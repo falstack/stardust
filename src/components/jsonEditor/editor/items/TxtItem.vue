@@ -12,7 +12,7 @@
       <text class="iconfont ic-text" />
     </template>
     <template slot="content">
-      <view>{{ item.title || '点击添加段落' }}</view>
+      <view>{{ item.text || '点击添加段落' }}</view>
     </template>
   </CommonItem>
 </template>

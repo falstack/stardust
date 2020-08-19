@@ -97,12 +97,14 @@ export default {
         return
       }
       Taro.eventCenter.trigger('EDIT_NOTE_POSTER', {
-        slug: this.slug
+        slug: this.slug,
+        type: this.type
       })
     },
     emitEditText() {
       Taro.eventCenter.trigger('EDIT_NOTE_CONTENT', {
-        slug: this.slug
+        slug: this.slug,
+        type: this.type
       })
     }
   }

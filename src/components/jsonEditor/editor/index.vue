@@ -25,9 +25,12 @@
       class="last-create-btn"
     />
     <Drawer v-model="showDrawer" size="100%">
-      <view>
-        <text @tap="closeEditDrawer">取消</text>
-      </view>
+      <template v-if="currentSelectedItem">
+        <view>
+          <text @tap="closeEditDrawer">取消</text>
+        </view>
+        <textarea v-model="currentSelectedItem.text" name="" id="" cols="30" rows="10"></textarea>
+      </template>
     </Drawer>
   </view>
 </template>
@@ -70,7 +73,8 @@ export default {
       showDrawer: false,
       currentSelectedSlug: '',
       currentSelectedType: '',
-      currentSelectedIndex: 0
+      currentSelectedIndex: 0,
+      currentSelectedItem: null
     }
   },
   created() {
@@ -165,13 +169,15 @@ export default {
         }
       })
     },
-    handleEditNoteContent({ slug }) {
-
+    handleEditNoteContent(data) {
+      this._updateCurrentState(data)
+      this.showDrawer = true
     },
     _updateCurrentState(data) {
       this.currentSelectedSlug = data.slug
       this.currentSelectedType = data.type || ''
       this.currentSelectedIndex = this.content.map(_ => _.slug).indexOf(data.slug)
+      this.currentSelectedItem = this.content[this.currentSelectedIndex]
     }
   }
 }

@@ -147,7 +147,9 @@
         </view>
       </view>
     </view>
-    <button class="btn" @tap="handleClick">+</button>
+    <button class="btn" @tap="handleClick">
+      <text class="iconfont-2 ic-add" />
+    </button>
   </view>
 </template>
 

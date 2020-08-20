@@ -2,7 +2,7 @@
 #json-editor-container {
   width: 100%;
   overflow-x: hidden;
-  background-color: RGB(241, 243, 244);
+  background-color: #f5f5f7;
 
   .last-create-btn {
     padding-bottom: 300px;
@@ -39,8 +39,8 @@
 
     .toolbar {
       padding: 20px 30px;
-      background-color: #b8c0cc;
-      color: #fff;
+      background-color: #f5f5f7;
+      color: #515154;
     }
   }
 }
@@ -123,6 +123,7 @@ export default {
   created() {
     Taro.eventCenter.on('CREATE_NOTE_ITEM', this.handleCreateNoteItem)
     Taro.eventCenter.on('DELETE_NOTE_ITEM', this.handleDeleteNoteItem)
+    Taro.eventCenter.on('SORT_NOTE_ITEM', this.handleSortNoteItem)
     Taro.eventCenter.on('EDIT_NOTE_POSTER', this.handleEditNotePoster)
     Taro.eventCenter.on('EDIT_NOTE_CONTENT', this.handleEditNoteContent)
   },
@@ -231,6 +232,19 @@ export default {
     saveEditData() {
       this.$set(this.content, this.currentSelectedIndex, this.currentSelectedItem)
       this.showDrawer = false
+    },
+    handleSortNoteItem({ slug, isUp }) {
+      const index = this.content.map(_ => _.slug).indexOf(slug)
+      if (index === 0 && isUp) {
+        return
+      }
+      if (index === this.content.length - 1 && !isUp) {
+        return
+      }
+      const targetIndex = isUp ? index - 1 : index + 1
+      const targetItem = this.content[targetIndex]
+      this.content.splice(targetIndex, 1)
+      this.content.splice(index, 0, targetItem)
     }
   }
 }

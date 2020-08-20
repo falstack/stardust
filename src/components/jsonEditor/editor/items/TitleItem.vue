@@ -9,7 +9,7 @@
 <template>
   <CommonItem :slug="item.slug" :type="item.type" class="title-item">
     <template slot="poster">
-      <text class="iconfont ic-text" />
+      <text class="iconfont ic-title" />
     </template>
     <template slot="content">
       <view>{{ item.text || '点击添加标题' }}</view>

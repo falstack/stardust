@@ -6,6 +6,7 @@
   .editor-item {
     background-color: #fff;
     padding: $container-padding;
+    height: $editor-item-height + 40px;
 
     .poster {
       width: $editor-item-height;
@@ -23,13 +24,21 @@
     }
 
     .control {
-      float: right;
+      height: $editor-item-height;
       margin-left: $container-padding;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      float: right;
 
-      .iconfont {
+      .icon {
         display: block;
         color: $color-text-light;
-        margin-bottom: 15px;
+      }
+
+      .iconfont {
+        font-size: 26px;
       }
     }
 
@@ -51,8 +60,9 @@
         <slot name="poster"> poster </slot>
       </view>
       <view class="control">
-        <text class="iconfont ic-cancel" @tap="emitDeleteItem" />
-        <text class="iconfont ic-sort" />
+        <text class="icon iconfont-2 ic-up" @tap="emitSortItem(true)" />
+        <text class="icon iconfont ic-cancel" @tap="emitDeleteItem" />
+        <text class="icon iconfont-2 ic-down" @tap="emitSortItem(false)" />
       </view>
       <view class="content" @tap="emitEditText">
         <slot name="content"></slot>
@@ -81,6 +91,15 @@ export default {
     }
   },
   methods: {
+    emitSortItem(isUp) {
+      Taro.eventCenter.trigger('SORT_NOTE_ITEM', {
+        slug: this.slug,
+        isUp
+      })
+      Taro.eventCenter.trigger('OPEN_CREATE_POPUP', {
+        slug: -1
+      })
+    },
     emitDeleteItem() {
       Taro.eventCenter.trigger('DELETE_NOTE_ITEM', {
         slug: this.slug

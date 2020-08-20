@@ -7,6 +7,42 @@
   .last-create-btn {
     padding-bottom: 300px;
   }
+
+  .edit-drawer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+    .header,
+    .toolbar {
+      width: 100%;
+      flex-shrink: 0;
+    }
+
+    .textarea {
+      width: 100%;
+      flex-grow: 1;
+      padding: 20px;
+    }
+
+    .header {
+      padding: 20px 30px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e7ecf2;
+    }
+
+    .toolbar {
+      padding: 20px 30px;
+      background-color: #b8c0cc;
+      color: #fff;
+    }
+  }
 }
 </style>
 
@@ -22,12 +58,22 @@
     />
     <CreateBtn class="last-create-btn"/>
     <Drawer v-model="showDrawer" size="100%">
-      <template v-if="currentSelectedItem">
-        <view>
+      <view class="edit-drawer" v-if="currentSelectedItem">
+        <view class="header">
           <text @tap="closeEditDrawer">取消</text>
+          <text @tap="saveEditData">更新</text>
         </view>
-        <textarea v-model="currentSelectedItem.text" name="" id="" cols="30" rows="10"></textarea>
-      </template>
+        <view class="toolbar">
+          toolbar
+        </view>
+        <textarea
+          v-model="currentSelectedItem.text"
+          placeholder="请输入内容"
+          autoFocus="true"
+          showConfirmBar=""
+          class="textarea"
+        />
+      </view>
     </Drawer>
   </view>
 </template>
@@ -177,8 +223,14 @@ export default {
         ? this.content.map(_ => _.slug).indexOf(data.slug)
         : this.content.length
       this.currentSelectedItem = isCreate ? {
+        type: data.type,
+        slug: Math.random().toString(36).substring(3, 6),
         text: ''
       } : this.content[this.currentSelectedIndex]
+    },
+    saveEditData() {
+      this.$set(this.content, this.currentSelectedIndex, this.currentSelectedItem)
+      this.showDrawer = false
     }
   }
 }

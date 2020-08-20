@@ -72,6 +72,7 @@
           autoFocus="true"
           showConfirmBar=""
           class="textarea"
+          maxlength="5000"
         />
       </view>
     </Drawer>

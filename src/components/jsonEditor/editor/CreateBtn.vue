@@ -128,8 +128,8 @@ export default {
   name: 'CreateBtn',
   props: {
     slug: {
-      required: true,
-      type: String
+      type: String,
+      default: ''
     }
   },
   data() {

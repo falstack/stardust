@@ -20,10 +20,7 @@
       :item="item"
       class="flip-list-item"
     />
-    <CreateBtn
-      slug="0"
-      class="last-create-btn"
-    />
+    <CreateBtn class="last-create-btn"/>
     <Drawer v-model="showDrawer" size="100%">
       <template v-if="currentSelectedItem">
         <view>
@@ -88,7 +85,7 @@ export default {
       this.showDrawer = false
     },
     handleCreateNoteItem(data) {
-      this._updateCurrentState(data)
+      this._updateCurrentState(data, true)
       if (data.type === 'img') {
         this.getImageFromAlbum()
       } else {
@@ -173,11 +170,15 @@ export default {
       this._updateCurrentState(data)
       this.showDrawer = true
     },
-    _updateCurrentState(data) {
+    _updateCurrentState(data, isCreate = false) {
       this.currentSelectedSlug = data.slug
       this.currentSelectedType = data.type || ''
-      this.currentSelectedIndex = this.content.map(_ => _.slug).indexOf(data.slug)
-      this.currentSelectedItem = this.content[this.currentSelectedIndex]
+      this.currentSelectedIndex = data.slug
+        ? this.content.map(_ => _.slug).indexOf(data.slug)
+        : this.content.length
+      this.currentSelectedItem = isCreate ? {
+        text: ''
+      } : this.content[this.currentSelectedIndex]
     }
   }
 }

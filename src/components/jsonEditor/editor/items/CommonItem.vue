@@ -2,11 +2,10 @@
 .editor-item-wrap {
   user-select: none;
 
-  $editor-item-height: 152px;
+  $editor-item-height: 156px;
   .editor-item {
     background-color: #fff;
     padding: $container-padding;
-    @extend %clearfix;
 
     .poster {
       width: $editor-item-height;
@@ -36,11 +35,9 @@
 
     .content {
       height: $editor-item-height;
-      @include mutiline($editor-item-height / 4, 4);
-
-      .three-line {
-        @include mutiline(19px, 3);
-      }
+      font-size: 30px;
+      margin: 15px 0;
+      @include mutiline(42px, 3);
     }
   }
 }

@@ -29,8 +29,37 @@
     border-radius: 10px;
     padding: 10px;
     animation: popup-enter 300ms;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 14px rgba(0,0,0,.15);
     z-index: 2;
+
+    .arrow {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      margin-left: -10px;
+      display: block;
+      width: 0;
+      height: 0;
+      border-color: transparent;
+      border-style: solid;
+      border-width: 0 10px 10px;
+      border-bottom-color: hsla(0,0%,85%,.5);
+
+      &:after {
+        content: '';
+        top: 2px;
+        margin-left: -10px;
+        border-width: 10px;
+        display: block;
+        width: 0;
+        height: 0;
+        position: absolute;
+        border-color: transparent;
+        border-style: solid;
+        border-bottom-color: #fff;
+        border-top-width: 0;
+      }
+    }
 
     .row {
       font-size: 0;
@@ -88,6 +117,7 @@
 <template>
   <view class="create-btn-wrap">
     <view v-if="trigger" class="box">
+      <view class="arrow" />
       <view class="row">
         <view @tap="emitCreate('img')">
           <text class="iconfont ic-image" />

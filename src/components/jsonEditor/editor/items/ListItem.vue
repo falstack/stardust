@@ -3,23 +3,6 @@
   .poster {
     background-color: #00a1d6;
   }
-
-  ul li {
-    list-style-type: disc;
-  }
-
-  ol li {
-    list-style-type: decimal;
-  }
-
-  ul,
-  ol {
-    margin-left: 1.3em;
-  }
-
-  span {
-    display: block;
-  }
 }
 </style>
 
@@ -32,12 +15,12 @@
       <template v-if="item.text">
         <view v-if="item.sort === '1'">
           <view v-for="(li, index) in computeList(item.text)" :key="index">
-            <text class="oneline" v-text="li" />
+            <text class="oneline">{{ li }}</text>
           </view>
         </view>
         <view v-else>
           <view v-for="(li, index) in computeList(item.text)" :key="index">
-            <text class="oneline" v-text="li" />
+            <text class="oneline">{{ li }}</text>
           </view>
         </view>
       </template>
@@ -75,7 +58,7 @@ export default {
       while (/\n\n/.test(list)) {
         list = list.replace(/\n\n/g, '\n')
       }
-      return list.split('\n').slice(0, 4)
+      return list.split('\n').slice(0, 3)
     }
   }
 }

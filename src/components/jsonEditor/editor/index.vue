@@ -67,9 +67,9 @@
           <text @tap="closeEditDrawer">取消</text>
           <text @tap="saveEditData">更新</text>
         </view>
-        <view class="toolbar">
-          toolbar
-        </view>
+        <Component
+          :is="`${currentSelectedItem.type}-bar`"
+        />
         <Component
           :is="`${currentSelectedItem.type}-input`"
           v-model="currentSelectedItem.text"
@@ -92,6 +92,11 @@ import ListInput from './textarea/ListInput'
 import TitleInput from './textarea/TitleInput'
 import TxtInput from './textarea/TxtInput'
 import UseInput from './textarea/UseInput'
+import ImgBar from './toolbar/ImgBar'
+import ListBar from './toolbar/ListBar'
+import TitleBar from './toolbar/TitleBar'
+import TxtBar from './toolbar/TxtBar'
+import UseBar from './toolbar/UseBar'
 import Drawer from '../../drawer'
 import ENUM from './enmu'
 
@@ -109,7 +114,12 @@ export default {
     ListInput,
     TitleInput,
     TxtInput,
-    UseInput
+    UseInput,
+    ImgBar,
+    ListBar,
+    TitleBar,
+    TxtBar,
+    UseBar
   },
   props: {
     value: {

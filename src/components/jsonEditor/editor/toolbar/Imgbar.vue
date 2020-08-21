@@ -2,6 +2,9 @@
 </style>
 
 <template>
+  <view class="toolbar">
+    img toolbar
+  </view>
 </template>
 
 <script>

@@ -74,6 +74,7 @@
 <script>
 import Taro from '@tarojs/taro'
 import CreateBtn from '../CreateBtn.vue'
+import ENUM from '../enmu'
 
 export default {
   name: 'CommonItem',
@@ -92,19 +93,19 @@ export default {
   },
   methods: {
     emitSortItem(isUp) {
-      Taro.eventCenter.trigger('SORT_NOTE_ITEM', {
+      Taro.eventCenter.trigger(ENUM.SORT_NOTE_ITEM, {
         slug: this.slug,
         isUp
       })
-      Taro.eventCenter.trigger('OPEN_CREATE_POPUP', {
+      Taro.eventCenter.trigger(ENUM.OPEN_CREATE_POPUP, {
         slug: -1
       })
     },
     emitDeleteItem() {
-      Taro.eventCenter.trigger('DELETE_NOTE_ITEM', {
+      Taro.eventCenter.trigger(ENUM.DELETE_NOTE_ITEM, {
         slug: this.slug
       })
-      Taro.eventCenter.trigger('OPEN_CREATE_POPUP', {
+      Taro.eventCenter.trigger(ENUM.OPEN_CREATE_POPUP, {
         slug: -1
       })
     },
@@ -112,13 +113,13 @@ export default {
       if (this.type !== 'img') {
         return
       }
-      Taro.eventCenter.trigger('EDIT_NOTE_POSTER', {
+      Taro.eventCenter.trigger(ENUM.EDIT_NOTE_POSTER, {
         slug: this.slug,
         type: this.type
       })
     },
     emitEditText() {
-      Taro.eventCenter.trigger('EDIT_NOTE_CONTENT', {
+      Taro.eventCenter.trigger(ENUM.EDIT_NOTE_CONTENT, {
         slug: this.slug,
         type: this.type
       })

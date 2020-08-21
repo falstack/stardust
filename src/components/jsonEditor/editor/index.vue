@@ -13,8 +13,8 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: flex-start;
 
     .header,
     .toolbar {
@@ -22,8 +22,12 @@
       flex-shrink: 0;
     }
 
-    .textarea {
+    input,
+    textarea {
       width: 100%;
+    }
+
+    textarea {
       flex-grow: 1;
       padding: 20px;
     }
@@ -66,13 +70,9 @@
         <view class="toolbar">
           toolbar
         </view>
-        <textarea
+        <Component
+          :is="`${currentSelectedItem.type}-input`"
           v-model="currentSelectedItem.text"
-          placeholder="请输入内容"
-          autoFocus="true"
-          showConfirmBar=""
-          class="textarea"
-          maxlength="5000"
         />
       </view>
     </Drawer>
@@ -87,7 +87,13 @@ import UseItem from './items/UseItem.vue'
 import ListItem from './items/ListItem.vue'
 import TitleItem from './items/TitleItem.vue'
 import CreateBtn from './CreateBtn.vue'
+import ImgInput from './textarea/ImgInput'
+import ListInput from './textarea/ListInput'
+import TitleInput from './textarea/TitleInput'
+import TxtInput from './textarea/TxtInput'
+import UseInput from './textarea/UseInput'
 import Drawer from '../../drawer'
+import ENUM from './enmu'
 
 export default {
   name: 'JsonEditor',
@@ -98,7 +104,12 @@ export default {
     TxtItem,
     ImgItem,
     UseItem,
-    ListItem
+    ListItem,
+    ImgInput,
+    ListInput,
+    TitleInput,
+    TxtInput,
+    UseInput
   },
   props: {
     value: {
@@ -122,11 +133,11 @@ export default {
     }
   },
   created() {
-    Taro.eventCenter.on('CREATE_NOTE_ITEM', this.handleCreateNoteItem)
-    Taro.eventCenter.on('DELETE_NOTE_ITEM', this.handleDeleteNoteItem)
-    Taro.eventCenter.on('SORT_NOTE_ITEM', this.handleSortNoteItem)
-    Taro.eventCenter.on('EDIT_NOTE_POSTER', this.handleEditNotePoster)
-    Taro.eventCenter.on('EDIT_NOTE_CONTENT', this.handleEditNoteContent)
+    Taro.eventCenter.on(ENUM.CREATE_NOTE_ITEM, this.handleCreateNoteItem)
+    Taro.eventCenter.on(ENUM.DELETE_NOTE_ITEM, this.handleDeleteNoteItem)
+    Taro.eventCenter.on(ENUM.SORT_NOTE_ITEM, this.handleSortNoteItem)
+    Taro.eventCenter.on(ENUM.EDIT_NOTE_POSTER, this.handleEditNotePoster)
+    Taro.eventCenter.on(ENUM.EDIT_NOTE_CONTENT, this.handleEditNoteContent)
   },
   methods: {
     closeEditDrawer() {

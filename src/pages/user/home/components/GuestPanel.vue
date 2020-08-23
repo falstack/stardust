@@ -37,6 +37,10 @@
       margin-bottom: 60px;
     }
 
+    .message-wrap {
+      padding: 12px 0 53px;
+    }
+
     .input-wrap {
       display: flex;
       flex-direction: row;
@@ -103,7 +107,10 @@
         <view class="title">
           注册
         </view>
-        <view class="input-wrap">
+        <view v-if="showMessageBox" class="message-wrap">
+          <CodeInput v-model="messageCode" @submit="handleSignUp" />
+        </view>
+        <view class="input-wrap" v-else>
           <view class="area">+ 86</view>
           <input
             v-model="phoneNumber"
@@ -134,22 +141,26 @@
 <script>
 import Drawer from '~/components/drawer'
 import Dialog from '~/components/dialog'
+import CodeInput from "./CodeInput";
 import toast from '~/utils/toast'
-import { oAuthLogin } from '~/utils/login'
+import { oAuthLogin, sendPhoneMessage } from '~/utils/login'
 
 export default {
   name: 'GuestPanel',
   components: {
     Drawer,
-    Dialog
+    Dialog,
+    CodeInput
   },
   props: {},
   data() {
     return {
       phoneNumber: '',
+      messageCode: '',
       sendMessageTimeout: 0,
       showDrawer: false,
       showDialog: false,
+      showMessageBox: false,
       user: null
     }
   },
@@ -202,6 +213,16 @@ export default {
       }
       this.sendMessageTimeout = 60
       this.overLoopTimeout()
+      sendPhoneMessage(this.phoneNumber)
+        .then(() => {
+          this.showMessageBox = true
+        })
+        .catch(err => {
+          toast.info(err.message)
+        })
+    },
+    handleSignUp() {
+      console.log('handleSignUp')
     }
   }
 }

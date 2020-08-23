@@ -141,3 +141,10 @@ export const step_6_get_user_roles = () => {
     })
     .catch(() => {})
 }
+
+export const sendPhoneMessage = (phone_number, isNew = true) => {
+  return http.post('door/message', {
+    type: isNew ? 'sign_up' : 'sign_in',
+    phone_number
+  })
+}

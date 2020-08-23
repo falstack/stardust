@@ -20,7 +20,7 @@ const config = {
     options: {
     }
   },
-  framework: 'vue',
+  framework: 'vue3',
   sass: {
     resource: [
       path.resolve(__dirname, '..', 'src/style/var.scss'),

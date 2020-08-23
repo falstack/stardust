@@ -1,6 +1,6 @@
 <template>
   <view class="index">
-    <text>{{ msg }}</text>
+    hello vue3
   </view>
 </template>
 

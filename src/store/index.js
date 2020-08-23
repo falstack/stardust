@@ -1,6 +1,6 @@
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 
-const store = new Vuex({
+const store = createStore({
   state: () => ({
     numbers: [1, 2, 3]
   }),

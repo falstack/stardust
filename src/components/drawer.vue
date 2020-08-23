@@ -22,8 +22,18 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #fff;
+    background-color: $bg-color;
     animation: scroll-enter 300ms;
+
+    .drawer__close {
+      padding-top: 110px;
+      padding-left: $container-padding;
+
+      .iconfont {
+        font-size: 50px;
+        font-weight: bold;
+      }
+    }
   }
 
   @keyframes scroll-enter {
@@ -40,8 +50,14 @@
 
 <template>
   <view v-if="visible" class="drawer">
-    <view class="drawer__mask" />
+    <view class="drawer__mask" @tap="clickMask" />
     <view class="drawer__wrap" :style="{ height: size }">
+      <template v-if="size === '100%'">
+        <view class="drawer__close">
+          <text class="iconfont ic-cancel" @tap="closeDrawer" />
+        </view>
+        <view class="iphone-x-shim" />
+      </template>
       <slot />
     </view>
   </view>
@@ -59,6 +75,10 @@ export default {
     size: {
       type: String,
       default: '60%'
+    },
+    maskClose: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -74,8 +94,16 @@ export default {
       this.$emit('input', val)
     }
   },
-  created() {},
-  mounted() {},
-  methods: {}
+  methods: {
+    clickMask() {
+      if (!this.maskClose) {
+        return
+      }
+      this.closeDrawer()
+    },
+    closeDrawer() {
+      this.visible = false
+    }
+  }
 }
 </script>

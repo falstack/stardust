@@ -1,0 +1,13 @@
+.iphone-x-shim {
+  height: env(safe-area-inset-top);
+}
+
+.primary-btn {
+  background-color: #3D3D3D;
+  color: #fff;
+
+  &-plain {
+    border: 1PX solid #3D3D3D;
+    color: #3D3D3D;
+  }
+}

@@ -44,7 +44,12 @@ const store = createStore({
     }
   },
   getters: {
-    isGuest: (state) => !state.userInfo,
+    isGuest: (state) => {
+      if (!state.userInfo) {
+        return true
+      }
+      return !state.userInfo.providers.bind_phone
+    },
     hasRole: (role) => (state) => {
       if (!state.userInfo) {
         return false

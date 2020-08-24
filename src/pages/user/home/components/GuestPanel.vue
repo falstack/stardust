@@ -27,7 +27,7 @@
     }
   }
 
-  .drawer-register-wrap {
+  .register-drawer {
     width: 500px;
     margin: 0 auto;
 
@@ -36,54 +36,18 @@
       font-size: 44px;
       margin-bottom: 60px;
     }
-
-    .message-wrap {
-      padding: 12px 0 53px;
-    }
-
-    .input-wrap {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #F5F5F5;
-      padding: 30px 20px;
-      border-radius: 20px;
-      margin-bottom: 40px;
-
-      .area {
-        border-right: 1PX solid #3D3D3D;
-        padding-right: 10px;
-        margin-right: 10px;
-        font-size: 30px;
-        line-height: 30px;
-        height: 30px;
-      }
-
-      .input {
-        flex: 1;
-        font-size: 30px;
-      }
-    }
-
-    .submit-btn {
-      font-size: 32px;
-    }
   }
 
-  .register-bind-phone-dialog {
-    padding-top: 100px;
-    position: relative;
+  .bind-phone-dialog {
+    padding: $container-padding;
 
-    .avatar {
-      position: absolute;
-      left: 50%;
-      top: -105px;
-      transform: translateX(-50%);
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      border: 10px solid $bg-color;
+    .tip {
+      text-align: center;
+      padding-bottom: $container-padding;
+    }
+
+    .btn {
+      margin-top: $container-padding;
     }
   }
 }
@@ -101,36 +65,22 @@
       </button>
     </view>
     <Drawer v-model="state.showDrawer" size="100%">
-      <view class="drawer-register-wrap">
+      <view class="register-drawer">
         <view class="title">
           注册
         </view>
-        <view v-if="state.showMessageBox" class="message-wrap">
-          <CodeInput v-model="state.messageCode" @submit="handleSignUp" />
-        </view>
-        <view class="input-wrap" v-else>
-          <view class="area">+ 86</view>
-          <input
-            v-model="state.phoneNumber"
-            class="input"
-            type="number"
-            auto-focus="true"
-            confirm-type="send"
-            adjustPosition=""
-            placeholder="请输入您的手机号"
-          >
-        </view>
-        <button class="submit-btn primary-btn" @tap="getRegisterMessage">
-          {{ state.sendMessageTimeout ? `${state.sendMessageTimeout}s后可重新获取` : '获取短信验证码' }}
-        </button>
+        <PhoneCodeBox is-new @submit="handleSignUp" />
       </view>
     </Drawer>
     <Dialog v-model="state.showDialog">
-      <view v-if="state.user" class="register-bind-phone-dialog">
-        <image class="avatar" :src="state.user.avatar" />
-        <view>需要绑定手机号才能注册成功</view>
-        <button open-type="getPhoneNumber" hover-class="none" @getPhoneNumber={getUserPhone}>绑定当前微信号</button>
-        <button hover-class="none">绑定其它手机号</button>
+      <view class="bind-phone-dialog">
+        <view class="tip">继续操作前请先绑定手机号</view>
+        <template v-if="$env !== 'weapp'">
+          <button class="btn primary-btn" open-type="getPhoneNumber" hover-class="none" @getPhoneNumber={getUserPhone}>一键绑定</button>
+        </template>
+        <template v-else>
+          <PhoneCodeBox @submit="handleBindPhone" />
+        </template>
       </view>
     </Dialog>
   </view>
@@ -140,93 +90,59 @@
 import { reactive } from 'vue'
 import Drawer from '~/components/drawer'
 import Dialog from '~/components/dialog'
-import CodeInput from "./CodeInput";
 import toast from '~/utils/toast'
-import { sendPhoneMessage } from '~/utils/login'
 import { useStore } from 'vuex'
+import PhoneCodeBox from './PhoneCodeBox'
 
 export default {
   name: 'GuestPanel',
+  components: {
+    Drawer,
+    Dialog,
+    PhoneCodeBox
+  },
   setup() {
     const store = useStore()
     const state = reactive({
-      phoneNumber: '',
-      messageCode: '',
-      sendMessageTimeout: 0,
       showDrawer: false,
       showDialog: false,
-      showMessageBox: false,
-      user: null
     })
 
     const handleTap = () => {
       state.showDrawer = true
     }
 
-    const overLoopTimeout = () => {
-      if (state.sendMessageTimeout === 1) {
-        state.sendMessageTimeout = 0
-        return
-      }
-      setTimeout(() => {
-        state.sendMessageTimeout--
-        overLoopTimeout()
-      }, 1000)
-    }
-
-    const startLoginProcess = (evt) => {
+    const startLoginProcess = async (evt) => {
       if (!evt.detail.userInfo) {
         toast.info('授权后才能登录')
         return
       }
-      store.dispatch('userLogin')
+      await store.dispatch('userLogin')
+      if (store.getters.isGuest) {
+        state.showDialog = true
+      }
     }
 
     const getUserPhone = (evt) => {
       console.log(evt)
     }
 
-    const getRegisterMessage = () => {
-      if (state.sendMessageTimeout) {
-        return
-      }
-      if (
-        !state.phoneNumber ||
-        state.phoneNumber.length !== 11 ||
-        !/^\d+$/.test(state.phoneNumber)
-      ) {
-        toast.info('请输入正确的手机号~')
-        return
-      }
-      state.sendMessageTimeout = 60
-      overLoopTimeout()
-      sendPhoneMessage(state.phoneNumber)
-        .then(() => {
-          state.showMessageBox = true
-        })
-        .catch(err => {
-          toast.info(err.message)
-        })
-    }
-
     const handleSignUp = () => {
       console.log('handleSignUp')
+    }
+
+    const handleBindPhone = () => {
+      console.log('handleBindPhone')
     }
 
     return {
       state,
       handleTap,
-      overLoopTimeout,
       startLoginProcess,
       getUserPhone,
-      getRegisterMessage,
-      handleSignUp
+      handleSignUp,
+      handleBindPhone
     }
-  },
-  components: {
-    Drawer,
-    Dialog,
-    CodeInput
   }
 }
 </script>

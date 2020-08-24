@@ -55,24 +55,24 @@ $item-size: 80px;
 <template>
   <view class="code-input">
     <input
-      v-model="code"
+      v-model="state.code"
       class="input"
       type="number"
       auto-focus="true"
       confirm-type="send"
       adjustPosition=""
-      :maxlength="length"
-      :disabled="disabled"
-      :style="`padding-left:${36 * count + 18}px`"
+      :maxlength="$props.length"
+      :disabled="state.disabled"
+      :style="`padding-left:${36 * state.count + 18}px`"
     />
     <view class="code-input__wrap">
       <view
-        v-for="(item, index) in length"
+        v-for="(item, index) in $props.length"
         :key="item"
-        :class="{ 'is-active': count === index }"
+        :class="{ 'is-active': state.count === index }"
         class="item"
       >
-        {{ code[index] }}
+        {{ state.code[index] }}
       </view>
     </view>
   </view>
@@ -80,11 +80,12 @@ $item-size: 80px;
 
 <script>
 // TODO：code-input 只要在 375 宽的时候和外面的 input 等高。。
+import { reactive, watch } from 'vue'
+
 export default {
   name: 'CodeInput',
-  components: {},
   props: {
-    value: {
+    modelValue: {
       required: true,
       type: [String, Number]
     },
@@ -93,24 +94,34 @@ export default {
       default: 6
     }
   },
-  data() {
-    return {
-      code: this.value,
+  setup(props, ctx) {
+    const state = reactive({
+      code: props.modelValue,
       loading: false,
       disabled: false,
       count: 0
-    }
-  },
-  watch: {
-    value(val) {
-      this.code = val
-    },
-    code(val) {
-      this.count = val.length
-      this.$emit('input', val)
-      if (this.count === this.length) {
-        this.$emit('submit')
+    })
+
+    watch(
+      () => state.code,
+      (val) => {
+        state.count = val.length
+        ctx.emit('update:modelValue', val)
+        if (state.count === props.length) {
+          ctx.emit('submit')
+        }
       }
+    )
+
+    watch(
+      () => props.modelValue,
+      (val) => {
+        state.code = val
+      }
+    )
+
+    return {
+      state
     }
   }
 }

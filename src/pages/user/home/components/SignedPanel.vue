@@ -118,7 +118,6 @@ import { computed } from 'vue'
 
 export default {
   name: 'SignedPanel',
-  components: {},
   setup() {
     const store = useStore()
     const user = computed(() => store.state.userInfo)

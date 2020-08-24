@@ -17,6 +17,7 @@ app.config.errorHandler = (err, vm, info) => {
   console.log(info)
 }
 app.config.globalProperties.$utils = utils
+app.config.globalProperties.$env = process.env.TARO_ENV
 
 if (cache.get('JWT_TOKEN')) {
   store.commit('UPDATE_USER_INFO', cache.get('USER_INFO'))

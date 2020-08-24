@@ -64,11 +64,12 @@
 </template>
 
 <script>
+import { ref, watch } from 'vue'
+
 export default {
   name: 'VDrawer',
-  components: {},
   props: {
-    value: {
+    modelValue: {
       required: true,
       type: Boolean
     },
@@ -81,28 +82,38 @@ export default {
       default: true
     }
   },
-  data() {
-    return {
-      visible: this.value
+  setup(props, ctx) {
+    const visible = ref(props.modelValue)
+
+    watch(
+      visible,
+      (val) => {
+        ctx.emit('update:modelValue', val)
+      }
+    )
+
+    watch(
+      () => props.modelValue,
+      (val) => {
+        visible.value = val
+      }
+    )
+
+    const closeDrawer = () => {
+      visible.value = false
     }
-  },
-  watch: {
-    value(val) {
-      this.visible = val
-    },
-    visible(val) {
-      this.$emit('input', val)
-    }
-  },
-  methods: {
-    clickMask() {
-      if (!this.maskClose) {
+
+    const clickMask = () => {
+      if (!props.maskClose) {
         return
       }
-      this.closeDrawer()
-    },
-    closeDrawer() {
-      this.visible = false
+      closeDrawer()
+    }
+
+    return {
+      visible,
+      clickMask,
+      closeDrawer
     }
   }
 }

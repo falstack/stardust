@@ -33,7 +33,7 @@
 
 <template>
   <view v-if="visible" class="dialog">
-    <view class="dialog__mask" @tap="handleClose" />
+    <view class="dialog__mask" @tap="closeDialog" />
     <view class="dialog__wrap">
       <slot />
     </view>
@@ -41,11 +41,12 @@
 </template>
 
 <script>
+import { ref, watch } from 'vue'
+
 export default {
   name: 'VDialog',
-  components: {},
   props: {
-    value: {
+    modelValue: {
       required: true,
       type: Boolean
     },
@@ -54,25 +55,38 @@ export default {
       default: true
     }
   },
-  data() {
-    return {
-      visible: this.value
+  setup(props, ctx) {
+    const visible = ref(props.modelValue)
+
+    watch(
+      visible,
+      (val) => {
+        ctx.emit('update:modelValue', val)
+      }
+    )
+
+    watch(
+      () => props.modelValue,
+      (val) => {
+        visible.value = val
+      }
+    )
+
+    const closeDialog = () => {
+      visible.value = false
     }
-  },
-  watch: {
-    value(val) {
-      this.visible = val
-    },
-    visible(val) {
-      this.$emit('input', val)
-    }
-  },
-  methods: {
-    handleClose() {
-      if (!this.maskClose) {
+
+    const clickMask = () => {
+      if (!props.maskClose) {
         return
       }
-      this.visible = false
+      closeDialog()
+    }
+
+    return {
+      visible,
+      clickMask,
+      closeDialog
     }
   }
 }

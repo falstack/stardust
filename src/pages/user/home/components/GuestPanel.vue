@@ -102,18 +102,18 @@
         登录
       </button>
     </view>
-    <Drawer v-model="showDrawer" size="100%">
+    <Drawer v-model="state.showDrawer" size="100%">
       <view class="drawer-register-wrap">
         <view class="title">
           注册
         </view>
-        <view v-if="showMessageBox" class="message-wrap">
-          <CodeInput v-model="messageCode" @submit="handleSignUp" />
+        <view v-if="state.showMessageBox" class="message-wrap">
+          <CodeInput v-model="state.messageCode" @submit="handleSignUp" />
         </view>
         <view class="input-wrap" v-else>
           <view class="area">+ 86</view>
           <input
-            v-model="phoneNumber"
+            v-model="state.phoneNumber"
             class="input"
             type="number"
             auto-focus="true"
@@ -123,13 +123,13 @@
           >
         </view>
         <button class="submit-btn primary-btn" @tap="getRegisterMessage">
-          {{ sendMessageTimeout ? `${sendMessageTimeout}s后可重新获取` : '获取短信验证码' }}
+          {{ state.sendMessageTimeout ? `${state.sendMessageTimeout}s后可重新获取` : '获取短信验证码' }}
         </button>
       </view>
     </Drawer>
-    <Dialog v-model="showDialog">
-      <view v-if="user" class="register-bind-phone-dialog">
-        <image class="avatar" :src="user.avatar" />
+    <Dialog v-model="state.showDialog">
+      <view v-if="state.user" class="register-bind-phone-dialog">
+        <image class="avatar" :src="state.user.avatar" />
         <view>需要绑定手机号才能注册成功</view>
         <button open-type="getPhoneNumber" hover-class="none" @getPhoneNumber={getUserPhone}>绑定当前微信号</button>
         <button hover-class="none">绑定其它手机号</button>
@@ -139,6 +139,7 @@
 </template>
 
 <script>
+import { reactive } from 'vue'
 import Drawer from '~/components/drawer'
 import Dialog from '~/components/dialog'
 import CodeInput from "./CodeInput";
@@ -147,14 +148,8 @@ import { oAuthLogin, sendPhoneMessage } from '~/utils/login'
 
 export default {
   name: 'GuestPanel',
-  components: {
-    Drawer,
-    Dialog,
-    CodeInput
-  },
-  props: {},
-  data() {
-    return {
+  setup() {
+    const state = reactive({
       phoneNumber: '',
       messageCode: '',
       sendMessageTimeout: 0,
@@ -162,68 +157,83 @@ export default {
       showDialog: false,
       showMessageBox: false,
       user: null
+    })
+
+    const handleTap = () => {
+      state.showDrawer = true
     }
-  },
-  computed: {},
-  watch: {},
-  created() {},
-  mounted() {},
-  methods: {
-    handleTap() {
-      this.showDrawer = true
-    },
-    overLoopTimeout() {
-      if (this.sendMessageTimeout === 1) {
-        this.sendMessageTimeout = 0
+
+    const overLoopTimeout = () => {
+      if (state.sendMessageTimeout === 1) {
+        state.sendMessageTimeout = 0
         return
       }
       setTimeout(() => {
-        this.sendMessageTimeout--
-        this.overLoopTimeout()
+        state.sendMessageTimeout--
+        overLoopTimeout()
       }, 1000)
-    },
-    startRegisterProcess(evt) {
+    }
+
+    const startRegisterProcess = (evt) => {
       if (!evt.detail.userInfo) {
         toast.info('授权后才能注册')
         return
       }
       oAuthLogin()
-      .then(user => {
-        this.user = user
-        this.showDialog = true
-      })
-      .catch(() => {
-        toast.info('注册失败，请稍后再试~')
-      })
-    },
-    getUserPhone(evt) {
+        .then(user => {
+          state.user = user
+          state.showDialog = true
+        })
+        .catch(() => {
+          toast.info('注册失败，请稍后再试~')
+        })
+    }
+
+    const getUserPhone = (evt) => {
       console.log(evt)
-    },
-    getRegisterMessage() {
-      if (this.sendMessageTimeout) {
+    }
+
+    const getRegisterMessage = () => {
+      if (state.sendMessageTimeout) {
         return
       }
       if (
-        !this.phoneNumber ||
-        this.phoneNumber.length !== 11 ||
-        !/^\d+$/.test(this.phoneNumber)
+        !state.phoneNumber ||
+        state.phoneNumber.length !== 11 ||
+        !/^\d+$/.test(state.phoneNumber)
       ) {
         toast.info('请输入正确的手机号~')
         return
       }
-      this.sendMessageTimeout = 60
-      this.overLoopTimeout()
-      sendPhoneMessage(this.phoneNumber)
+      state.sendMessageTimeout = 60
+      state.overLoopTimeout()
+      sendPhoneMessage(state.phoneNumber)
         .then(() => {
-          this.showMessageBox = true
+          state.showMessageBox = true
         })
         .catch(err => {
           toast.info(err.message)
         })
-    },
-    handleSignUp() {
+    }
+
+    const handleSignUp = () => {
       console.log('handleSignUp')
     }
+
+    return {
+      state,
+      handleTap,
+      overLoopTimeout,
+      startRegisterProcess,
+      getUserPhone,
+      getRegisterMessage,
+      handleSignUp
+    }
+  },
+  components: {
+    Drawer,
+    Dialog,
+    CodeInput
   }
 }
 </script>

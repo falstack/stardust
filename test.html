@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <title>Document</title>
+  <script crossorigin="anonymous" integrity="sha384-By3cPqxThh0caEqh+N/Mz0GCmPpeAL1RGv5y/BcbLfgV0zdY77mQhL+SCZrKsp9m" src="https://lib.baomitu.com/vue/3.0.0-beta.24/vue.global.js"></script>
+</head>
+<body>
+<div id="app">
+  <p>{{ msg }}</p>
+  <test-input v-model="msg"></test-input>
+  <button @click="add">++</button>
+</div>
+<script>
+const testInput = {
+  props: {
+    modelValue: {
+      required: true,
+      type: String
+    }
+  },
+  emits: ['update:modelValue'],
+  setup(props, ctx) {
+    const text = Vue.ref(props.modelValue)
+
+    Vue.watch(text, (val) => {
+      console.log('update:modelValue')
+      ctx.emit('update:modelValue', val)
+    })
+
+    Vue.watch(() => props.modelValue, (val) => {
+      console.log('props.modelValue update')
+      text.value = val
+    })
+
+    return () => Vue.h(
+      'input',
+      {
+        value: text.value,
+        onInput: function (event) {
+          console.log('onInput', event.target.value)
+          ctx.emit('update:modelValue', event.target.value)
+        }
+      }
+    )
+  }
+}
+
+const app = Vue.createApp({
+  components: {
+    testInput
+  },
+  setup() {
+    const msg = Vue.ref('hello vue3')
+    const add = () => msg.value += '!'
+
+    return {
+      msg,
+      add
+    }
+  }
+ });
+
+app.mount('#app')
+</script>
+</body>
+</html>

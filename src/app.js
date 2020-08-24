@@ -1,12 +1,22 @@
 import { createApp } from 'vue'
 import store from './store'
+import utils from '~/utils'
+import toast from '~/utils/toast'
 import './app.scss'
 
-const App = createApp({
+const app = createApp({
   onShow (options) {},
   // 入口组件不需要实现 render 方法，即使实现了也会被 taro 所覆盖
 })
 
-App.use(store)
+app.use(store)
 
-export default App
+app.config.devtools = true
+app.config.errorHandler = (err, vm, info) => {
+  console.log(err)
+  console.log(info)
+}
+app.config.globalProperties.$utils = utils
+
+
+export default app

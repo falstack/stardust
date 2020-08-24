@@ -44,9 +44,7 @@ export const accessLogin = (form, isLogin = true) => {
   return new Promise((resolve, reject) => {
     step_0_get_jwt_token_by_access(form, isLogin)
       .then(token => {
-        step_5_get_current_user(token)
-          .then(resolve)
-          .catch(reject)
+        step_5_get_current_user(token).then(resolve).catch(reject)
       })
       .catch(reject)
   })
@@ -70,15 +68,8 @@ const step_1_get_wx_code = () => {
 }
 
 const step_2_get_token_or_user_by_code = code => {
-  return new Promise((resolve, reject) => {
-    const url = process.env.TARO_ENV === 'weapp' ? 'door/wechat_mini_app_get_token' : 'door/qq_mini_app_get_token'
-    http
-      .post(url, { code, app_name: 'moe_idol' })
-      .then(key => {
-        resolve(key)
-      })
-      .catch(reject)
-  })
+  const url = process.env.TARO_ENV === 'weapp' ? 'door/wechat_mini_app_get_token' : 'door/qq_mini_app_get_token'
+  return http.post(url, { code, app_name: 'moe_idol' })
 }
 
 const step_3_get_secret_data_from_wechat = () => {
@@ -96,51 +87,20 @@ const step_3_get_secret_data_from_wechat = () => {
 }
 
 const step_4_get_user = form => {
-  return new Promise((resolve, reject) => {
-    const url = process.env.TARO_ENV === 'weapp' ? 'door/wechat_mini_app_login' : 'door/qq_mini_app_login'
-    http
-      .post(url, form)
-      .then(data => {
-        resolve(data)
-      })
-      .catch(reject)
-  })
+  const url = process.env.TARO_ENV === 'weapp' ? 'door/wechat_mini_app_login' : 'door/qq_mini_app_login'
+  return http.post(url, form).then(resolve).catch(reject)
 }
 
 const step_5_get_current_user = token => {
-  cache.set('JWT-TOKEN', token)
-  return new Promise((resolve, reject) => {
-    http
-      .post('door/get_user_info')
-      .then(user => {
-        cache.set('USER', user)
-        if (user && user.title.length) {
-          step_6_get_user_roles()
-        }
-        resolve(user)
-      })
-      .catch(reject)
-  })
+  cache.set('JWT_TOKEN', token)
+  return http.post('door/get_user_info')
 }
 
 const step_0_get_jwt_token_by_access = (form, isLogin) => {
-  return new Promise((resolve, reject) => {
-    http
-      .post(isLogin ? 'door/login' : 'door/register', form)
-      .then(token => {
-        resolve(token)
-      })
-      .catch(reject)
-  })
+  return http.post(isLogin ? 'door/login' : 'door/register', form)
 }
 
-export const step_6_get_user_roles = () => {
-  http.get('user/roles')
-    .then(roles => {
-      cache.set('USER_ROLES', roles)
-    })
-    .catch(() => {})
-}
+export const getUserRole = () => http.get('user/roles')
 
 export const sendPhoneMessage = (phone_number, isNew = true) => {
   return http.post('door/message', {

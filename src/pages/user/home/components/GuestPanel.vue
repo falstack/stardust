@@ -91,14 +91,12 @@
 
 <template>
   <view class="guest-panel">
-    <view class="login-tips">
-      你还没登录呢，喵 o(一︿一+)o
-    </view>
+    <view class="login-tips">你还没登录呢，喵 o(一︿一+)o</view>
     <view class="btn-wrap">
       <button class="primary-btn-plain" hover-class="none" @tap="handleTap">
         注册
       </button>
-      <button class="primary-btn" open-type="getUserInfo" hover-class="none" @getUserInfo="startRegisterProcess">
+      <button class="primary-btn" open-type="getUserInfo" hover-class="none" @getUserInfo="startLoginProcess">
         登录
       </button>
     </view>
@@ -144,11 +142,13 @@ import Drawer from '~/components/drawer'
 import Dialog from '~/components/dialog'
 import CodeInput from "./CodeInput";
 import toast from '~/utils/toast'
-import { oAuthLogin, sendPhoneMessage } from '~/utils/login'
+import { sendPhoneMessage } from '~/utils/login'
+import { useStore } from 'vuex'
 
 export default {
   name: 'GuestPanel',
   setup() {
+    const store = useStore()
     const state = reactive({
       phoneNumber: '',
       messageCode: '',
@@ -174,19 +174,12 @@ export default {
       }, 1000)
     }
 
-    const startRegisterProcess = (evt) => {
+    const startLoginProcess = (evt) => {
       if (!evt.detail.userInfo) {
-        toast.info('授权后才能注册')
+        toast.info('授权后才能登录')
         return
       }
-      oAuthLogin()
-        .then(user => {
-          state.user = user
-          state.showDialog = true
-        })
-        .catch(() => {
-          toast.info('注册失败，请稍后再试~')
-        })
+      store.dispatch('userLogin')
     }
 
     const getUserPhone = (evt) => {
@@ -206,7 +199,7 @@ export default {
         return
       }
       state.sendMessageTimeout = 60
-      state.overLoopTimeout()
+      overLoopTimeout()
       sendPhoneMessage(state.phoneNumber)
         .then(() => {
           state.showMessageBox = true
@@ -224,7 +217,7 @@ export default {
       state,
       handleTap,
       overLoopTimeout,
-      startRegisterProcess,
+      startLoginProcess,
       getUserPhone,
       getRegisterMessage,
       handleSignUp

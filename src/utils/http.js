@@ -5,7 +5,7 @@ const request = (method, path, data, config) => {
   return new Promise((resolve, reject) => {
     const header = {
       ...(config.header || {}),
-      'Authorization': `Bearer ${cache.get('JWT-TOKEN')}`
+      'Authorization': `Bearer ${cache.get('JWT_TOKEN')}`
     }
     const url = /^http/.test(path) ? path : `https://api.calibur.tv/v1/${path}`
     Taro.request({

@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import store from './store'
 import utils from '~/utils'
-import toast from '~/utils/toast'
+import cache from '~/utils/cache'
 import './app.scss'
 
 const app = createApp({
@@ -18,5 +18,9 @@ app.config.errorHandler = (err, vm, info) => {
 }
 app.config.globalProperties.$utils = utils
 
+if (cache.get('JWT_TOKEN')) {
+  store.commit('UPDATE_USER_INFO', cache.get('USER_INFO'))
+  store.dispatch('userLogin')
+}
 
 export default app

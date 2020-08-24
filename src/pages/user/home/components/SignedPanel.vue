@@ -1,4 +1,7 @@
 <style lang="scss">
+.signed-panel {
+  padding-bottom: 120px;
+}
 </style>
 
 <template>

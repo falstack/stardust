@@ -60,9 +60,9 @@
         <slot name="poster"> poster </slot>
       </view>
       <view class="control">
-        <text class="icon iconfont-2 ic-up" @tap="emitSortItem(true)" />
+        <text class="icon icon ic-up" @tap="emitSortItem(true)" />
         <text class="icon iconfont ic-cancel" @tap="emitDeleteItem" />
-        <text class="icon iconfont-2 ic-down" @tap="emitSortItem(false)" />
+        <text class="icon icon ic-down" @tap="emitSortItem(false)" />
       </view>
       <view class="content" @tap="emitEditText">
         <slot name="content"></slot>

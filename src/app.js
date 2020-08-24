@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import store from './store'
-import utils from '~/utils'
+import * as utils from '~/utils'
 import cache from '~/utils/cache'
 import './app.scss'
 

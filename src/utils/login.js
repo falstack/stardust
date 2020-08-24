@@ -102,6 +102,8 @@ const step_0_get_jwt_token_by_access = (form, isLogin) => {
 
 export const getUserRole = () => http.get('user/roles')
 
+export const logoutAction = () => http.post('door/logout')
+
 export const sendPhoneMessage = (phone_number, isNew = true) => {
   return http.post('door/message', {
     type: isNew ? 'sign_up' : 'sign_in',

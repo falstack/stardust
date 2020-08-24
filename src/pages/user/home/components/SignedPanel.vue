@@ -30,6 +30,12 @@
         color: $color-text-gray;
       }
     }
+
+    .ic-setting {
+      float: right;
+      font-size: 40px;
+      margin: 30px $container-padding / 2;
+    }
   }
 
   .panel-wrap {
@@ -74,6 +80,7 @@
   <view class="signed-panel">
     <view class="user-info">
       <image class="avatar" :src="$utils.resize(user.avatar, { width: 70 })" />
+      <text class="icon ic-setting" @tap="toUserAbout" />
       <view class="user-meta">
         <view class="nickname">{{ user.nickname }}</view>
         <view class="pocket">
@@ -105,6 +112,7 @@
 </template>
 
 <script>
+import Taro from '@tarojs/taro'
 import { useStore } from 'vuex'
 import { computed } from 'vue'
 
@@ -115,8 +123,15 @@ export default {
     const store = useStore()
     const user = computed(() => store.state.userInfo)
 
+    const toUserAbout = () => {
+      Taro.navigateTo({
+        url: '/pages/user/about/index'
+      })
+    }
+
     return {
-      user
+      user,
+      toUserAbout
     }
   }
 }

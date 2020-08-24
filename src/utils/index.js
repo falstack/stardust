@@ -1,14 +1,9 @@
 import cache from '~/utils/cache'
 import Taro from '@tarojs/taro'
 
-const DPR = (function () {
-  try {
-    const info = Taro.getSystemInfoSync()
-    return info.pixelRatio || 2
-  } catch (e) {
-    return 2
-  }
-})()
+const systemInfo = Taro.getSystemInfoSync()
+
+const DPR = Math.max(parseInt(systemInfo.pixelRatio || 2), 2)
 
 export default {
   resize(url, options = {}) {

@@ -6,16 +6,16 @@
     <view class="btn-wrap">
       <button
         class="primary-btn-plain"
+        open-type="getUserInfo"
         hover-class="none"
-        @tap="startRegisterProcess"
+        @getUserInfo="signUpAction"
       >
         注册
       </button>
       <button
         class="primary-btn"
-        open-type="getUserInfo"
         hover-class="none"
-        @getUserInfo="startLoginProcess"
+        @tap="signInAction"
       >
         登录
       </button>
@@ -24,14 +24,11 @@
       v-model="state.showDrawer"
       size="100%"
     >
-      <view class="register-drawer">
+      <view class="login-drawer">
         <view class="title">
-          注册
+          登录
         </view>
-        <PhoneCodeBox
-          type="sign_up"
-          @submit="handleSignUp"
-        />
+        <PhoneCodeBox type="sign_up" />
       </view>
     </Drawer>
     <Dialog v-model="state.showDialog">
@@ -39,10 +36,7 @@
         <view class="tip">
           继续操作前请先绑定手机号
         </view>
-        <PhoneCodeBox
-          type="bind_phone"
-          @submit="handleBindPhone"
-        />
+        <PhoneCodeBox type="bind_phone" />
       </view>
     </Dialog>
   </view>
@@ -71,20 +65,15 @@ export default {
       showDialog: false,
     })
 
-    const startRegisterProcess = () => {
-      getAuthCode()
-      .then(code => {
-        store.commit('SET_AUTH_CODE', code)
-        state.showDrawer = true
-      })
-      .catch(() => {
-        toast.info('授权后才能注册')
-      })
+    const signInAction = async () => {
+      const code = await getAuthCode()
+      store.commit('SET_AUTH_CODE', code)
+      state.showDrawer = true
     }
 
-    const startLoginProcess = async (evt) => {
+    const signUpAction = async (evt) => {
       if (!evt.detail.userInfo) {
-        toast.info('授权后才能登录')
+        toast.info('授权后才能注册')
         return
       }
       await store.dispatch('userLogin')
@@ -93,20 +82,10 @@ export default {
       }
     }
 
-    const handleSignUp = () => {
-      console.log('handleSignUp')
-    }
-
-    const handleBindPhone = () => {
-      console.log('handleBindPhone')
-    }
-
     return {
       state,
-      startRegisterProcess,
-      startLoginProcess,
-      handleSignUp,
-      handleBindPhone
+      signUpAction,
+      signInAction
     }
   }
 }
@@ -141,7 +120,7 @@ export default {
     }
   }
 
-  .register-drawer {
+  .login-drawer {
     width: 500px;
     margin: 0 auto;
 

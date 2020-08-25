@@ -2,8 +2,8 @@ import Taro from '@tarojs/taro'
 import http from '~/utils/http'
 import cache from '~/utils/cache'
 
-const step_0_get_jwt_token_by_access = (form, isLogin) => {
-  return http.post(isLogin ? 'door/login' : 'door/register', form)
+const step_0_get_jwt_token_by_access = form => {
+  return http.post(form.isRegister ? 'door/register' : 'door/login', form)
 }
 
 const step_2_get_token_or_user_by_code = code => {
@@ -86,7 +86,7 @@ export const oAuthLogin = () => {
   })
 }
 
-export const bindWxPhone = (form) => http.post('door/wechat_bind_phone', {
+export const getWechatPhone = (form) => http.post('door/get_wechat_phone', {
   iv: form.iv,
   encrypted_data: form.encryptedData,
   code: form.code,
@@ -98,9 +98,14 @@ export const bindPhone = ({ phone, authCode }) => http.post('door/bind_phone', {
   authCode
 })
 
-export const accessLogin = (form, isLogin = true) => {
+export const bindUser = (form) => http.post(`door/bind_${process.env.TARO_ENV}_user`, {
+  ...form,
+  app_name: 'moe_idol'
+})
+
+export const accessLogin = (form) => {
   return new Promise((resolve, reject) => {
-    step_0_get_jwt_token_by_access(form, isLogin)
+    step_0_get_jwt_token_by_access(form)
       .then(token => {
         cache.set('JWT_TOKEN', token)
         getUserInfo().then(resolve).catch(reject)

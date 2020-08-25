@@ -45,20 +45,37 @@
         {{ state.sendMessageTimeout ? `${state.sendMessageTimeout}s后可重新获取` : '获取短信验证码' }}
       </button>
     </view>
+    <Dialog v-model="state.showBindOAuth">
+      <view class="bind-auth-dialog">
+        <view class="tip">
+          继续操作前请先绑定{{ $env === 'weapp' ? '微信' : 'QQ' }}号
+        </view>
+        <button
+          class="primary-btn"
+          open-type="getUserInfo"
+          hover-class="none"
+          @getUserInfo="bindUserAction"
+        >
+          一键授权绑定
+        </button>
+      </view>
+    </Dialog>
   </view>
 </template>
 
 <script>
 import { reactive } from 'vue'
 import { useStore } from 'vuex'
-import { sendPhoneMessage, bindPhone, bindWxPhone } from '~/utils/login'
+import { sendPhoneMessage, bindUser, bindPhone, getWechatPhone, accessLogin } from '~/utils/login'
 import toast from '~/utils/toast'
+import Dialog from '~/components/dialog'
 import CodeInput from './CodeInput'
 
 export default {
   name: 'PhoneCodeBox',
   components: {
-    CodeInput
+    CodeInput,
+    Dialog
   },
   props: {
     type: {
@@ -66,30 +83,47 @@ export default {
       type: String
     }
   },
-  setup(props, ctx) {
+  setup(props) {
     const store = useStore()
     const state = reactive({
       phoneNumber: '',
       messageCode: '',
       sendMessageTimeout: 0,
       showMessageBox: false,
+      showBindOAuth: false
     })
 
-    const userPhoneBindSuccess = () => {
+    const getUserPhoneCallback = () => {
       const user = { ...store.state.userInfo }
       user.providers.bind_phone = true
       store.commit('UPDATE_USER_INFO', user)
     }
 
     const handleSubmit = () => {
-      bindPhone({
-        phone: state.phoneNumber,
-        authCode: state.messageCode
-      })
-        .then(userPhoneBindSuccess)
-        .catch((err) => {
-          toast.info(err.message)
+      if (props.type === 'bind_phone') {
+        bindPhone({
+          phone: state.phoneNumber,
+          authCode: state.messageCode
         })
+          .then(getUserPhoneCallback)
+          .catch((err) => {
+            toast.info(err.message)
+          })
+      } else {
+        accessLogin({
+          access: state.phoneNumber,
+          authCode: state.messageCode,
+          isRegister: true
+        })
+          .then(user => {
+            store.commit('UPDATE_USER_INFO', user)
+            state.showBindOAuth = store.getters.isGuest
+          })
+          .catch((err) => {
+            toast.info(err.message)
+            state.messageCode = ''
+          })
+      }
     }
 
     const overLoopTimeout = () => {
@@ -109,12 +143,21 @@ export default {
         toast.info('请先授权')
         return
       }
-      bindWxPhone({
+      getWechatPhone({
         code: store.state.authCode,
         encryptedData: evt.detail.encryptedData,
-        iv: evt.detail.iv
+        iv: evt.detail.iv,
+        type: props.type
       })
-        .then(userPhoneBindSuccess)
+        .then((data) => {
+          if (data) {
+            state.phoneNumber = data.phone_number
+            state.messageCode = data.message_code
+            handleSubmit()
+          } else {
+            getUserPhoneCallback()
+          }
+        })
         .catch((err) => {
           toast.info(err.message)
         })
@@ -146,11 +189,33 @@ export default {
         })
     }
 
+    const bindUserAction = (evt) => {
+      if (!evt.detail.userInfo) {
+        toast.info('授权后才能登录')
+        return
+      }
+      bindUser({
+        iv: evt.detail.iv,
+        code: store.state.authCode,
+        signature: evt.detail.signature,
+        encrypted_data: evt.detail.encrypted_data
+      })
+      .then(() => {
+        const user = { ...store.state.userInfo }
+        user.providers[`bind_${process.env.TARO_ENV}`] = true
+        store.commit('UPDATE_USER_INFO', user)
+      })
+      .catch((err) => {
+        toast.info(err.message)
+      })
+    }
+
     return {
       state,
       sendMessage,
       getUserPhone,
-      handleSubmit
+      handleSubmit,
+      bindUserAction
     }
   }
 }
@@ -200,6 +265,15 @@ export default {
     .divider {
       flex-shrink: 0;
       width: $container-padding;
+    }
+  }
+
+  .bind-auth-dialog {
+    padding: $container-padding;
+
+    .tip {
+      text-align: center;
+      padding-bottom: $container-padding * 2;
     }
   }
 }

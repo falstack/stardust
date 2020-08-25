@@ -26,8 +26,6 @@ const store = createStore({
       try {
         const user = await oAuthLogin()
         ctx.commit('UPDATE_USER_INFO', user)
-        const code = await getAuthCode()
-        ctx.commit('SET_AUTH_CODE', code)
         if (user && user.title.length) {
           const roles = await getUserRole()
           ctx.commit('UPDATE_USER_ROLE', roles)
@@ -54,7 +52,12 @@ const store = createStore({
       if (!state.userInfo) {
         return true
       }
-      return !state.userInfo.providers.bind_phone
+
+      if (!state.userInfo.providers.bind_phone) {
+        return true
+      }
+
+      return Object.values(state.userInfo.providers).filter(_ => _).length < 2
     },
     hasRole: (role) => (state) => {
       if (!state.userInfo) {

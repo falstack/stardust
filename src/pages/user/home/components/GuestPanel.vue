@@ -53,7 +53,7 @@
   <view class="guest-panel">
     <view class="login-tips">你还没登录呢，喵 o(一︿一+)o</view>
     <view class="btn-wrap">
-      <button class="primary-btn-plain" hover-class="none" @tap="handleTap">
+      <button class="primary-btn-plain" hover-class="none" @tap="startRegisterProcess">
         注册
       </button>
       <button class="primary-btn" open-type="getUserInfo" hover-class="none" @getUserInfo="startLoginProcess">
@@ -71,7 +71,7 @@
     <Dialog v-model="state.showDialog">
       <view class="bind-phone-dialog">
         <view class="tip">继续操作前请先绑定手机号</view>
-        <PhoneCodeBox type="bind" @submit="handleBindPhone" />
+        <PhoneCodeBox type="bind_phone" @submit="handleBindPhone" />
       </view>
     </Dialog>
   </view>
@@ -83,6 +83,7 @@ import Drawer from '~/components/drawer'
 import Dialog from '~/components/dialog'
 import toast from '~/utils/toast'
 import { useStore } from 'vuex'
+import { getAuthCode } from '~/utils/login'
 import PhoneCodeBox from './PhoneCodeBox'
 
 export default {
@@ -99,8 +100,15 @@ export default {
       showDialog: false,
     })
 
-    const handleTap = () => {
-      state.showDrawer = true
+    const startRegisterProcess = () => {
+      getAuthCode()
+      .then(code => {
+        store.commit('SET_AUTH_CODE', code)
+        state.showDrawer = true
+      })
+      .catch(() => {
+        toast.info('授权后才能注册')
+      })
     }
 
     const startLoginProcess = async (evt) => {
@@ -114,10 +122,6 @@ export default {
       }
     }
 
-    const getUserPhone = (evt) => {
-      console.log(evt)
-    }
-
     const handleSignUp = () => {
       console.log('handleSignUp')
     }
@@ -128,9 +132,8 @@ export default {
 
     return {
       state,
-      handleTap,
+      startRegisterProcess,
       startLoginProcess,
-      getUserPhone,
       handleSignUp,
       handleBindPhone
     }

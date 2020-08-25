@@ -6,23 +6,6 @@ const step_0_get_jwt_token_by_access = (form, isLogin) => {
   return http.post(isLogin ? 'door/login' : 'door/register', form)
 }
 
-const step_1_get_wx_code = () => {
-  return new Promise((resolve, reject) => {
-    Taro.login({
-      success(data) {
-        if (data.code) {
-          resolve(data.code)
-        } else {
-          reject()
-        }
-      },
-      fail() {
-        reject('')
-      }
-    })
-  })
-}
-
 const step_2_get_token_or_user_by_code = code => {
   const url = process.env.TARO_ENV === 'weapp' ? 'door/wechat_mini_app_get_token' : 'door/qq_mini_app_get_token'
   return http.post(url, { code, app_name: 'moe_idol' })
@@ -47,9 +30,26 @@ const step_4_get_user = form => {
   return http.post(url, form).then(resolve).catch(reject)
 }
 
+export const getAuthCode = () => {
+  return new Promise((resolve, reject) => {
+    Taro.login({
+      success(data) {
+        if (data.code) {
+          resolve(data.code)
+        } else {
+          reject()
+        }
+      },
+      fail() {
+        reject('')
+      }
+    })
+  })
+}
+
 export const oAuthLogin = () => {
   return new Promise((resolve, reject) => {
-    step_1_get_wx_code()
+    getAuthCode()
       .then(code => {
         step_2_get_token_or_user_by_code(code)
           .then(resp => {

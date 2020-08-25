@@ -30,7 +30,6 @@
   }
 
   .buttons {
-    margin-top: $container-padding;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -66,13 +65,8 @@
       >
     </view>
     <view class="buttons">
-      <template v-if="$env === 'weapp' && !state.showMessageBox">
-        <button
-          class="btn primary-btn-plain"
-          open-type="getPhoneNumber"
-          hover-class="none"
-          @getPhoneNumber={getUserPhone}
-        >
+      <template v-if="$env === 'weapp'">
+        <button class="btn primary-btn-plain" open-type="getPhoneNumber" hover-class="none" @getPhoneNumber={getUserPhone}>
           一键授权手机号
         </button>
         <view class="divider" />
@@ -112,7 +106,6 @@ export default {
     const handleSubmit = () => {
       console.log(state.messageCode)
       console.log(state.phoneNumber)
-      // TODO：isNew 则为注册，否则为绑定
     }
 
     const overLoopTimeout = () => {

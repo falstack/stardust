@@ -1,12 +1,13 @@
 import { createStore } from 'vuex'
-import { oAuthLogin, getUserRole, logoutAction } from '~/utils/login'
+import { getAuthCode, oAuthLogin, getUserRole, logoutAction } from '~/utils/login'
 import toast from '~/utils/toast'
 import cache from '~/utils/cache'
 
 const store = createStore({
   state: () => ({
     userInfo: null,
-    userRole: []
+    userRole: [],
+    autoCode: ''
   }),
   mutations: {
     UPDATE_USER_INFO(state, user) {
@@ -15,6 +16,9 @@ const store = createStore({
     },
     UPDATE_USER_ROLE(state, role) {
       state.userRole = role
+    },
+    SET_AUTH_CODE(state, code) {
+      state.autoCode = code
     }
   },
   actions: {
@@ -22,6 +26,8 @@ const store = createStore({
       try {
         const user = await oAuthLogin()
         ctx.commit('UPDATE_USER_INFO', user)
+        const code = await getAuthCode()
+        ctx.commit('SET_AUTH_CODE', code)
         if (user && user.title.length) {
           const roles = await getUserRole()
           ctx.commit('UPDATE_USER_ROLE', roles)

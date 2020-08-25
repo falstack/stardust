@@ -1,26 +1,32 @@
-<style lang="scss">
-.list-item {
-  .poster {
-    background-color: #00a1d6;
-  }
-}
-</style>
-
 <template>
-  <CommonItem :slug="item.slug" :type="item.type" class="list-item">
+  <CommonItem
+    :slug="item.slug"
+    :type="item.type"
+    class="list-item"
+  >
     <template slot="poster">
       <text class="iconfont ic-list" />
     </template>
     <template slot="content">
       <template v-if="item.text">
         <view v-if="item.sort === '1'">
-          <view v-for="(li, index) in computeList(item.text)" :key="index">
-            <text class="oneline">{{ li }}</text>
+          <view
+            v-for="(li, index) in computeList(item.text)"
+            :key="index"
+          >
+            <text class="oneline">
+              {{ li }}
+            </text>
           </view>
         </view>
         <view v-else>
-          <view v-for="(li, index) in computeList(item.text)" :key="index">
-            <text class="oneline">{{ li }}</text>
+          <view
+            v-for="(li, index) in computeList(item.text)"
+            :key="index"
+          >
+            <text class="oneline">
+              {{ li }}
+            </text>
           </view>
         </view>
       </template>
@@ -63,3 +69,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.list-item {
+  .poster {
+    background-color: #00a1d6;
+  }
+}
+</style>

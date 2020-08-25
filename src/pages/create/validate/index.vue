@@ -1,7 +1,5 @@
-<style lang="scss">
-</style>
-
 <template>
+  <text>233</text>
 </template>
 
 <script>
@@ -19,3 +17,6 @@ export default {
   methods: {}
 }
 </script>
+
+<style lang="scss">
+</style>

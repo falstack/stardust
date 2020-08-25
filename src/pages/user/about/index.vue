@@ -1,12 +1,11 @@
-<style lang="scss">
-.user-about {
-  padding: $container-padding;
-}
-</style>
-
 <template>
   <view class="user-about">
-    <button class="primary-btn" @tap="userLogout">退出登录</button>
+    <button
+      class="primary-btn"
+      @tap="userLogout"
+    >
+      退出登录
+    </button>
   </view>
 </template>
 
@@ -32,3 +31,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.user-about {
+  padding: $container-padding;
+}
+</style>

@@ -1,8 +1,8 @@
-<style lang="scss">
-</style>
-
 <template>
-  <input v-model="text" type="text">
+  <input
+    v-model="text"
+    type="text"
+  >
 </template>
 
 <script>
@@ -34,3 +34,7 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+</style>
+

@@ -1,3 +1,102 @@
+<template>
+  <view class="create-btn-wrap">
+    <view
+      v-if="trigger"
+      class="box"
+    >
+      <view class="arrow" />
+      <view class="row">
+        <view @tap="emitCreate('img')">
+          <text class="iconfont ic-image" />
+          <text class="text">
+            图片
+          </text>
+        </view>
+        <view @tap="emitCreate('txt')">
+          <text class="iconfont ic-text" />
+          <text class="text">
+            段落
+          </text>
+        </view>
+        <view @tap="emitCreate('use')">
+          <text class="iconfont ic-use" />
+          <text class="text">
+            引用
+          </text>
+        </view>
+      </view>
+      <view class="row">
+        <view @tap="emitCreate('list')">
+          <text class="iconfont ic-list" />
+          <text class="text">
+            列表
+          </text>
+        </view>
+        <view @tap="emitCreate('title')">
+          <text class="iconfont ic-title" />
+          <text class="text">
+            标题
+          </text>
+        </view>
+        <view @tap="emitCreate('divider')">
+          <text class="iconfont ic-divider" />
+          <text class="text">
+            分割线
+          </text>
+        </view>
+      </view>
+    </view>
+    <button
+      class="btn"
+      @tap="handleClick"
+    >
+      <text class="icon ic-add" />
+    </button>
+  </view>
+</template>
+
+<script>
+import Taro from '@tarojs/taro'
+
+export default {
+  name: 'CreateBtn',
+  props: {
+    slug: {
+      type: String,
+      default: ''
+    }
+  },
+  data() {
+    return {
+      trigger: false
+    }
+  },
+  created() {
+    Taro.eventCenter.on('OPEN_CREATE_POPUP', ({ slug }) => {
+      if (this.slug === slug) {
+        this.trigger = !this.trigger
+      } else {
+        this.trigger = false
+      }
+    })
+  },
+  methods: {
+    handleClick() {
+      Taro.eventCenter.trigger('OPEN_CREATE_POPUP', {
+        slug: this.slug
+      })
+    },
+    emitCreate(type) {
+      Taro.eventCenter.trigger('CREATE_NOTE_ITEM', {
+        slug: this.slug,
+        type
+      })
+      this.trigger = false
+    }
+  }
+}
+</script>
+
 <style lang="scss">
 .create-btn-wrap {
   position: relative;
@@ -113,84 +212,3 @@
   }
 }
 </style>
-
-<template>
-  <view class="create-btn-wrap">
-    <view v-if="trigger" class="box">
-      <view class="arrow" />
-      <view class="row">
-        <view @tap="emitCreate('img')">
-          <text class="iconfont ic-image" />
-          <text class="text">图片</text>
-        </view>
-        <view @tap="emitCreate('txt')">
-          <text class="iconfont ic-text" />
-          <text class="text">段落</text>
-        </view>
-        <view @tap="emitCreate('use')">
-          <text class="iconfont ic-use" />
-          <text class="text">引用</text>
-        </view>
-      </view>
-      <view class="row">
-        <view @tap="emitCreate('list')">
-          <text class="iconfont ic-list" />
-          <text class="text">列表</text>
-        </view>
-        <view @tap="emitCreate('title')">
-          <text class="iconfont ic-title" />
-          <text class="text">标题</text>
-        </view>
-        <view @tap="emitCreate('divider')">
-          <text class="iconfont ic-divider" />
-          <text class="text">分割线</text>
-        </view>
-      </view>
-    </view>
-    <button class="btn" @tap="handleClick">
-      <text class="icon ic-add" />
-    </button>
-  </view>
-</template>
-
-<script>
-import Taro from '@tarojs/taro'
-
-export default {
-  name: 'CreateBtn',
-  props: {
-    slug: {
-      type: String,
-      default: ''
-    }
-  },
-  data() {
-    return {
-      trigger: false
-    }
-  },
-  created() {
-    Taro.eventCenter.on('OPEN_CREATE_POPUP', ({ slug }) => {
-      if (this.slug === slug) {
-        this.trigger = !this.trigger
-      } else {
-        this.trigger = false
-      }
-    })
-  },
-  methods: {
-    handleClick() {
-      Taro.eventCenter.trigger('OPEN_CREATE_POPUP', {
-        slug: this.slug
-      })
-    },
-    emitCreate(type) {
-      Taro.eventCenter.trigger('CREATE_NOTE_ITEM', {
-        slug: this.slug,
-        type
-      })
-      this.trigger = false
-    }
-  }
-}
-</script>

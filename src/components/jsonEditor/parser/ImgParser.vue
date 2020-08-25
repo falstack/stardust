@@ -1,3 +1,40 @@
+<template>
+  <view class="json-content-img-parser">
+    <text @click="emitImagePreview">
+      <VImg
+        :src="item.url"
+        :width="item.width"
+        :height="item.height"
+        :mime="item.mime"
+        :blur="true"
+        :full="true"
+      />
+      <p
+        v-if="item.text"
+        class="img-tip"
+        v-text="item.text"
+      />
+    </text>
+  </view>
+</template>
+
+<script>
+export default {
+  name: 'JsonContentImgParser',
+  props: {
+    item: {
+      type: Object,
+      required: true
+    }
+  },
+  methods: {
+    emitImagePreview() {
+      this.$channel.$emit('json-editor-image-click', this.item)
+    }
+  }
+}
+</script>
+
 <style lang="scss">
 .json-content-img-parser {
   margin-bottom: 20px;
@@ -19,35 +56,3 @@
 }
 </style>
 
-<template>
-  <view class="json-content-img-parser">
-    <text @click="emitImagePreview">
-      <VImg
-        :src="item.url"
-        :width="item.width"
-        :height="item.height"
-        :mime="item.mime"
-        :blur="true"
-        :full="true"
-      />
-    </span>
-    <p v-if="item.text" class="img-tip" v-text="item.text" />
-  </view>
-</template>
-
-<script>
-export default {
-  name: 'JsonContentImgParser',
-  props: {
-    item: {
-      type: Object,
-      required: true
-    }
-  },
-  methods: {
-    emitImagePreview() {
-      this.$channel.$emit('json-editor-image-click', this.item)
-    }
-  }
-}
-</script>

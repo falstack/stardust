@@ -1,6 +1,3 @@
-<style lang="scss">
-</style>
-
 <template>
   <view class="toolbar">
     txt toolbar
@@ -22,3 +19,6 @@ export default {
   methods: {}
 }
 </script>
+
+<style lang="scss">
+</style>

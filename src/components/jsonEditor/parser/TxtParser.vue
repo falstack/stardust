@@ -1,3 +1,21 @@
+<template>
+  <view class="json-content-txt-parser">
+    <p v-text="item.text" />
+  </view>
+</template>
+
+<script>
+export default {
+  name: 'JsonContentTxtParser',
+  props: {
+    item: {
+      type: Object,
+      required: true
+    }
+  }
+}
+</script>
+
 <style lang="scss">
 .json-content-txt-parser {
   p {
@@ -13,19 +31,3 @@
   }
 }
 </style>
-
-<template>
-  <view class="json-content-txt-parser"><p v-html="item.text" /></view>
-</template>
-
-<script>
-export default {
-  name: 'JsonContentTxtParser',
-  props: {
-    item: {
-      type: Object,
-      required: true
-    }
-  }
-}
-</script>

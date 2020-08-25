@@ -1,3 +1,24 @@
+<template>
+  <view class="json-content-txt-parser">
+    <h3
+      v-if="item.text"
+      v-text="item.text"
+    />
+  </view>
+</template>
+
+<script>
+export default {
+  name: 'JsonContentTitleParser',
+  props: {
+    item: {
+      type: Object,
+      required: true
+    }
+  }
+}
+</script>
+
 <style lang="scss">
 .json-content-txt-parser {
   h3 {
@@ -13,21 +34,3 @@
   }
 }
 </style>
-
-<template>
-  <view class="json-content-txt-parser">
-    <h3 v-if="item.text" v-text="item.text" />
-  </view>
-</template>
-
-<script>
-export default {
-  name: 'JsonContentTitleParser',
-  props: {
-    item: {
-      type: Object,
-      required: true
-    }
-  }
-}
-</script>

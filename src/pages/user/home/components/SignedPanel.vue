@@ -1,3 +1,87 @@
+<template>
+  <view class="signed-panel">
+    <view class="user-info">
+      <image
+        class="avatar"
+        :src="$utils.resize(user.avatar, { width: 70 })"
+      />
+      <text
+        class="icon ic-setting"
+        @tap="toUserAbout"
+      />
+      <view class="user-meta">
+        <view class="nickname">
+          {{ user.nickname }}
+        </view>
+        <view class="pocket">
+          <text>团子：{{ user.wallet_coin }}</text>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <text>光玉：{{ user.wallet_money }}</text>
+        </view>
+      </view>
+    </view>
+    <view class="user-social panel-wrap">
+      <view class="panel-item">
+        <view class="label">
+          关注
+        </view>
+        <view class="value">
+          0
+        </view>
+      </view>
+      <view class="panel-item">
+        <view class="label">
+          粉丝
+        </view>
+        <view class="value">
+          0
+        </view>
+      </view>
+      <view class="panel-item">
+        <view class="label">
+          关注
+        </view>
+        <view class="value">
+          0
+        </view>
+      </view>
+      <view class="panel-item">
+        <view class="label">
+          粉丝
+        </view>
+        <view class="value">
+          0
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import Taro from '@tarojs/taro'
+import { useStore } from 'vuex'
+import { computed } from 'vue'
+
+export default {
+  name: 'SignedPanel',
+  setup() {
+    const store = useStore()
+    const user = computed(() => store.state.userInfo)
+
+    const toUserAbout = () => {
+      Taro.navigateTo({
+        url: '/pages/user/about/index'
+      })
+    }
+
+    return {
+      user,
+      toUserAbout
+    }
+  }
+}
+</script>
+
 <style lang="scss">
 .signed-panel {
   .user-info {
@@ -75,63 +159,3 @@
   }
 }
 </style>
-
-<template>
-  <view class="signed-panel">
-    <view class="user-info">
-      <image class="avatar" :src="$utils.resize(user.avatar, { width: 70 })" />
-      <text class="icon ic-setting" @tap="toUserAbout" />
-      <view class="user-meta">
-        <view class="nickname">{{ user.nickname }}</view>
-        <view class="pocket">
-          <text>团子：{{ user.wallet_coin }}</text>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <text>光玉：{{ user.wallet_money }}</text>
-        </view>
-      </view>
-    </view>
-    <view class="user-social panel-wrap">
-      <view class="panel-item">
-        <view class="label">关注</view>
-        <view class="value">0</view>
-      </view>
-      <view class="panel-item">
-        <view class="label">粉丝</view>
-        <view class="value">0</view>
-      </view>
-      <view class="panel-item">
-        <view class="label">关注</view>
-        <view class="value">0</view>
-      </view>
-      <view class="panel-item">
-        <view class="label">粉丝</view>
-        <view class="value">0</view>
-      </view>
-    </view>
-  </view>
-</template>
-
-<script>
-import Taro from '@tarojs/taro'
-import { useStore } from 'vuex'
-import { computed } from 'vue'
-
-export default {
-  name: 'SignedPanel',
-  setup() {
-    const store = useStore()
-    const user = computed(() => store.state.userInfo)
-
-    const toUserAbout = () => {
-      Taro.navigateTo({
-        url: '/pages/user/about/index'
-      })
-    }
-
-    return {
-      user,
-      toUserAbout
-    }
-  }
-}
-</script>

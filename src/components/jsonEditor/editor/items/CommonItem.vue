@@ -1,71 +1,34 @@
-<style lang="scss">
-.editor-item-wrap {
-  user-select: none;
-
-  $editor-item-height: 156px;
-  .editor-item {
-    background-color: #fff;
-    padding: $container-padding;
-    height: $editor-item-height + 40px;
-
-    .poster {
-      width: $editor-item-height;
-      height: $editor-item-height;
-      line-height: $editor-item-height;
-      margin-right: $container-padding;
-      text-align: center;
-      float: left;
-
-      .iconfont {
-        font-size: 50px;
-        font-weight: bold;
-        color: #fff;
-      }
-    }
-
-    .control {
-      height: $editor-item-height;
-      margin-left: $container-padding;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      float: right;
-
-      .icon {
-        display: block;
-        color: $color-text-light;
-      }
-
-      .iconfont {
-        font-size: 26px;
-      }
-    }
-
-    .content {
-      height: $editor-item-height;
-      font-size: 30px;
-      margin: 15px 0;
-      @include mutiline(42px, 3);
-    }
-  }
-}
-</style>
-
 <template>
   <view class="editor-item-wrap">
     <CreateBtn :slug="slug" />
     <view class="editor-item">
-      <view class="poster" @tap="emitEditPoster">
-        <slot name="poster"> poster </slot>
+      <view
+        class="poster"
+        @tap="emitEditPoster"
+      >
+        <slot name="poster">
+          poster
+        </slot>
       </view>
       <view class="control">
-        <text class="icon icon ic-up" @tap="emitSortItem(true)" />
-        <text class="icon iconfont ic-cancel" @tap="emitDeleteItem" />
-        <text class="icon icon ic-down" @tap="emitSortItem(false)" />
+        <text
+          class="icon icon ic-up"
+          @tap="emitSortItem(true)"
+        />
+        <text
+          class="icon iconfont ic-cancel"
+          @tap="emitDeleteItem"
+        />
+        <text
+          class="icon icon ic-down"
+          @tap="emitSortItem(false)"
+        />
       </view>
-      <view class="content" @tap="emitEditText">
-        <slot name="content"></slot>
+      <view
+        class="content"
+        @tap="emitEditText"
+      >
+        <slot name="content" />
       </view>
     </view>
   </view>
@@ -127,3 +90,57 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.editor-item-wrap {
+  user-select: none;
+
+  $editor-item-height: 156px;
+  .editor-item {
+    background-color: #fff;
+    padding: $container-padding;
+    height: $editor-item-height + 40px;
+
+    .poster {
+      width: $editor-item-height;
+      height: $editor-item-height;
+      line-height: $editor-item-height;
+      margin-right: $container-padding;
+      text-align: center;
+      float: left;
+
+      .iconfont {
+        font-size: 50px;
+        font-weight: bold;
+        color: #fff;
+      }
+    }
+
+    .control {
+      height: $editor-item-height;
+      margin-left: $container-padding;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      float: right;
+
+      .icon {
+        display: block;
+        color: $color-text-light;
+      }
+
+      .iconfont {
+        font-size: 26px;
+      }
+    }
+
+    .content {
+      height: $editor-item-height;
+      font-size: 30px;
+      margin: 15px 0;
+      @include mutiline(42px, 3);
+    }
+  }
+}
+</style>

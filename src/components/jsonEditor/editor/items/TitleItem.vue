@@ -1,13 +1,9 @@
-<style lang="scss">
-.title-item {
-  .poster {
-    background-color: #9266f9;
-  }
-}
-</style>
-
 <template>
-  <CommonItem :slug="item.slug" :type="item.type" class="title-item">
+  <CommonItem
+    :slug="item.slug"
+    :type="item.type"
+    class="title-item"
+  >
     <template slot="poster">
       <text class="iconfont ic-title" />
     </template>
@@ -41,3 +37,11 @@ export default {
   methods: {}
 }
 </script>
+
+<style lang="scss">
+.title-item {
+  .poster {
+    background-color: #9266f9;
+  }
+}
+</style>

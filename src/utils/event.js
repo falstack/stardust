@@ -16,7 +16,7 @@ export default new class {
   }
 
   emit(type, ...args) {
-    this.debug && console.log('emit', type);
+    this.debug && console.log('emit', type)
     Taro.eventCenter.trigger(type, ...args)
   }
 }()

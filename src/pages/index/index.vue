@@ -2,7 +2,9 @@
   <view class="index">
     <TestInput v-model="msg" />
     <view>msg：{{ msg }}</view>
-    <button @tap="add">add+</button>
+    <button @tap="add">
+      add+
+    </button>
   </view>
 </template>
 

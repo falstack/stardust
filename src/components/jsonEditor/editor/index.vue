@@ -1,55 +1,3 @@
-<style lang="scss">
-#json-editor-container {
-  width: 100%;
-  overflow-x: hidden;
-  background-color: #f5f5f7;
-
-  .last-create-btn {
-    padding-bottom: 300px;
-  }
-
-  .edit-drawer {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-
-    .header,
-    .toolbar {
-      width: 100%;
-      flex-shrink: 0;
-    }
-
-    input,
-    textarea {
-      width: 100%;
-    }
-
-    textarea {
-      flex-grow: 1;
-      padding: 20px;
-    }
-
-    .header {
-      padding: 20px 30px;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #e7ecf2;
-    }
-
-    .toolbar {
-      padding: 20px 30px;
-      background-color: #f5f5f7;
-      color: #515154;
-    }
-  }
-}
-</style>
-
 <template>
   <view id="json-editor-container">
     <Component
@@ -60,12 +8,22 @@
       :item="item"
       class="flip-list-item"
     />
-    <CreateBtn class="last-create-btn"/>
-    <Drawer v-model="showDrawer" size="100%">
-      <view class="edit-drawer" v-if="currentSelectedItem">
+    <CreateBtn class="last-create-btn" />
+    <Drawer
+      v-model="showDrawer"
+      size="100%"
+    >
+      <view
+        v-if="currentSelectedItem"
+        class="edit-drawer"
+      >
         <view class="header">
-          <text @tap="closeEditDrawer">取消</text>
-          <text @tap="saveEditData">更新</text>
+          <text @tap="closeEditDrawer">
+            取消
+          </text>
+          <text @tap="saveEditData">
+            更新
+          </text>
         </view>
         <Component
           :is="`${currentSelectedItem.type}-bar`"
@@ -271,3 +229,55 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+#json-editor-container {
+  width: 100%;
+  overflow-x: hidden;
+  background-color: #f5f5f7;
+
+  .last-create-btn {
+    padding-bottom: 300px;
+  }
+
+  .edit-drawer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    .header,
+    .toolbar {
+      width: 100%;
+      flex-shrink: 0;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+    }
+
+    textarea {
+      flex-grow: 1;
+      padding: 20px;
+    }
+
+    .header {
+      padding: 20px 30px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e7ecf2;
+    }
+
+    .toolbar {
+      padding: 20px 30px;
+      background-color: #f5f5f7;
+      color: #515154;
+    }
+  }
+}
+</style>

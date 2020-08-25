@@ -1,24 +1,20 @@
-<style lang="scss">
-.img-item {
-  .poster {
-    position: relative;
-    background-color: #67c23a;
-
-    .image {
-      display: block;
-      width: 100%;
-      height: 100%;
-      background-color: #fff;
-    }
-  }
-}
-</style>
-
 <template>
-  <CommonItem :slug="item.slug" :type="item.type" class="img-item">
+  <CommonItem
+    :slug="item.slug"
+    :type="item.type"
+    class="img-item"
+  >
     <template slot="poster">
-      <image mode="aspectFill" class="image" v-if="item.local_url || item.url" :src="item.local_url || item.url" />
-      <text v-else class="iconfont ic-image" />
+      <image
+        v-if="item.local_url || item.url"
+        mode="aspectFill"
+        class="image"
+        :src="item.local_url || item.url"
+      />
+      <text
+        v-else
+        class="iconfont ic-image"
+      />
     </template>
     <template slot="content">
       {{ item.text || '点击添加图片描述' }}
@@ -50,3 +46,19 @@ export default {
   methods: {}
 }
 </script>
+
+<style lang="scss">
+.img-item {
+  .poster {
+    position: relative;
+    background-color: #67c23a;
+
+    .image {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background-color: #fff;
+    }
+  }
+}
+</style>

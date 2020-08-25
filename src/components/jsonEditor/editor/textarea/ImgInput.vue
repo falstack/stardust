@@ -1,6 +1,3 @@
-<style lang="scss">
-</style>
-
 <template>
   <input
     v-model="text"
@@ -36,3 +33,6 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+</style>

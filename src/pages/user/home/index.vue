@@ -1,13 +1,3 @@
-<style lang="scss">
-.user-home {
-  padding-top: 120px;
-
-  .user-panel {
-    padding: $container-padding;
-  }
-}
-</style>
-
 <template>
   <view class="user-home">
     <view class="iphone-x-shim" />
@@ -19,8 +9,8 @@
 </template>
 
 <script>
-import GuestPanel from "./components/GuestPanel";
-import SignedPanel from "./components/SignedPanel";
+import GuestPanel from './components/GuestPanel'
+import SignedPanel from './components/SignedPanel'
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 
@@ -40,3 +30,13 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.user-home {
+  padding-top: 120px;
+
+  .user-panel {
+    padding: $container-padding;
+  }
+}
+</style>

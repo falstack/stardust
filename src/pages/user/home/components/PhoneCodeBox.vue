@@ -1,59 +1,21 @@
-<style lang="scss">
-.phone-code-box {
-  .message-wrap {
-    padding: 12px 0 53px;
-  }
-
-  .input-wrap {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #F5F5F5;
-    padding: 30px 20px;
-    border-radius: 20px;
-    margin-bottom: 40px;
-
-    .area {
-      border-right: 1PX solid #3D3D3D;
-      padding-right: 10px;
-      margin-right: 10px;
-      font-size: 30px;
-      line-height: 30px;
-      height: 30px;
-    }
-
-    .input {
-      flex: 1;
-      font-size: 30px;
-    }
-  }
-
-  .buttons {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-
-    .btn {
-      flex: 1;
-    }
-
-    .divider {
-      flex-shrink: 0;
-      width: $container-padding;
-    }
-  }
-}
-</style>
-
 <template>
   <view class="phone-code-box">
-    <view v-if="state.showMessageBox" class="message-wrap">
-      <CodeInput v-model="state.messageCode" @submit="handleSubmit" />
+    <view
+      v-if="state.showMessageBox"
+      class="message-wrap"
+    >
+      <CodeInput
+        v-model="state.messageCode"
+        @submit="handleSubmit"
+      />
     </view>
-    <view class="input-wrap" v-else>
-      <view class="area">+ 86</view>
+    <view
+      v-else
+      class="input-wrap"
+    >
+      <view class="area">
+        + 86
+      </view>
       <input
         v-model="state.phoneNumber"
         class="input"
@@ -66,12 +28,20 @@
     </view>
     <view class="buttons">
       <template v-if="$env === 'weapp'">
-        <button class="btn primary-btn-plain" open-type="getPhoneNumber" hover-class="none" @getPhoneNumber={getUserPhone}>
+        <button
+          class="btn primary-btn-plain"
+          open-type="getPhoneNumber"
+          hover-class="none"
+          @getPhoneNumber="{getUserPhone}"
+        >
           一键授权手机号
         </button>
         <view class="divider" />
       </template>
-      <button class="btn primary-btn" @tap="sendMessage">
+      <button
+        class="btn primary-btn"
+        @tap="sendMessage"
+      >
         {{ state.sendMessageTimeout ? `${state.sendMessageTimeout}s后可重新获取` : '获取短信验证码' }}
       </button>
     </view>
@@ -185,3 +155,52 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.phone-code-box {
+  .message-wrap {
+    padding: 12px 0 53px;
+  }
+
+  .input-wrap {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #F5F5F5;
+    padding: 30px 20px;
+    border-radius: 20px;
+    margin-bottom: 40px;
+
+    .area {
+      border-right: 1PX solid #3D3D3D;
+      padding-right: 10px;
+      margin-right: 10px;
+      font-size: 30px;
+      line-height: 30px;
+      height: 30px;
+    }
+
+    .input {
+      flex: 1;
+      font-size: 30px;
+    }
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    .btn {
+      flex: 1;
+    }
+
+    .divider {
+      flex-shrink: 0;
+      width: $container-padding;
+    }
+  }
+}
+</style>

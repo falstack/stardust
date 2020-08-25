@@ -1,6 +1,3 @@
-<style lang="scss">
-</style>
-
 <template>
   <textarea
     v-model="text"
@@ -38,3 +35,7 @@
     }
   }
 </script>
+
+<style lang="scss">
+</style>
+

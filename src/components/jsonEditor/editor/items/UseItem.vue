@@ -1,18 +1,9 @@
-<style lang="scss">
-.use-item {
-  .poster {
-    background-color: #f25d8e;
-  }
-
-  .blockquote {
-    border-left: 4px solid #ccd0d7;
-    padding-left: 10px;
-  }
-}
-</style>
-
 <template>
-  <CommonItem :slug="item.slug" :type="item.type" class="use-item">
+  <CommonItem
+    :slug="item.slug"
+    :type="item.type"
+    class="use-item"
+  >
     <template slot="poster">
       <text class="iconfont ic-use" />
     </template>
@@ -48,3 +39,16 @@ export default {
   methods: {}
 }
 </script>
+
+<style lang="scss">
+.use-item {
+  .poster {
+    background-color: #f25d8e;
+  }
+
+  .blockquote {
+    border-left: 4px solid #ccd0d7;
+    padding-left: 10px;
+  }
+}
+</style>

@@ -145,17 +145,17 @@ export default {
       }
       getWechatPhone({
         code: store.state.authCode,
-        encryptedData: evt.detail.encryptedData,
+        encrypted_data: evt.detail.encryptedData,
         iv: evt.detail.iv,
         type: props.type
       })
         .then((data) => {
-          if (data) {
+          if (props.type === 'bind_phone') {
+            getUserPhoneCallback()
+          } else {
             state.phoneNumber = data.phone_number
             state.messageCode = data.message_code
             handleSubmit()
-          } else {
-            getUserPhoneCallback()
           }
         })
         .catch((err) => {
@@ -196,9 +196,9 @@ export default {
       }
       bindUser({
         iv: evt.detail.iv,
-        code: store.state.authCode,
         signature: evt.detail.signature,
-        encrypted_data: evt.detail.encrypted_data
+        encrypted_data: evt.detail.encryptedData,
+        user_info: evt.detail.userInfo
       })
       .then(() => {
         const user = { ...store.state.userInfo }

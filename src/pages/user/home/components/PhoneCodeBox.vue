@@ -80,7 +80,8 @@
 
 <script>
 import { reactive } from 'vue'
-import { sendPhoneMessage } from '~/utils/login'
+import { useStore } from 'vuex'
+import { sendPhoneMessage, bindPhone, bindWxPhone } from '~/utils/login'
 import toast from '~/utils/toast'
 import CodeInput from './CodeInput'
 
@@ -96,6 +97,7 @@ export default {
     }
   },
   setup(props, ctx) {
+    const store = useStore()
     const state = reactive({
       phoneNumber: '',
       messageCode: '',
@@ -103,9 +105,21 @@ export default {
       showMessageBox: false,
     })
 
+    const userPhoneBindSuccess = () => {
+      const user = { ...store.state.userInfo }
+      user.providers.bind_phone = true
+      store.commit('UPDATE_USER_INFO', user)
+    }
+
     const handleSubmit = () => {
-      console.log(state.messageCode)
-      console.log(state.phoneNumber)
+      bindPhone({
+        phone: state.phoneNumber,
+        authCode: state.messageCode
+      })
+        .then(userPhoneBindSuccess)
+        .catch((err) => {
+          toast.info(err.message)
+        })
     }
 
     const overLoopTimeout = () => {
@@ -119,8 +133,21 @@ export default {
       }, 1000)
     }
 
+    // return _ctx.getUserPhone.apply(_ctx, arguments);
     const getUserPhone = (evt) => {
-      console.log(evt)
+      if (!evt.detail.iv) {
+        toast.info('请先授权')
+        return
+      }
+      bindWxPhone({
+        code: store.state.authCode,
+        encryptedData: evt.detail.encryptedData,
+        iv: evt.detail.iv
+      })
+        .then(userPhoneBindSuccess)
+        .catch((err) => {
+          toast.info(err.message)
+        })
     }
 
     const sendMessage = () => {

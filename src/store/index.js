@@ -7,7 +7,7 @@ const store = createStore({
   state: () => ({
     userInfo: null,
     userRole: [],
-    autoCode: ''
+    authCode: ''
   }),
   mutations: {
     UPDATE_USER_INFO(state, user) {
@@ -18,7 +18,7 @@ const store = createStore({
       state.userRole = role
     },
     SET_AUTH_CODE(state, code) {
-      state.autoCode = code
+      state.authCode = code
     }
   },
   actions: {

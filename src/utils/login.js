@@ -86,6 +86,18 @@ export const oAuthLogin = () => {
   })
 }
 
+export const bindWxPhone = (form) => http.post('door/wechat_bind_phone', {
+  iv: form.iv,
+  encrypted_data: form.encryptedData,
+  code: form.code,
+  app_name: 'moe_idol'
+})
+
+export const bindPhone = ({ phone, authCode }) => http.post('door/bind_phone', {
+  phone,
+  authCode
+})
+
 export const accessLogin = (form, isLogin = true) => {
   return new Promise((resolve, reject) => {
     step_0_get_jwt_token_by_access(form, isLogin)

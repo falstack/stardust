@@ -45,10 +45,6 @@
       text-align: center;
       padding-bottom: $container-padding;
     }
-
-    .btn {
-      margin-top: $container-padding;
-    }
   }
 }
 </style>
@@ -69,18 +65,13 @@
         <view class="title">
           注册
         </view>
-        <PhoneCodeBox is-new @submit="handleSignUp" />
+        <PhoneCodeBox type="sign_up" @submit="handleSignUp" />
       </view>
     </Drawer>
     <Dialog v-model="state.showDialog">
       <view class="bind-phone-dialog">
         <view class="tip">继续操作前请先绑定手机号</view>
-        <template v-if="$env !== 'weapp'">
-          <button class="btn primary-btn" open-type="getPhoneNumber" hover-class="none" @getPhoneNumber={getUserPhone}>一键绑定</button>
-        </template>
-        <template v-else>
-          <PhoneCodeBox @submit="handleBindPhone" />
-        </template>
+        <PhoneCodeBox type="bind" @submit="handleBindPhone" />
       </view>
     </Dialog>
   </view>

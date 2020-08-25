@@ -29,8 +29,21 @@
     }
   }
 
-  .submit-btn {
-    font-size: 32px;
+  .buttons {
+    margin-top: $container-padding;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    .btn {
+      flex: 1;
+    }
+
+    .divider {
+      flex-shrink: 0;
+      width: $container-padding;
+    }
   }
 }
 </style>
@@ -52,9 +65,22 @@
         placeholder="请输入您的手机号"
       >
     </view>
-    <button class="submit-btn primary-btn" @tap="sendMessage">
-      {{ state.sendMessageTimeout ? `${state.sendMessageTimeout}s后可重新获取` : '获取短信验证码' }}
-    </button>
+    <view class="buttons">
+      <template v-if="$env === 'weapp' && !state.showMessageBox">
+        <button
+          class="btn primary-btn-plain"
+          open-type="getPhoneNumber"
+          hover-class="none"
+          @getPhoneNumber={getUserPhone}
+        >
+          一键授权手机号
+        </button>
+        <view class="divider" />
+      </template>
+      <button class="btn primary-btn" @tap="sendMessage">
+        {{ state.sendMessageTimeout ? `${state.sendMessageTimeout}s后可重新获取` : '获取短信验证码' }}
+      </button>
+    </view>
   </view>
 </template>
 
@@ -70,9 +96,9 @@ export default {
     CodeInput
   },
   props: {
-    isNew: {
-      type: Boolean,
-      default: false
+    type: {
+      required: true,
+      type: String
     }
   },
   setup(props, ctx) {
@@ -100,6 +126,10 @@ export default {
       }, 1000)
     }
 
+    const getUserPhone = (evt) => {
+      console.log(evt)
+    }
+
     const sendMessage = () => {
       if (state.sendMessageTimeout) {
         return
@@ -117,7 +147,7 @@ export default {
       state.sendMessageTimeout = 60
       overLoopTimeout()
 
-      sendPhoneMessage(state.phoneNumber, props.isNew)
+      sendPhoneMessage(state.phoneNumber, props.type)
         .then(() => {
           state.showMessageBox = true
         })
@@ -129,6 +159,7 @@ export default {
     return {
       state,
       sendMessage,
+      getUserPhone,
       handleSubmit
     }
   }

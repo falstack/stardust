@@ -7,7 +7,8 @@ const request = (method, path, data, config) => {
       ...(config.header || {}),
       'Authorization': `Bearer ${cache.get('JWT_TOKEN')}`
     }
-    const url = /^http/.test(path) ? path : `https://api.calibur.tv/v1/${path}`
+    // const url = /^http/.test(path) ? path : `https://api.calibur.tv/v1/${path}`
+    const url = /^http/.test(path) ? path : `http://localhost:5200/v1/${path}`
     Taro.request({
       ...config,
       url,

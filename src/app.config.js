@@ -2,7 +2,8 @@ export default {
   pages: [
     'pages/index/index',
     'pages/user/home/index',
-    'pages/user/about/index'
+    'pages/user/about/index',
+    'pages/room/live/index'
   ],
   window: {
     navigationBarBackgroundColor: '#f9f9f9',

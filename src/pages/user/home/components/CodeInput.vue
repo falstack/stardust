@@ -7,13 +7,13 @@
       auto-focus="true"
       confirm-type="send"
       adjustPosition=""
-      :maxlength="$props.length"
+      :maxlength="length"
       :disabled="state.disabled"
       :style="`padding-left:${36 * state.count + 18}px`"
     >
     <view class="code-input__wrap">
       <view
-        v-for="(item, index) in $props.length"
+        v-for="(item, index) in length"
         :key="item"
         :class="{ 'is-active': state.count === index }"
         class="item"

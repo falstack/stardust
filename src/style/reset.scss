@@ -1,13 +1,19 @@
 page {
   background-color: $bg-color;
+  font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
 }
 
 view,
 input,
 image,
 button,
-textarea {
+textarea,
+scroll-view {
   box-sizing: border-box;
+}
+
+image {
+  display: block;
 }
 
 input,

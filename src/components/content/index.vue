@@ -11,11 +11,13 @@
 
 <script>
 import Txt from './txt'
+import Mp3 from './mp3'
 
 export default {
   name: 'ContentMsg',
   components: {
-    Txt
+    Txt,
+    Mp3
   },
   props: {
     content: {
@@ -27,4 +29,10 @@ export default {
 </script>
 
 <style lang="scss">
+.content-msg {
+  text {
+    word-break: break-all;
+    font-size: 32px;
+  }
+}
 </style>

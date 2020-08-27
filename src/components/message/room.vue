@@ -1,33 +1,45 @@
 <template>
-  <view class="chat-room">
-    <text>123123123123123</text>
-    <Txt :item="{ text: '我擦擦擦' }" />
+  <view v-if="false" />
+  <ScrollView
+    v-else
+    scroll-y="true"
+    show-scrollbar=""
+    scroll-with-animation="true"
+    :scroll-into-view="`id-${state.last_message_id}`"
+    class="chat-room"
+  >
     <BubbleMsg
       v-for="item in state.list"
+      :id="`id-${item.id}`"
       :key="item.id"
       :message="item"
     />
-  </view>
+  </ScrollView>
 </template>
 
 <script>
 import { reactive } from 'vue'
 import { ScrollView } from '@tarojs/components'
 import BubbleMsg from './bubble'
-import Txt from '../content/txt'
 
 export default {
   name: 'MsgRoom',
   components: {
     BubbleMsg,
-    ScrollView,
-    Txt
+    ScrollView
   },
-  setup(props) {
+  props: {
+    list: {
+      type: Array,
+      default: () => []
+    }
+  },
+  setup() {
     const state = reactive({
-      list: props.list || [],
+      list: [],
       resolver: null,
-      last_pending_id: 0
+      last_pending_id: 0,
+      last_message_id: 0
     })
 
     const _setResolve = () => {
@@ -79,6 +91,7 @@ export default {
       message.next = null
 
       state.list.push(message)
+      state.last_message_id = message.id
 
       const isPromise = message.async || false
       if (isPromise) {
@@ -91,6 +104,7 @@ export default {
 
     const addWidget = (widget) => {
       state.list.push(widget)
+      state.last_message_id = widget.id
     }
 
     const updateMessage = (id, obj) => {
@@ -121,6 +135,5 @@ export default {
 .chat-room {
   width: 100%;
   height: 100%;
-  background-color: #00a1d6;
 }
 </style>

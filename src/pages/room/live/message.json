@@ -1,0 +1,202 @@
+[
+  {
+    "id": 1,
+    "type": "bubble-msg",
+    "float": "left",
+    "content": [
+      {
+        "type": "txt",
+        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
+    },
+      {
+        "type": "mp3",
+        "url": "https://file.calibur.tv/owner/voice/charman.mp3"
+      }
+    ],
+    "user": {
+      "id": 1,
+      "avatar": "https://m1.calibur.tv/cc-19f/1562950958417-r9m.jpeg",
+      "nickname": "冰淤"
+    }
+  },
+  {
+    "id": 2,
+    "type": "bubble-msg",
+    "float": "right",
+    "content": [
+      {
+        "type": "txt",
+        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
+      },
+      {
+        "type": "mp3",
+        "url": "https://file.calibur.tv/owner/voice/saber.mp3"
+      }
+    ],
+    "user": {
+      "id": 2,
+      "avatar": "https://m1.calibur.tv/cc-19f/1562950958417-r9m.jpeg",
+      "nickname": "冰淤"
+    }
+  },
+  {
+    "id": 3,
+    "type": "bubble-msg",
+    "float": "left",
+    "content": [
+      {
+        "type": "txt",
+        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
+      },
+      {
+        "type": "mp3",
+        "url": "https://file.calibur.tv/owner/voice/charman.mp3"
+      }
+    ],
+    "user": {
+      "id": 1,
+      "avatar": "https://m1.calibur.tv/cc-19f/1562950958417-r9m.jpeg",
+      "nickname": "冰淤"
+    }
+  },
+  {
+    "id": 4,
+    "type": "bubble-msg",
+    "float": "left",
+    "content": [
+      {
+        "type": "txt",
+        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
+      },
+      {
+        "type": "mp3",
+        "url": "https://file.calibur.tv/owner/voice/charman.mp3"
+      }
+    ],
+    "user": {
+      "id": 1,
+      "avatar": "https://m1.calibur.tv/cc-19f/1562950958417-r9m.jpeg",
+      "nickname": "冰淤"
+    }
+  },
+  {
+    "id": 5,
+    "type": "bubble-msg",
+    "float": "left",
+    "content": [
+      {
+        "type": "txt",
+        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
+      },
+      {
+        "type": "mp3",
+        "url": "https://file.calibur.tv/owner/voice/charman.mp3"
+      }
+    ],
+    "user": {
+      "id": 1,
+      "avatar": "https://m1.calibur.tv/cc-19f/1562950958417-r9m.jpeg",
+      "nickname": "冰淤"
+    }
+  },
+  {
+    "id": 6,
+    "type": "bubble-msg",
+    "float": "left",
+    "content": [
+      {
+        "type": "txt",
+        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
+      },
+      {
+        "type": "mp3",
+        "url": "https://file.calibur.tv/owner/voice/charman.mp3"
+      }
+    ],
+    "user": {
+      "id": 1,
+      "avatar": "https://m1.calibur.tv/cc-19f/1562950958417-r9m.jpeg",
+      "nickname": "冰淤"
+    }
+  },
+  {
+    "id": 7,
+    "type": "bubble-msg",
+    "float": "left",
+    "content": [
+      {
+        "type": "txt",
+        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
+      },
+      {
+        "type": "mp3",
+        "url": "https://file.calibur.tv/owner/voice/charman.mp3"
+      }
+    ],
+    "user": {
+      "id": 1,
+      "avatar": "https://m1.calibur.tv/cc-19f/1562950958417-r9m.jpeg",
+      "nickname": "冰淤"
+    }
+  },
+  {
+    "id": 8,
+    "type": "bubble-msg",
+    "float": "left",
+    "content": [
+      {
+        "type": "txt",
+        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
+      },
+      {
+        "type": "mp3",
+        "url": "https://file.calibur.tv/owner/voice/charman.mp3"
+      }
+    ],
+    "user": {
+      "id": 1,
+      "avatar": "https://m1.calibur.tv/cc-19f/1562950958417-r9m.jpeg",
+      "nickname": "冰淤"
+    }
+  },
+  {
+    "id": 9,
+    "type": "bubble-msg",
+    "float": "left",
+    "content": [
+      {
+        "type": "txt",
+        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
+      },
+      {
+        "type": "mp3",
+        "url": "https://file.calibur.tv/owner/voice/charman.mp3"
+      }
+    ],
+    "user": {
+      "id": 1,
+      "avatar": "https://m1.calibur.tv/cc-19f/1562950958417-r9m.jpeg",
+      "nickname": "冰淤"
+    }
+  },
+  {
+    "id": 10,
+    "type": "bubble-msg",
+    "float": "left",
+    "content": [
+      {
+        "type": "txt",
+        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
+      },
+      {
+        "type": "mp3",
+        "url": "https://file.calibur.tv/owner/voice/charman.mp3"
+      }
+    ],
+    "user": {
+      "id": 1,
+      "avatar": "https://m1.calibur.tv/cc-19f/1562950958417-r9m.jpeg",
+      "nickname": "冰淤"
+    }
+  }
+]

@@ -1,6 +1,6 @@
 <template>
   <view class="avatar">
-    {{ user.nickname }}
+    <image class="face" :src="$utils.resize(user.avatar, { width: 80 })" />
   </view>
 </template>
 
@@ -20,6 +20,11 @@ export default {
 .avatar {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
+
+  .face {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+  }
 }
 </style>

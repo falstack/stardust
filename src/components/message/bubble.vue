@@ -4,6 +4,9 @@
       <UserAvatar :user="message.user" />
     </view>
     <view class="msg-body">
+      <view class="msg-header">
+        <UserNickname :user="message.user" />
+      </view>
       <view :style="wrapperStyle" class="msg-bubble">
         <LoadingMsg v-if="message.loading" />
         <view v-else>
@@ -22,6 +25,7 @@
 import { computed } from 'vue'
 import ContentMsg from '~/components/content'
 import UserAvatar from '~/components/user/avatar'
+import UserNickname from '~/components/user/nickname'
 import LoadingMsg from './loading'
 
 export default {
@@ -29,7 +33,8 @@ export default {
   components: {
     ContentMsg,
     LoadingMsg,
-    UserAvatar
+    UserAvatar,
+    UserNickname
   },
   props: {
     message: {
@@ -69,8 +74,8 @@ export default {
 
 <style lang="scss">
 .msg-box {
-  min-height: 60px;
-  margin: 20px 0;
+  margin: 0 $container-padding;
+  padding: 30px 0;
 
   &:after,
   &:before {
@@ -82,6 +87,7 @@ export default {
   &-left {
     .msg-avatar {
       float: left;
+      margin-right: 10px;
     }
 
     .msg-body {
@@ -96,6 +102,7 @@ export default {
   &-right {
     .msg-avatar {
       float: right;
+      margin-left: 10px;
     }
 
     .msg-body {
@@ -108,17 +115,19 @@ export default {
   }
 
   .msg-body {
-    overflow: hidden;
+    .msg-header {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: $color-text-gray;
+    }
 
     .msg-bubble {
       position: relative;
       padding: 14px 26px;
       border-radius: 30px;
-      max-width: 55%;
+      max-width: 560px;
       display: inline-block;
       text-align: left;
-      word-break: break-word !important;
-      word-break: break-all;
       font-size: 28px;
       line-height: 1.6;
 

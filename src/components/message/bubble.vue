@@ -1,20 +1,20 @@
 <template>
-  <view :class="`msg-box-${float}`" class="msg-box">
+  <view :class="`msg-box-${message.float || 'left'}`" class="msg-box">
     <view class="msg-avatar">
-      <UserAvatar :user="item.user" />
+      <UserAvatar :user="message.user" />
     </view>
     <view class="msg-body">
       <view :style="wrapperStyle" class="msg-bubble">
-        <slot v-if="loading" name="loading">
-          <MsgLoading />
-        </slot>
-        <text v-show="!loading">
+        <MsgLoading v-if="message.loading" />
+        <view v-else>
           <slot />
-          <text v-if="status" class="msg-status" :class="`msg-status-${status}`" />
-        </text>
+          <text v-if="message.status" class="msg-status" :class="`msg-status-${message.status}`" />
+        </view>
       </view>
     </view>
-    <slot name="extra" />
+    <view class="msg-extra">
+      <slot name="extra" />
+    </view>
   </view>
 </template>
 
@@ -33,30 +33,28 @@ export default {
     message: {
       type: Object,
       required: true
-    },
-    color: {
-      type: Object,
-      required: true
-    },
-    float: {
-      type: String,
-      required: true,
-      validator: val => ~['left', 'right'].indexOf(val)
-    },
-    loading: {
-      type: Boolean,
-      required: true
-    },
-    status: {
-      type: String,
-      required: true
     }
   },
   setup(props) {
+    const _computeBubbleColor = (msg) => {
+      if (msg.color) {
+        return msg.color
+      }
+
+      const colorEnums = [
+        { bg: '#12b7f5', text: '#fff' },
+        { bg: '#ff8eb3', text: '#fff' }
+      ]
+
+      return colorEnums[msg.user.id % colorEnums.length]
+    }
+
     const wrapperStyle = computed(() => {
+      const color = _computeBubbleColor(props.message)
+
       return {
-        backgroundColor: props.color.bg,
-        color: props.color.text
+        backgroundColor: color.bg,
+        color: color.text
       }
     })
 

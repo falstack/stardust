@@ -14,20 +14,24 @@ export default {
   components: {
     MsgRoom
   },
-  setup(props, ctx) {
+  setup() {
     const roomRef = ref(null)
     const addMessage = () => {
       roomRef.value.addMessage({
-        data: {
-          id: 1,
-          content: [
-            '123'
-          ],
-          user: {
-            id: 1,
-            avatar: 'avatar',
-            nickname: '冰淤'
+        id: 1,
+        type: 'bubble-msg',
+        side: 'left',
+        loading: true,
+        content: [
+          {
+            type: 'txt',
+            text: '123'
           }
+        ],
+        user: {
+          id: 1,
+          avatar: 'avatar',
+          nickname: '冰淤'
         }
       })
     }

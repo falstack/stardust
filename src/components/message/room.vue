@@ -8,23 +8,14 @@
 
 <script>
 import { reactive } from 'vue'
-import Bubble from './bubble'
+import BubbleMsg from './bubble'
 
 export default {
   name: 'MsgRoom',
   components: {
-    Bubble
+    BubbleMsg
   },
-  props: {
-    colors: {
-      type: Array,
-      default: () => [
-        { bg: '#12b7f5', text: '#fff' },
-        { bg: '#ff8eb3', text: '#fff' }
-      ]
-    }
-  },
-  setup(props) {
+  setup() {
     const state = reactive({
       list: [],
       resolver: null,
@@ -70,50 +61,28 @@ export default {
       state.resolver = null
     }
 
-    const _computeBubbleColor = (item) => {
-      if (item.color) {
-        return item.color
-      }
-      return props.colors[item.data.user.id % props.colors.length]
-    }
-
     const clearMessage = () => {
       state.list = []
       state.last_pending_id = 0
       state.resolver = null
     }
 
-    const addMessage = (params) => {
-      const id = params.data && params.data.id || Math.random().toString(10).substring(3, 6)
-      const loading = params.loading || false
-      const isPromise = params.async || false
+    const addMessage = (message) => {
+      message.next = null
 
-      const data = {
-        id,
-        loading,
-        type: 'bubble',
-        item: params.data,
-        next: null
-      }
+      state.list.push(message)
 
-      state.list.push(data)
-
-      if (!loading && !isPromise) {
-        _handleResolve(params.data)
-      }
-
+      const isPromise = message.async || false
       if (isPromise) {
-        state.last_pending_id = id
+        state.last_pending_id = message.id
         _setResolve()
+      } else {
+        _handleResolve(message)
       }
     }
 
-    const addWidget = (params) => {
-      state.list.push({
-        id: params.data && params.data.id || Math.random().toString(10).substring(3, 6),
-        data: params.data,
-        type: params.type
-      })
+    const addWidget = (widget) => {
+      state.list.push(widget)
     }
 
     const updateMessage = (id, obj) => {

@@ -1,20 +1,17 @@
 <template>
-  <view class="text-msg">
-    {{ item.content[0] }}
-  </view>
+  <text>{{ item.text }}</text>
 </template>
 
 <script>
 export default {
-  name: 'TextMsg',
   props: {
     item: {
       type: Object,
       required: true
     }
-  },
-  setup(props) {
-    console.log(props)
   }
 }
 </script>
+
+<style lang="scss">
+</style>

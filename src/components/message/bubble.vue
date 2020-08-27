@@ -5,9 +5,9 @@
     </view>
     <view class="msg-body">
       <view :style="wrapperStyle" class="msg-bubble">
-        <MsgLoading v-if="message.loading" />
+        <LoadingMsg v-if="message.loading" />
         <view v-else>
-          <slot />
+          <ContentMsg :content="message.content" />
           <text v-if="message.status" class="msg-status" :class="`msg-status-${message.status}`" />
         </view>
       </view>
@@ -20,13 +20,15 @@
 
 <script>
 import { computed } from 'vue'
-import MsgLoading from './loading'
-import UserAvatar from '../avatar'
+import ContentMsg from '~/components/content'
+import UserAvatar from '~/components/user/avatar'
+import LoadingMsg from './loading'
 
 export default {
   name: 'MsgBubble',
   components: {
-    MsgLoading,
+    ContentMsg,
+    LoadingMsg,
     UserAvatar
   },
   props: {

@@ -1,23 +1,31 @@
 <template>
   <view class="chat-room">
-    <view v-for="item in state.list" :key="item.id">
-      <component :is="item.type" :message="item" />
-    </view>
+    <text>123123123123123</text>
+    <Txt :item="{ text: '我擦擦擦' }" />
+    <BubbleMsg
+      v-for="item in state.list"
+      :key="item.id"
+      :message="item"
+    />
   </view>
 </template>
 
 <script>
 import { reactive } from 'vue'
+import { ScrollView } from '@tarojs/components'
 import BubbleMsg from './bubble'
+import Txt from '../content/txt'
 
 export default {
   name: 'MsgRoom',
   components: {
-    BubbleMsg
+    BubbleMsg,
+    ScrollView,
+    Txt
   },
-  setup() {
+  setup(props) {
     const state = reactive({
-      list: [],
+      list: props.list || [],
       resolver: null,
       last_pending_id: 0
     })
@@ -108,3 +116,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.chat-room {
+  width: 100%;
+  height: 100%;
+  background-color: #00a1d6;
+}
+</style>

@@ -1,5 +1,9 @@
-.iphone-x-shim {
+.iphone-top-shim {
   height: env(safe-area-inset-top);
+}
+
+.iphone-bottom-shim {
+  height: env(safe-area-inset-bottom);
 }
 
 .primary-btn {

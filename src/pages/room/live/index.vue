@@ -5,12 +5,13 @@
     </view>
     <view class="flex-shrink-0">
       <button @tap="addMessage">add+</button>
+      <view class="iphone-bottom-shim" />
     </view>
   </view>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import MsgRoom from '~/components/message/room'
 import messages from './message.json'
 
@@ -21,11 +22,45 @@ export default {
   },
   setup() {
     const roomRef = ref(null)
-    const count = ref(0)
+    const state = reactive({
+      loopTimer: 0,
+      startTime: 0,
+      lastIndex: -1
+    })
 
-    const addMessage = () => {
-      roomRef.value.addMessage(messages[count.value++])
+    const addMessage = (index) => {
+      roomRef.value.addMessage(messages[index])
     }
+
+    const messageReader = () => {
+      state.loopTimer = setInterval(() => {
+        let setValue = 0
+        let noAppend = true
+        for (let i = state.lastIndex + 1; i < messages.length; ++i) {
+          if (messages[i].start <= Date.now() - state.startTime) {
+            addMessage(i)
+            setValue = i
+            noAppend = false
+          } else {
+            break
+          }
+        }
+        if (noAppend) {
+          return
+        }
+
+        if (setValue === messages.length - 1) {
+          clearInterval(state.loopTimer)
+          state.loopTimer = 0
+        }
+        state.lastIndex = setValue
+      }, 160)
+    }
+
+    onMounted(() => {
+      state.startTime = Date.now()
+      messageReader()
+    })
 
     return {
       roomRef,
@@ -54,6 +89,7 @@ export default {
   .flex-shrink-0 {
     width: 100%;
     flex-shrink: 0;
+    background-color: #fff;
   }
 }
 </style>

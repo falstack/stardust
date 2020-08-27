@@ -1,16 +1,14 @@
 [
   {
     "id": 1,
+    "start": 0,
     "type": "bubble-msg",
     "float": "left",
     "content": [
       {
-        "type": "txt",
-        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
-    },
-      {
         "type": "mp3",
-        "url": "https://file.calibur.tv/owner/voice/charman.mp3"
+        "text": "皮卡皮卡~",
+        "url": "https://file.calibur.tv/owner/voice/pikapika.mp3"
       }
     ],
     "user": {
@@ -21,15 +19,13 @@
   },
   {
     "id": 2,
+    "start": 2000,
     "type": "bubble-msg",
     "float": "right",
     "content": [
       {
-        "type": "txt",
-        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
-      },
-      {
         "type": "mp3",
+        "text": "试问，你就是我的master吗？",
         "url": "https://file.calibur.tv/owner/voice/saber.mp3"
       }
     ],
@@ -41,16 +37,14 @@
   },
   {
     "id": 3,
+    "start": 8000,
     "type": "bubble-msg",
     "float": "left",
     "content": [
       {
-        "type": "txt",
-        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
-      },
-      {
         "type": "mp3",
-        "url": "https://file.calibur.tv/owner/voice/charman.mp3"
+        "text": "我不做人啦~JOJO！",
+        "url": "https://file.calibur.tv/owner/voice/dio.mp3"
       }
     ],
     "user": {
@@ -61,16 +55,14 @@
   },
   {
     "id": 4,
+    "start": 12000,
     "type": "bubble-msg",
     "float": "left",
     "content": [
       {
-        "type": "txt",
-        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
-      },
-      {
         "type": "mp3",
-        "url": "https://file.calibur.tv/owner/voice/charman.mp3"
+        "text": "reo~reo~reo~reo~reo~reo~reo~reo~reo~",
+        "url": "https://file.calibur.tv/owner/voice/reoreoreo.mp3"
       }
     ],
     "user": {
@@ -81,16 +73,14 @@
   },
   {
     "id": 5,
+    "start": 18000,
     "type": "bubble-msg",
     "float": "left",
     "content": [
       {
-        "type": "txt",
-        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
-      },
-      {
         "type": "mp3",
-        "url": "https://file.calibur.tv/owner/voice/charman.mp3"
+        "text": "咘噜咘噜咘噜~咘噜咘噜咘噜~",
+        "url": "https://file.calibur.tv/owner/voice/tel.mp3"
       }
     ],
     "user": {
@@ -101,16 +91,14 @@
   },
   {
     "id": 6,
+    "start": 21000,
     "type": "bubble-msg",
     "float": "left",
     "content": [
       {
-        "type": "txt",
-        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
-      },
-      {
         "type": "mp3",
-        "url": "https://file.calibur.tv/owner/voice/charman.mp3"
+        "text": "我叫蒙奇·D·路飞，是要成为海贼王的男人！",
+        "url": "https://file.calibur.tv/owner/voice/luffy.mp3"
       }
     ],
     "user": {
@@ -121,72 +109,13 @@
   },
   {
     "id": 7,
+    "start": 25000,
     "type": "bubble-msg",
     "float": "left",
     "content": [
       {
         "type": "txt",
-        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
-      },
-      {
-        "type": "mp3",
-        "url": "https://file.calibur.tv/owner/voice/charman.mp3"
-      }
-    ],
-    "user": {
-      "id": 1,
-      "avatar": "https://m1.calibur.tv/cc-19f/1562950958417-r9m.jpeg",
-      "nickname": "冰淤"
-    }
-  },
-  {
-    "id": 8,
-    "type": "bubble-msg",
-    "float": "left",
-    "content": [
-      {
-        "type": "txt",
-        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
-      },
-      {
-        "type": "mp3",
-        "url": "https://file.calibur.tv/owner/voice/charman.mp3"
-      }
-    ],
-    "user": {
-      "id": 1,
-      "avatar": "https://m1.calibur.tv/cc-19f/1562950958417-r9m.jpeg",
-      "nickname": "冰淤"
-    }
-  },
-  {
-    "id": 9,
-    "type": "bubble-msg",
-    "float": "left",
-    "content": [
-      {
-        "type": "txt",
-        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
-      },
-      {
-        "type": "mp3",
-        "url": "https://file.calibur.tv/owner/voice/charman.mp3"
-      }
-    ],
-    "user": {
-      "id": 1,
-      "avatar": "https://m1.calibur.tv/cc-19f/1562950958417-r9m.jpeg",
-      "nickname": "冰淤"
-    }
-  },
-  {
-    "id": 10,
-    "type": "bubble-msg",
-    "float": "left",
-    "content": [
-      {
-        "type": "txt",
-        "text": "测试测试测试测试测试测试测试测试测试测试测试测试"
+        "text": "大弟弟子当大特棋谱~"
       },
       {
         "type": "mp3",

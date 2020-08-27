@@ -1,6 +1,6 @@
 <template>
   <view class="user-home">
-    <view class="iphone-x-shim" />
+    <view class="iphone-top-shim" />
     <view class="user-panel">
       <GuestPanel v-if="isGuest" />
       <SignedPanel v-else />

@@ -18,7 +18,7 @@
             @tap="closeDrawer"
           />
         </view>
-        <view class="iphone-x-shim" />
+        <view class="iphone-top-shim" />
       </template>
       <slot />
     </view>

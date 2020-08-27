@@ -30,6 +30,7 @@ export default {
 
 <style lang="scss">
 .content-msg {
+  view,
   text {
     word-break: break-all;
     font-size: 32px;

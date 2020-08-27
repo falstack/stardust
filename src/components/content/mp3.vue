@@ -1,6 +1,6 @@
 <template>
   <view class="audio-item">
-    audio
+    {{ item.text }}
   </view>
 </template>
 
@@ -18,23 +18,7 @@ export default {
     const audio = Taro.createInnerAudioContext()
     audio.src = props.item.url
 
-    const onPlay = () => {
-      if (audio.paused) {
-        audio.play()
-      }
-    }
-
-    const onPause = () => {
-      if (audio.paused) {
-        return
-      }
-      audio.pause()
-    }
-
-    return {
-      onPlay,
-      onPause
-    }
+    audio.play()
   }
 }
 </script>

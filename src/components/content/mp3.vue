@@ -18,7 +18,17 @@ export default {
     const audio = Taro.createInnerAudioContext()
     audio.src = props.item.url
 
-    // audio.play()
+    if (props.item.start_at) {
+      audio.startTime = props.item.start_at / 1000 | 0
+    }
+
+    audio.play()
+
+    if (props.item.end_at) {
+      setTimeout(() => {
+        audio.pause()
+      }, props.item.end_at - (props.item.start_at || 0))
+    }
   }
 }
 </script>

@@ -26,6 +26,7 @@
       {
         "type": "mp3",
         "text": "试问，你就是我的master吗？",
+        "end_at": 5000,
         "url": "https://file.calibur.tv/owner/voice/saber.mp3"
       }
     ],
@@ -98,6 +99,7 @@
       {
         "type": "mp3",
         "text": "我叫蒙奇·D·路飞，是要成为海贼王的男人！",
+        "start_at": 1000,
         "url": "https://file.calibur.tv/owner/voice/luffy.mp3"
       }
     ],
@@ -119,6 +121,8 @@
       },
       {
         "type": "mp3",
+        "start_at": 11000,
+        "end_at": 19000,
         "url": "https://file.calibur.tv/owner/voice/charman.mp3"
       }
     ],

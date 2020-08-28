@@ -4,13 +4,17 @@
       <MsgRoom ref="roomRef" />
     </view>
     <view class="flex-shrink-0">
-      <button @tap="addMessage">add+</button>
+      <view class="buttons">
+        <button @tap="startRecord">开始录音</button>
+        <button @tap="stopRecord">结束录音</button>
+      </view>
       <view class="iphone-bottom-shim" />
     </view>
   </view>
 </template>
 
 <script>
+import Taro from '@tarojs/taro'
 import { ref, reactive, onMounted } from 'vue'
 import MsgRoom from '~/components/message/room'
 import messages from './message.json'
@@ -57,6 +61,25 @@ export default {
       }, 160)
     }
 
+    const startRecord = () => {
+      const recorder = Taro.getRecorderManager()
+      recorder.start({
+        duration: 20000,
+        format: 'mp3'
+      })
+
+      recorder.onStop((res) => {
+        const audio = Taro.createInnerAudioContext()
+        audio.src = res.tempFilePath
+        audio.play()
+      })
+    }
+
+    const stopRecord = () => {
+      const recorder = Taro.getRecorderManager()
+      recorder.stop()
+    }
+
     onMounted(() => {
       state.startTime = Date.now()
       messageReader()
@@ -64,6 +87,8 @@ export default {
 
     return {
       roomRef,
+      stopRecord,
+      startRecord,
       addMessage
     }
   }
@@ -90,6 +115,17 @@ export default {
     width: 100%;
     flex-shrink: 0;
     background-color: #fff;
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    button {
+      flex: 1;
+    }
   }
 }
 </style>

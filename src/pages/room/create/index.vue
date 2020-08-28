@@ -3,32 +3,51 @@
     <ScrollView class="display-header" scroll-x="true">
       <view class="shim" />
       <view class="avatar-list">
-        <view class="avatar create-btn">
-          <text class="icon ic-add" />
+        <Avatar />
+        <Avatar />
+        <Avatar />
+        <Avatar />
+        <Avatar />
+        <Avatar />
+        <Avatar />
+        <Avatar />
+        <Avatar />
+        <view class="avatar select-btn">
+          <text class="icon ic-add" @tap="toggleSearchDrawer" />
         </view>
       </view>
       <view class="shim" />
     </ScrollView>
+    <SearchDrawer v-model="state.showDrawer" />
   </view>
 </template>
 
 <script>
+import { reactive } from 'vue'
 import { ScrollView } from '@tarojs/components'
+import Avatar from './components/avatar'
+import SearchDrawer from './components/searchDrawer'
 
 export default {
-  name: '',
   components: {
-    ScrollView
+    Avatar,
+    ScrollView,
+    SearchDrawer
   },
-  props: {},
-  data() {
-    return {}
-  },
-  computed: {},
-  watch: {},
-  created() {},
-  mounted() {},
-  methods: {}
+  setup() {
+    const state = reactive({
+      showDrawer: false
+    })
+
+    const toggleSearchDrawer = () => {
+      state.showDrawer = !state.showDrawer
+    }
+
+    return {
+      state,
+      toggleSearchDrawer
+    }
+  }
 }
 </script>
 
@@ -63,28 +82,21 @@ export default {
       align-items: center;
     }
 
-    .avatar {
-      display: inline-block;
-      width: 100px;
-      height: 100px;
-      border: 2px solid #f5f5f7;
-      border-radius: 50%;
-      flex-shrink: 0;
-      margin-left: -20px;
-
-      &:first-child {
-        margin-left: 0;
-      }
+    .avatar:first-child {
+      margin-left: 0;
     }
 
-    .create-btn {
+    .select-btn {
       background-color: #f5f5f7;
-      line-height: 100px;
-      text-align: center;
 
       .ic-add {
         font-size: 50px;
         color: #3C3F41;
+        display: block;
+        width: 100%;
+        height: 100%;
+        line-height: 100px;
+        text-align: center;
       }
     }
   }

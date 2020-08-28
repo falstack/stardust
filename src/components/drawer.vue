@@ -4,6 +4,7 @@
     class="drawer"
   >
     <view
+      v-if="showMask"
       class="drawer__mask"
       @tap="clickMask"
     />
@@ -40,6 +41,10 @@ export default {
       default: '60%'
     },
     maskClose: {
+      type: Boolean,
+      default: true
+    },
+    showMask: {
       type: Boolean,
       default: true
     }
@@ -90,6 +95,7 @@ export default {
   bottom: 0;
   width: 100%;
   z-index: 999;
+  pointer-events: none;
 
   &__mask {
     position: absolute;
@@ -98,6 +104,7 @@ export default {
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.3);
+    pointer-events: auto;
   }
 
   &__wrap {
@@ -107,6 +114,7 @@ export default {
     bottom: 0;
     background-color: $bg-color;
     animation: scroll-enter 300ms;
+    pointer-events: auto;
 
     .drawer__close {
       padding-top: 110px;

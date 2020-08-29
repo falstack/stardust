@@ -1,7 +1,8 @@
 import { createStore } from 'vuex'
-import { getAuthCode, oAuthLogin, getUserRole, logoutAction } from '~/utils/login'
+import { oAuthLogin, getUserRole, logoutAction } from '~/utils/login'
 import toast from '~/utils/toast'
 import cache from '~/utils/cache'
+import live from './live'
 
 const store = createStore({
   state: () => ({
@@ -68,6 +69,9 @@ const store = createStore({
       }
       return ~state.userRole.indexOf(role)
     }
+  },
+  modules: {
+    live
   }
 })
 

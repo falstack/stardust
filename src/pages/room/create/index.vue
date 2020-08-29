@@ -4,37 +4,40 @@
       <view class="shim" />
       <view class="avatar-list">
         <Avatar />
-        <Avatar />
-        <Avatar />
-        <Avatar />
-        <Avatar />
-        <Avatar />
-        <Avatar />
-        <Avatar />
-        <Avatar />
         <view class="avatar select-btn">
           <text class="icon ic-add" @tap="toggleSearchDrawer" />
         </view>
       </view>
       <view class="shim" />
     </ScrollView>
+    <ScrollView class="track-wrap" scroll-x="true">
+      <Track
+        v-for="track in content"
+        :key="track.name"
+        :item="track"
+      />
+    </ScrollView>
     <SearchDrawer v-model="state.showDrawer" />
   </view>
 </template>
 
 <script>
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
+import { useStore } from 'vuex'
 import { ScrollView } from '@tarojs/components'
-import Avatar from './components/avatar'
 import SearchDrawer from './components/searchDrawer'
+import Avatar from './components/avatar'
+import Track from './components/track'
 
 export default {
   components: {
+    Track,
     Avatar,
     ScrollView,
     SearchDrawer
   },
   setup() {
+    const store = useStore()
     const state = reactive({
       showDrawer: false
     })
@@ -43,8 +46,13 @@ export default {
       state.showDrawer = !state.showDrawer
     }
 
+    const content = computed(() => {
+      return store.state.live.content
+    })
+
     return {
       state,
+      content,
       toggleSearchDrawer
     }
   }
@@ -99,6 +107,10 @@ export default {
         text-align: center;
       }
     }
+  }
+
+  .track-wrap {
+    margin-top: 100px;
   }
 }
 </style>

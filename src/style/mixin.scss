@@ -12,53 +12,30 @@
   }
 }
 
+%oneline {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap !important;
+}
+
 %breakWord {
   word-break: break-word !important;
   word-break: break-all;
 }
 
+%spaceAround {
+  justify-content: space-evenly !important;
+  justify-content: space-around;
+}
+
 @mixin mutiline($line-height, $line: 2) {
+  white-space: normal;
   line-height: $line-height;
   max-height: $line-height * $line;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: $line;
+  /* autoprefixer: ignore next */
   -webkit-box-orient: vertical;
-}
-
-@mixin filter-blur($size: 2) {
-  filter: blur($size + px);
-  filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=$size, MakeShadow=false);
-}
-
-@mixin half-font($size, $origin: center) {
-  display: block;
-  font-size: $size * 2;
-  line-height: $size * 2;
-  transform: scale(0.5);
-  transform-origin: left $origin;
-}
-
-@mixin keyframes($name) {
-  @keyframes #{$name} {
-    @content;
-  }
-
-  @-webkit-keyframes #{$name} {
-    @content;
-  }
-
-  @-moz-keyframes #{$name} {
-    @content;
-  }
-}
-
-@include keyframes(rolling) {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }

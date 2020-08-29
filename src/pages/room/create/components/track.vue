@@ -3,7 +3,7 @@
     class="live-track"
     :class="{ 'is-active': isFocused }"
   >
-    <view class="track-name" @tap="switchTrack">{{ item.name }}</view>
+    <view class="track-name" @tap="switchTrack">{{ name }}</view>
     <view class="voice-wrap">
       <Voice
         v-for="voice in item.value"
@@ -39,7 +39,16 @@ export default {
       return store.state.live.editor.focusTrackId === props.item.name
     })
 
+    const name = computed(() => {
+      const type = props.item.type
+      if (type === 'bgm') {
+        return 'BGM'
+      }
+      return type === 'left' ? `左${props.item.part}` : `右${props.item.part}`
+    })
+
     return {
+      name,
       isFocused,
       switchTrack
     }

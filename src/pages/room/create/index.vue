@@ -10,13 +10,15 @@
       </view>
       <view class="shim" />
     </ScrollView>
-    <ScrollView class="track-wrap" scroll-x="true">
+    <view v-if="false" />
+    <view v-else class="track-wrap" scroll-x="true">
       <Track
         v-for="track in content"
-        :key="track.name"
+        :key="track.id"
         :item="track"
       />
-    </ScrollView>
+    </view>
+    <Control />
     <SearchDrawer v-model="state.showDrawer" />
   </view>
 </template>
@@ -28,11 +30,13 @@ import { ScrollView } from '@tarojs/components'
 import SearchDrawer from './components/searchDrawer'
 import Avatar from './components/avatar'
 import Track from './components/track'
+import Control from './components/control'
 
 export default {
   components: {
     Track,
     Avatar,
+    Control,
     ScrollView,
     SearchDrawer
   },
@@ -111,6 +115,7 @@ export default {
 
   .track-wrap {
     margin-top: 100px;
+    overflow-x: auto;
   }
 }
 </style>

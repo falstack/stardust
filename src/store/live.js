@@ -3,8 +3,9 @@ export default {
   state: () => ({
     content: [
       {
+        id: 1,
         type: 'left',
-        name: '左1',
+        part: 1,
         value: [
           {
             id: 1,
@@ -145,31 +146,47 @@ export default {
         ]
       },
       {
+        id: 2,
         type: 'right',
-        name: '右1',
-        created_at: 2,
+        part: 1,
         value: []
       },
       {
+        id: 3,
         type: 'bgm',
-        name: 'BGM',
-        created_at: 3,
+        part: 1,
         value: []
       }
     ],
     editor: {
       focusVoiceId: 0,
-      focusTrackId: ''
+      focusTrackId: 0
     }
   }),
   mutations: {
     UPDATE_FOCUS_VOICE(store, { id }) {
-      store.editor.focusTrackId = ''
+      store.editor.focusTrackId = 0
       store.editor.focusVoiceId = id
     },
-    UPDATE_FOCUS_TRACK(store, { name }) {
+    UPDATE_FOCUS_TRACK(store, { id }) {
       store.editor.focusVoiceId = 0
-      store.editor.focusTrackId = name
+      store.editor.focusTrackId = id
+    },
+    ADD_TRACK(store) {
+      for (let i = 0; i < store.content.length; i++) {
+        if (store.content[i].id === store.editor.focusTrackId) {
+          const newId = store.content.length + 1
+          const newVal = {
+            id: newId,
+            type: store.content[i].type,
+            part: store.content[i].part + 1,
+            value: []
+          }
+          store.content.splice(i + 1, 0, newVal)
+          store.editor.focusTrackId = newId
+          break
+        }
+      }
     }
   },
   actions: {

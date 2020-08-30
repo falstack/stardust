@@ -7,7 +7,14 @@
       <view @tap="handleDelTrack">删除轨道</view>
     </view>
     <view v-if="isVoiceMode">
-      is voice mode
+      <view>裁剪</view>
+      <view>音量</view>
+      <view>移动</view>
+      <view>变轨</view>
+      <view>删除</view>
+      <view>颜色</view>
+      <view>文案</view>
+      <view>音量</view>
     </view>
   </view>
 </template>

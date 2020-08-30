@@ -160,10 +160,14 @@ export default {
     ],
     editor: {
       focusVoiceId: 0,
-      focusTrackId: 0
+      focusTrackId: 0,
+      showVoiceDrawer: false
     }
   }),
   mutations: {
+    TOGGLE_VOICE_DRAWER(store) {
+      store.editor.showVoiceDrawer = !store.editor.showVoiceDrawer
+    },
     UPDATE_FOCUS_VOICE(store, { id }) {
       store.editor.focusTrackId = 0
       store.editor.focusVoiceId = id
@@ -201,6 +205,14 @@ export default {
           }
           store.editor.focusTrackId = store.content[i - 1].id
           store.content.splice(i, 1)
+          break
+        }
+      }
+    },
+    ADD_VOICE(store, data) {
+      for (let i = 0; i < store.content.length; i++) {
+        if (store.content[i].id === store.editor.focusTrackId) {
+          store.content[i].value.push(data)
           break
         }
       }

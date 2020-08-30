@@ -4,14 +4,10 @@
       <view class="shim" />
       <view class="avatar-list">
         <Avatar />
-        <view class="avatar select-btn">
-          <text class="icon ic-add" @tap="toggleSearchDrawer" />
-        </view>
       </view>
       <view class="shim" />
     </ScrollView>
-    <view v-if="false" />
-    <view v-else class="track-wrap" scroll-x="true">
+    <view class="track-wrap" scroll-x="true">
       <Track
         v-for="track in content"
         :key="track.id"
@@ -19,7 +15,7 @@
       />
     </view>
     <Control />
-    <SearchDrawer v-model="state.showDrawer" />
+    <SearchDrawer />
   </view>
 </template>
 
@@ -42,13 +38,7 @@ export default {
   },
   setup() {
     const store = useStore()
-    const state = reactive({
-      showDrawer: false
-    })
-
-    const toggleSearchDrawer = () => {
-      state.showDrawer = !state.showDrawer
-    }
+    const state = reactive({})
 
     const content = computed(() => {
       return store.state.live.content
@@ -56,8 +46,7 @@ export default {
 
     return {
       state,
-      content,
-      toggleSearchDrawer
+      content
     }
   }
 }

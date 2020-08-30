@@ -3,6 +3,7 @@
     control
     <view v-if="isTrackMode">
       <view @tap="handleAddTrack">增加轨道</view>
+      <view @tap="handleAddVoice">增加声源</view>
       <view @tap="handleDelTrack">删除轨道</view>
     </view>
     <view v-if="isVoiceMode">
@@ -37,11 +38,16 @@ export default {
       store.commit('live/DEL_TRACK')
     }
 
+    const handleAddVoice = () => {
+      store.commit('live/TOGGLE_VOICE_DRAWER')
+    }
+
     return {
       isTrackMode,
       isVoiceMode,
       handleDelTrack,
-      handleAddTrack
+      handleAddTrack,
+      handleAddVoice
     }
   }
 }

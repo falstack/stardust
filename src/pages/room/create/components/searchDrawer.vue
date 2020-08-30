@@ -7,11 +7,15 @@
     <view class="search-drawer">
       <Search v-model="state.keyword" />
     </view>
+    <view class="flow-wrap">
+      <text @tap="handleAddVoice">吉良吉影</text>
+    </view>
   </Drawer>
 </template>
 
 <script>
 import { reactive, watch } from 'vue'
+import { useStore } from 'vuex'
 import Search from '~/components/search'
 import Drawer from '~/components/drawer'
 
@@ -20,34 +24,27 @@ export default {
     Drawer,
     Search
   },
-  props: {
-    modelValue: {
-      required: true,
-      type: Boolean
-    },
-  },
-  setup(props, ctx) {
+  setup() {
+    const store = useStore()
     const state = reactive({
-      showDrawer: props.modelValue,
+      showDrawer: false,
       keyword: ''
     })
 
     watch(
-      () => state.showDrawer,
-      (val) => {
-        ctx.emit('update:modelValue', val)
-      }
-    )
-
-    watch(
-      () => props.modelValue,
+      () => store.state.live.editor.showVoiceDrawer,
       (val) => {
         state.showDrawer = val
       }
     )
 
+    const handleAddVoice = () => {
+
+    }
+
     return {
-      state
+      state,
+      handleAddVoice
     }
   }
 }
@@ -56,9 +53,5 @@ export default {
 <style lang="scss">
 .drawer__wrap {
   background-color: #3C3F41;
-}
-
-.search-drawer {
-  padding: 0 $container-padding;
 }
 </style>

@@ -36,7 +36,7 @@ export default {
     }
 
     const isFocused = computed(() => {
-      return store.state.live.editor.focusTrackId === props.item.name
+      return store.state.live.editor.focusTrackId === props.item.id
     })
 
     const name = computed(() => {

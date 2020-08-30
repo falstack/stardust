@@ -3,6 +3,7 @@
     control
     <view v-if="isTrackMode">
       <view @tap="handleAddTrack">增加轨道</view>
+      <view @tap="handleDelTrack">删除轨道</view>
     </view>
     <view v-if="isVoiceMode">
       is voice mode
@@ -32,9 +33,14 @@ export default {
       store.commit('live/ADD_TRACK')
     }
 
+    const handleDelTrack = () => {
+      store.commit('live/DEL_TRACK')
+    }
+
     return {
       isTrackMode,
       isVoiceMode,
+      handleDelTrack,
       handleAddTrack
     }
   }

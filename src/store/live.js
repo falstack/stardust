@@ -175,15 +175,32 @@ export default {
     ADD_TRACK(store) {
       for (let i = 0; i < store.content.length; i++) {
         if (store.content[i].id === store.editor.focusTrackId) {
+          const type = store.content[i].type
+          if (type === 'bgm') {
+            return
+          }
           const newId = store.content.length + 1
           const newVal = {
             id: newId,
-            type: store.content[i].type,
+            type,
             part: store.content[i].part + 1,
             value: []
           }
           store.content.splice(i + 1, 0, newVal)
           store.editor.focusTrackId = newId
+          break
+        }
+      }
+    },
+    DEL_TRACK(store) {
+      for (let i = 0; i < store.content.length; i++) {
+        if (store.content[i].id === store.editor.focusTrackId) {
+          const type = store.content[i].type
+          if (store.content.map(_ => _.type).filter(_ => _ === type).length <= 1) {
+            return
+          }
+          store.editor.focusTrackId = store.content[i - 1].id
+          store.content.splice(i, 1)
           break
         }
       }

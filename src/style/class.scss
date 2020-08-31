@@ -1,8 +1,10 @@
 .iphone-top-shim {
+  height: constant(safe-area-inset-top);
   height: env(safe-area-inset-top);
 }
 
 .iphone-bottom-shim {
+  height: constant(safe-area-inset-bottom);
   height: env(safe-area-inset-bottom);
 }
 

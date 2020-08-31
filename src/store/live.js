@@ -1,3 +1,16 @@
+const getIndex = (array, id, key = 'id') => {
+  let result = 0
+
+  for (let i = 0; i < array.length; i++) {
+    if (array[i][key] === id) {
+      result = i
+      break
+    }
+  }
+
+  return result
+}
+
 export default {
   namespaced: true,
   state: () => ({
@@ -28,7 +41,7 @@ export default {
             id: 2,
             track_at: 0,
             src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
-            text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
+            text: '测试删除',
             duration: 10000,
             start_at: 1000,
             ended_at: 9000,
@@ -159,9 +172,10 @@ export default {
       }
     ],
     editor: {
-      focusVoiceId: 0,
       focusTrackId: 0,
-      showVoiceDrawer: false
+      focusVoiceId: 0,
+      showVoiceDrawer: false,
+      voiceEditType: ''
     }
   }),
   mutations: {
@@ -177,45 +191,46 @@ export default {
       store.editor.focusTrackId = id
     },
     ADD_TRACK(store) {
-      for (let i = 0; i < store.content.length; i++) {
-        if (store.content[i].id === store.editor.focusTrackId) {
-          const type = store.content[i].type
-          if (type === 'bgm') {
-            return
-          }
-          const newId = store.content.length + 1
-          const newVal = {
-            id: newId,
-            type,
-            part: store.content[i].part + 1,
-            value: []
-          }
-          store.content.splice(i + 1, 0, newVal)
-          store.editor.focusTrackId = newId
-          break
-        }
+      const index = getIndex(store.content, store.editor.focusTrackId)
+      const type = store.content[index].type
+      if (type === 'bgm') {
+        return
       }
+      const newId = store.content.length + 1
+      const newVal = {
+        id: newId,
+        type,
+        part: store.content[index].part + 1,
+        value: []
+      }
+      store.content.splice(index + 1, 0, newVal)
+      store.editor.focusTrackId = newId
     },
     DEL_TRACK(store) {
-      for (let i = 0; i < store.content.length; i++) {
-        if (store.content[i].id === store.editor.focusTrackId) {
-          const type = store.content[i].type
-          if (store.content.map(_ => _.type).filter(_ => _ === type).length <= 1) {
-            return
-          }
-          store.editor.focusTrackId = store.content[i - 1].id
-          store.content.splice(i, 1)
-          break
-        }
+      const index = getIndex(store.content, store.editor.focusTrackId)
+      const type = store.content[index].type
+      if (store.content.map(_ => _.type).filter(_ => _ === type).length <= 1) {
+        return
       }
+      store.editor.focusTrackId = store.content[index - 1].id
+      store.content.splice(index, 1)
     },
     ADD_VOICE(store, data) {
-      for (let i = 0; i < store.content.length; i++) {
-        if (store.content[i].id === store.editor.focusTrackId) {
-          store.content[i].value.push(data)
-          break
-        }
+      const index = getIndex(store.content, store.editor.focusTrackId)
+      store.content[index].value.push(data)
+    },
+    CHANGE_VOICE_EDIT_TYPE(store, type) {
+      store.editor.voiceEditType = type
+    },
+    DELETE_VOICE_ITEM(store) {
+      const index = getIndex(store.content, store.editor.focusTrackId)
+      const track = store.content[index]
+      const subIndex = getIndex(track.value, store.editor.focusVoiceId)
+      track.value.splice(subIndex, 1)
+      if (subIndex) {
+        store.editor.focusVoiceId = track.value[subIndex - 1].id
       }
+      store.editor.voiceEditType = ''
     }
   },
   actions: {

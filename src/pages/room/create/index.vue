@@ -44,6 +44,8 @@ export default {
       return store.state.live.content
     })
 
+    store.dispatch('live/initEditor')
+
     return {
       state,
       content

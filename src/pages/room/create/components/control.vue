@@ -6,7 +6,10 @@
       <view @tap="handleDelTrack">删除轨道</view>
     </view>
     <view v-if="isVoiceMode">
-      <VoiceDelete v-if="selectedVoiceType === 'delete'" />
+      <component
+        :is="`voice-${selectedVoiceType}`"
+        v-if="selectedVoiceType"
+      />
       <view class="selection-wrap">
         <view class="selection-shim" />
         <view class="iphone-bottom-shim" />
@@ -27,12 +30,24 @@
 <script>
 import { useStore } from 'vuex'
 import { computed } from 'vue'
+import VoiceClip from './voice-clip'
+import VoiceColor from './voice-color'
 import VoiceDelete from './voice-delete'
+import VoiceMove from './voice-move'
+import VoiceText from './voice-text'
+import VoiceTrack from './voice-track'
+import VoiceVolume from './voice-volume'
 
 export default {
   name: '',
   components: {
-    VoiceDelete
+    VoiceClip,
+    VoiceColor,
+    VoiceDelete,
+    VoiceMove,
+    VoiceText,
+    VoiceTrack,
+    VoiceVolume
   },
   setup() {
     const store = useStore()

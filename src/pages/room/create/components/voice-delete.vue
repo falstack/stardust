@@ -1,5 +1,5 @@
 <template>
-  <view class="delete-voice">
+  <view class="voice-delete">
     delete
   </view>
 </template>

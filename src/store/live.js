@@ -111,6 +111,36 @@ export default {
       Object.keys(data).forEach(key => {
         track.value[subIndex][key] = data[key]
       })
+    },
+    CHANGE_VOICE_TRACK(store, { isUp }) {
+      const index = getIndex(store.content, store.editor.focusTrackId)
+      if (isUp && !index) {
+        return
+      }
+      if (!isUp && index === store.content.length - 1) {
+        return
+      }
+      const track = store.content[index]
+      const subIndex = getIndex(track.value, store.editor.focusVoiceId)
+      const voice = track[subIndex]
+      const targetIndex = isUp ? index - 1 : index + 1
+      const targetTrack = store.content[targetIndex].value
+      for (let i = 0; i < targetTrack.length; i++) {
+
+      }
+    },
+    UPDATE_VOICE_TEXT(store, { value }) {
+      const index = getIndex(store.content, store.editor.focusTrackId)
+      const track = store.content[index]
+      const subIndex = getIndex(track.value, store.editor.focusVoiceId)
+      track.value[subIndex].text = value
+    },
+    UPDATE_VOICE_COLOR(store, { bg, text }) {
+      const index = getIndex(store.content, store.editor.focusTrackId)
+      const track = store.content[index]
+      const subIndex = getIndex(track.value, store.editor.focusVoiceId)
+      track.value[subIndex].color_bubble = bg
+      track.value[subIndex].color_text = text
     }
   },
   actions: {

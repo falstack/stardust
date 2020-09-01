@@ -21,6 +21,7 @@
 import { MovableArea, MovableView } from '@tarojs/components'
 import { computed } from 'vue'
 import { useStore } from 'vuex'
+import { throttle } from '~/utils'
 
 export default {
   name: '',
@@ -43,34 +44,34 @@ export default {
       ? voice.value.ended_at / voice.value.duration * 250
       : 250
 
-    const handleChange = (evt, isStart) => {
-      const newVal = evt.detail.x / 250 * voice.value.duration | 0
+    let isRight = true
+    const handleChange = throttle((evt, isStart) => {
+      const reallyStart = isRight && isStart
+      const { ended_at, start_at, duration } = voice.value
+      const newVal = evt.detail.x / 250 * duration | 0
       let commit
-      if (isStart && newVal > voice.value.ended_at) {
+      if (reallyStart && newVal > ended_at) {
         commit = {
-          start_at: voice.value.ended_at,
           ended_at: newVal
         }
-      } else if (isStart && newVal <= voice.value.ended_at) {
+        isRight = !isRight
+      } else if (reallyStart && newVal <= ended_at) {
         commit = {
-          start_at: newVal,
-          ended_at: voice.value.ended_at
+          start_at: newVal
         }
-      } else if (!isStart && newVal < voice.value.start_at) {
+      } else if (!reallyStart && newVal < start_at) {
         commit = {
-          start_at: newVal,
-          ended_at: voice.value.start_at
+          start_at: newVal
         }
+        isRight = !isRight
       } else {
         commit = {
-          start_at: voice.value.start_at,
           ended_at: newVal
         }
       }
       store.commit('live/CLIP_VOICE_DURATION', commit)
-      console.log('handleChange', commit)
-    }
-    console.log(startX, endedX)
+    }, 100)
+
     return {
       handleChange,
       startX,
@@ -91,6 +92,7 @@ export default {
     height: 80px;
     border-radius: 50%;
     background-color: #fff;
+    color: #000;
   }
 }
 </style>

@@ -86,12 +86,13 @@ export default {
       const subIndex = getIndex(track.value, store.editor.focusVoiceId)
       track.value[subIndex].volume = volume
     },
-    CLIP_VOICE_DURATION(store, commit) {
+    CLIP_VOICE_DURATION(store, data) {
       const index = getIndex(store.content, store.editor.focusTrackId)
       const track = store.content[index]
       const subIndex = getIndex(track.value, store.editor.focusVoiceId)
-      track.value[subIndex].start_at = commit.start_at
-      track.value[subIndex].ended_at = commit.ended_at
+      Object.keys(data).forEach(key => {
+        track.value[subIndex][key] = data[key]
+      })
     }
   },
   actions: {

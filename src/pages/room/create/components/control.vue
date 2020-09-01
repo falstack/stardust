@@ -1,6 +1,6 @@
 <template>
   <view class="control">
-    <view v-if="isTrackMode && !isVoiceMode && canRender">
+    <view v-if="isTrackMode && canRender">
       <view @tap="handleAddTrack">增加轨道</view>
       <view @tap="handleAddVoice">增加声源</view>
       <view @tap="handleDelTrack">删除轨道</view>

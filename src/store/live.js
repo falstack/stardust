@@ -127,35 +127,45 @@ export default {
       const subIndex = getIndex(track, store.editor.focusVoiceId)
       const voice = track[subIndex]
       const targetIndex = isUp ? index - 1 : index + 1
-      const targetTrack = store.content[targetIndex].value
+      const targetTrack = store.content[targetIndex]
       const voiceStartAt = voice.begin_at
       const voiceTimeout = (voice.ended_at || voice.duration) - voice.start_at
       const voiceEndedAt = voice.begin_at + voiceTimeout
-      let noMatched = true
 
       const deleteOldVoice = () => {
         if (track[subIndex + 1]) {
-          track[subIndex + 1].margin_left += voiceTimeout / 100
+          track[subIndex + 1].margin_left += (voiceTimeout / 100 + voice.margin_left)
         }
         track.splice(subIndex, 1)
       }
 
-      const addNewVoice = (nextTrack, beforeIndex = -1) => {
-        if (beforeIndex !== -1) {
-          nextTrack[beforeIndex].margin_left -= voiceTimeout / 100
-          nextTrack.splice(beforeIndex, 0, voice)
+      const addNewVoice = (nextTrack, insertIndex = -1) => {
+        if (insertIndex !== -1) {
+          const prevVoice = nextTrack.value[insertIndex - 1]
+          if (
+            prevVoice &&
+            (prevVoice.begin_at + (prevVoice.ended_at || prevVoice.duration) - prevVoice.start_at) > (voiceStartAt - voice.margin_left * 100)
+          ) {
+            voice.margin_left -= (prevVoice.begin_at + (prevVoice.ended_at || prevVoice.duration) - prevVoice.start_at) / 100
+          }
+          nextTrack.value[insertIndex].margin_left -= (voiceTimeout / 100 + voice.margin_left)
+          nextTrack.value.splice(insertIndex, 0, voice)
         } else {
-          nextTrack.push(voice)
+          voice.margin_left = voice.begin_at / 100
+          nextTrack.value.push(voice)
         }
+        store.editor.focusTrackId = nextTrack.id
       }
 
-      if (!targetTrack.length) {
+      let noMatched = true
+      if (!targetTrack.value.length) {
+        noMatched = false
         deleteOldVoice()
         addNewVoice(targetTrack)
       } else {
-        for (let i = 0; i < targetTrack.length; i++) {
-          if (targetTrack[i].begin_at >= voiceEndedAt) {
-            const prevVoice = targetTrack[i - 1]
+        for (let i = 0; i < targetTrack.value.length; i++) {
+          if (targetTrack.value[i].begin_at >= voiceEndedAt) {
+            const prevVoice = targetTrack.value[i - 1]
             if (
               !prevVoice ||
               (prevVoice.begin_at + (prevVoice.ended_at || prevVoice.duration) - prevVoice.start_at) <= voiceStartAt
@@ -166,6 +176,10 @@ export default {
             }
           }
         }
+      }
+
+      if (noMatched) {
+        // TODO：Auto create track
       }
     },
     UPDATE_VOICE_TEXT(store, { value }) {
@@ -347,7 +361,103 @@ export default {
           id: 2,
           type: 'right',
           part: 1,
-          value: []
+          value: [
+            {
+              id: 6,
+              margin_left: 0,
+              begin_at: 0,
+              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
+              text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
+              duration: 10000,
+              volume: 100,
+              start_at: 0,
+              ended_at: 0,
+              color_bubble: '#ff8eb3',
+              color_text: '#fff',
+              sender: {
+                id: 1
+              },
+              author: {
+                id: 1
+              }
+            },
+            {
+              id: 7,
+              margin_left: 0,
+              begin_at: 10000,
+              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
+              text: '测试删除',
+              duration: 10000,
+              volume: 100,
+              start_at: 0,
+              ended_at: 0,
+              color_bubble: '#ff8eb3',
+              color_text: '#fff',
+              sender: {
+                id: 1
+              },
+              author: {
+                id: 1
+              }
+            },
+            {
+              id: 8,
+              margin_left: 0,
+              begin_at: 20000,
+              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
+              text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
+              duration: 10000,
+              volume: 100,
+              start_at: 0,
+              ended_at: 0,
+              color_bubble: '#ff8eb3',
+              color_text: '#fff',
+              sender: {
+                id: 1
+              },
+              author: {
+                id: 1
+              }
+            },
+            {
+              id: 9,
+              margin_left: 0,
+              begin_at: 30000,
+              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
+              text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
+              duration: 10000,
+              volume: 100,
+              start_at: 0,
+              ended_at: 0,
+              color_bubble: '#ff8eb3',
+              color_text: '#fff',
+              sender: {
+                id: 1
+              },
+              author: {
+                id: 1
+              }
+            },
+            {
+              id: 10,
+              margin_left: 0,
+              begin_at: 40000,
+              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
+              text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
+              duration: 10000,
+              volume: 100,
+              start_at: 0,
+              ended_at: 0,
+              color_bubble: '#ff8eb3',
+              color_text: '#fff',
+              sender: {
+                id: 1
+              },
+              author: {
+                id: 1
+              }
+            }
+          ]
         },
         {
           id: 3,

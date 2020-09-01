@@ -90,29 +90,30 @@ export default {
     },
     DELETE_VOICE_ITEM(store) {
       const index = getIndex(store.content, store.editor.focusTrackId)
-      const track = store.content[index]
-      const subIndex = getIndex(track.value, store.editor.focusVoiceId)
-      track.value.splice(subIndex, 1)
+      const track = store.content[index].value
+      const subIndex = getIndex(track, store.editor.focusVoiceId)
+      track.splice(subIndex, 1)
       if (subIndex) {
-        store.editor.focusVoiceId = track.value[subIndex - 1].id
+        store.editor.focusVoiceId = track[subIndex - 1].id
       }
       store.editor.voiceEditType = ''
     },
     UPDATE_VOICE_VOLUME(store, { volume }) {
       const index = getIndex(store.content, store.editor.focusTrackId)
-      const track = store.content[index]
-      const subIndex = getIndex(track.value, store.editor.focusVoiceId)
-      track.value[subIndex].volume = volume
+      const track = store.content[index].value
+      const subIndex = getIndex(track, store.editor.focusVoiceId)
+      track[subIndex].volume = volume
     },
     CLIP_VOICE_DURATION(store, data) {
       const index = getIndex(store.content, store.editor.focusTrackId)
-      const track = store.content[index]
-      const subIndex = getIndex(track.value, store.editor.focusVoiceId)
+      const track = store.content[index].value
+      const subIndex = getIndex(track, store.editor.focusVoiceId)
       Object.keys(data).forEach(key => {
-        track.value[subIndex][key] = data[key]
+        track[subIndex][key] = data[key]
       })
     },
     CHANGE_VOICE_TRACK(store, { isUp }) {
+      // TODO
       const index = getIndex(store.content, store.editor.focusTrackId)
       if (isUp && !index) {
         return
@@ -120,8 +121,8 @@ export default {
       if (!isUp && index === store.content.length - 1) {
         return
       }
-      const track = store.content[index]
-      const subIndex = getIndex(track.value, store.editor.focusVoiceId)
+      const track = store.content[index].value
+      const subIndex = getIndex(track, store.editor.focusVoiceId)
       const voice = track[subIndex]
       const targetIndex = isUp ? index - 1 : index + 1
       const targetTrack = store.content[targetIndex].value
@@ -131,16 +132,72 @@ export default {
     },
     UPDATE_VOICE_TEXT(store, { value }) {
       const index = getIndex(store.content, store.editor.focusTrackId)
-      const track = store.content[index]
-      const subIndex = getIndex(track.value, store.editor.focusVoiceId)
-      track.value[subIndex].text = value
+      const track = store.content[index].value
+      const subIndex = getIndex(track, store.editor.focusVoiceId)
+      track[subIndex].text = value
     },
     UPDATE_VOICE_COLOR(store, { bg, text }) {
       const index = getIndex(store.content, store.editor.focusTrackId)
-      const track = store.content[index]
-      const subIndex = getIndex(track.value, store.editor.focusVoiceId)
-      track.value[subIndex].color_bubble = bg
-      track.value[subIndex].color_text = text
+      const track = store.content[index].value
+      const subIndex = getIndex(track, store.editor.focusVoiceId)
+      track[subIndex].color_bubble = bg
+      track[subIndex].color_text = text
+    },
+    UPDATE_VOICE_MARGIN(store, { value }) {
+      const index = getIndex(store.content, store.editor.focusTrackId)
+      const track = store.content[index].value
+      const subIndex = getIndex(track, store.editor.focusVoiceId)
+      let delta
+      const curVoice = track[subIndex]
+      const nextVoice = track[subIndex + 1]
+      if (curVoice.margin_left + value < 0) {
+        /**
+         * 当 value 小于 0，即向左偏移的时候
+         * 设置 margin-left 最小为 0
+         */
+        delta = -curVoice.margin_left
+      } else if (nextVoice && nextVoice.margin_left && nextVoice.margin_left < value) {
+        /**
+         * 当 value 大于 0，且下一个元素有 margin-left 的时候
+         * 当前元素的 margin-left 加，下一个元素的 margin-left 减
+         * 保证在这个 case 下，后面的元素不会动
+         * 所以 delta 最大为下一个元素的 margin_left
+         */
+        delta = nextVoice.margin_left
+      } else {
+        delta = value
+      }
+
+      if (!delta) {
+        return
+      }
+
+      curVoice.margin_left += delta
+      curVoice.begin_at += delta * 100
+
+      if (!nextVoice) {
+        return
+      }
+      /**
+       * 向左偏移了，并且还有后面一个元素
+       * 那么后面一个元素就补上当前元素的偏移量
+       * 保证向左的时候，只有当前元素会移动
+       */
+      if (delta < 0) {
+        nextVoice.margin_left -= delta
+      } else if (nextVoice.margin_left) {
+        /**
+         * 下一个元素的 margin-left 减少
+         */
+        nextVoice.margin_left -= delta
+      } else {
+        /**
+         * 向右偏移了，那么右边的所以元素都要在时间轴上偏移
+         */
+        for (let i = subIndex + 1; i < track.length; i++) {
+          track[i].begin_at += delta * 100
+        }
+      }
     }
   },
   actions: {
@@ -153,13 +210,14 @@ export default {
           value: [
             {
               id: 1,
-              track_at: 0,
+              margin_left: 0,
+              begin_at: 0,
               src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
               text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
               duration: 10000,
               volume: 100,
-              start_at: 1000,
-              ended_at: 9000,
+              start_at: 0,
+              ended_at: 0,
               color_bubble: '#ff8eb3',
               color_text: '#fff',
               sender: {
@@ -171,13 +229,14 @@ export default {
             },
             {
               id: 2,
-              track_at: 0,
+              margin_left: 0,
+              begin_at: 10000,
               src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
               text: '测试删除',
               duration: 10000,
               volume: 100,
-              start_at: 1000,
-              ended_at: 9000,
+              start_at: 0,
+              ended_at: 0,
               color_bubble: '#ff8eb3',
               color_text: '#fff',
               sender: {
@@ -189,13 +248,14 @@ export default {
             },
             {
               id: 3,
-              track_at: 0,
+              margin_left: 0,
+              begin_at: 20000,
               src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
               text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
               duration: 10000,
               volume: 100,
-              start_at: 1000,
-              ended_at: 9000,
+              start_at: 0,
+              ended_at: 0,
               color_bubble: '#ff8eb3',
               color_text: '#fff',
               sender: {
@@ -207,13 +267,14 @@ export default {
             },
             {
               id: 4,
-              track_at: 0,
+              margin_left: 0,
+              begin_at: 30000,
               src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
               text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
               duration: 10000,
               volume: 100,
-              start_at: 1000,
-              ended_at: 9000,
+              start_at: 0,
+              ended_at: 0,
               color_bubble: '#ff8eb3',
               color_text: '#fff',
               sender: {
@@ -225,13 +286,14 @@ export default {
             },
             {
               id: 5,
-              track_at: 0,
+              margin_left: 0,
+              begin_at: 40000,
               src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
               text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
               duration: 10000,
               volume: 100,
-              start_at: 1000,
-              ended_at: 9000,
+              start_at: 0,
+              ended_at: 0,
               color_bubble: '#ff8eb3',
               color_text: '#fff',
               sender: {
@@ -240,61 +302,7 @@ export default {
               author: {
                 id: 1
               }
-            },
-            {
-              id: 6,
-              track_at: 0,
-              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
-              text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
-              duration: 10000,
-              volume: 100,
-              start_at: 1000,
-              ended_at: 9000,
-              color_bubble: '#ff8eb3',
-              color_text: '#fff',
-              sender: {
-                id: 1
-              },
-              author: {
-                id: 1
-              }
-            },
-            {
-              id: 7,
-              track_at: 0,
-              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
-              text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
-              duration: 10000,
-              volume: 100,
-              start_at: 1000,
-              ended_at: 9000,
-              color_bubble: '#ff8eb3',
-              color_text: '#fff',
-              sender: {
-                id: 1
-              },
-              author: {
-                id: 1
-              }
-            },
-            {
-              id: 8,
-              track_at: 0,
-              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
-              text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
-              duration: 10000,
-              volume: 100,
-              start_at: 1000,
-              ended_at: 9000,
-              color_bubble: '#ff8eb3',
-              color_text: '#fff',
-              sender: {
-                id: 1
-              },
-              author: {
-                id: 1
-              }
-            },
+            }
           ]
         },
         {
@@ -328,10 +336,10 @@ export default {
       }
 
       const index = getIndex(state.content, state.editor.focusTrackId)
-      const track = state.content[index]
-      const subIndex = getIndex(track.value, state.editor.focusVoiceId)
+      const track = state.content[index].value
+      const subIndex = getIndex(track, state.editor.focusVoiceId)
 
-      return track.value[subIndex]
+      return track[subIndex]
     }
   }
 }

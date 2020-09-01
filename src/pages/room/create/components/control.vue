@@ -72,16 +72,16 @@ export default {
           type: 'track'
         },
         {
-          text: '删除',
-          type: 'delete'
-        },
-        {
           text: '颜色',
           type: 'color'
         },
         {
           text: '文案',
           type: 'text'
+        },
+        {
+          text: '删除',
+          type: 'delete'
         }
       ]
     })

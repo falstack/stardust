@@ -30,6 +30,7 @@ export default {
       return {
         color: props.item.color_text,
         width: `${width / 50 | 0}px`,
+        marginLeft: `${props.item.margin_left * 2}px`,
         backgroundColor: props.item.color_bubble
       }
     })
@@ -63,7 +64,7 @@ export default {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  transition: width 100ms;
+  transition: width, margin-left 100ms;
 
   &.is-active {
     border: 2px solid #fff;

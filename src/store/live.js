@@ -30,12 +30,30 @@ export default {
       store.editor.showVoiceDrawer = !store.editor.showVoiceDrawer
     },
     UPDATE_FOCUS_VOICE(store, { id }) {
+      const index = getIndex(store.content, store.editor.focusTrackId)
+      const track = store.content[index].value
+      const sameTrack = track.map(_ => _.id).filter(_ => _ === id).length
+      if (!sameTrack) {
+        let result
+        for (let i = 0; i < store.content.length; i++) {
+          if (result) {
+            break
+          }
+          for (let j = 0; j < store.content[i].value.length; j++) {
+            if (store.content[i].value[j].id === id) {
+              result = store.content[i].id
+              break
+            }
+          }
+        }
+        store.editor.focusTrackId = result
+      }
       store.editor.focusVoiceId = id
     },
     UPDATE_FOCUS_TRACK(store, { id }) {
       const index = getIndex(store.content, id)
-      const voices = store.content[index].value
-      store.editor.focusVoiceId = voices.length ? voices[0].id : 0
+      const track = store.content[index].value
+      store.editor.focusVoiceId = track.length ? track[0].id : 0
       store.editor.focusTrackId = id
     },
     ADD_TRACK(store) {

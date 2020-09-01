@@ -1,11 +1,11 @@
 <template>
   <view class="control">
-    <view v-if="isTrackMode">
+    <view v-if="isTrackMode && canRender">
       <view @tap="handleAddTrack">增加轨道</view>
       <view @tap="handleAddVoice">增加声源</view>
       <view @tap="handleDelTrack">删除轨道</view>
     </view>
-    <view v-if="isVoiceMode">
+    <view v-if="isVoiceMode && canRender">
       <component
         :is="`voice-${selectedVoiceType}`"
         v-if="selectedVoiceType"
@@ -29,7 +29,7 @@
 
 <script>
 import { useStore } from 'vuex'
-import { computed } from 'vue'
+import { computed, watch, ref, nextTick } from 'vue'
 import VoiceClip from './voice-clip'
 import VoiceColor from './voice-color'
 import VoiceDelete from './voice-delete'
@@ -50,6 +50,7 @@ export default {
     VoiceVolume
   },
   setup() {
+    const canRender = ref(true)
     const store = useStore()
 
     const voiceEditBar = computed(() => {
@@ -93,6 +94,15 @@ export default {
       return !!store.state.live.editor.focusVoiceId
     })
 
+    watch([
+      () => store.state.live.editor.focusVoiceId,
+      () => store.state.live.editor.focusTrackId
+    ], async () => {
+      canRender.value = false
+      await nextTick()
+      canRender.value = true
+    })
+
     const selectedVoiceType = computed(() => {
       return store.state.live.editor.voiceEditType
     })
@@ -121,7 +131,8 @@ export default {
       handleAddVoice,
       handleEditType,
       voiceEditBar,
-      selectedVoiceType
+      selectedVoiceType,
+      canRender
     }
   }
 }

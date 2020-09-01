@@ -4,12 +4,14 @@
       <MovableView
         :x="startX"
         direction="horizontal"
+        animation=""
         class="radio"
         @change="handleChange($event, true)"
       />
       <MovableView
         :x="endedX"
         direction="horizontal"
+        animation=""
         class="radio"
         @change="handleChange($event, false)"
       />

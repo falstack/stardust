@@ -25,7 +25,7 @@ export default {
   setup(props) {
     const store = useStore()
     const voiceStyle = computed(() => {
-      const width = props.item.duration - (props.item.start_at || 0) - (props.item.ended_at ? props.item.duration - props.item.ended_at : 0)
+      const width = (props.item.ended_at || props.item.duration) - props.item.start_at
 
       return {
         color: props.item.color_text,
@@ -64,7 +64,7 @@ export default {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  transition: width, margin-left 100ms;
+  transition: width 100ms;
 
   &.is-active {
     border: 2px solid #fff;

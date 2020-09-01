@@ -113,11 +113,13 @@ export default {
       })
     },
     CHANGE_VOICE_TRACK(store, { isUp }) {
-      // TODO
       const index = getIndex(store.content, store.editor.focusTrackId)
       if (isUp && !index) {
         return
       }
+      /**
+       * TODO：最后一条是 BGM 不能变轨到那边
+       */
       if (!isUp && index === store.content.length - 1) {
         return
       }
@@ -126,8 +128,44 @@ export default {
       const voice = track[subIndex]
       const targetIndex = isUp ? index - 1 : index + 1
       const targetTrack = store.content[targetIndex].value
-      for (let i = 0; i < targetTrack.length; i++) {
+      const voiceStartAt = voice.begin_at
+      const voiceTimeout = (voice.ended_at || voice.duration) - voice.start_at
+      const voiceEndedAt = voice.begin_at + voiceTimeout
+      let noMatched = true
 
+      const deleteOldVoice = () => {
+        if (track[subIndex + 1]) {
+          track[subIndex + 1].margin_left += voiceTimeout / 100
+        }
+        track.splice(subIndex, 1)
+      }
+
+      const addNewVoice = (nextTrack, beforeIndex = -1) => {
+        if (beforeIndex !== -1) {
+          nextTrack[beforeIndex].margin_left -= voiceTimeout / 100
+          nextTrack.splice(beforeIndex, 0, voice)
+        } else {
+          nextTrack.push(voice)
+        }
+      }
+
+      if (!targetTrack.length) {
+        deleteOldVoice()
+        addNewVoice(targetTrack)
+      } else {
+        for (let i = 0; i < targetTrack.length; i++) {
+          if (targetTrack[i].begin_at >= voiceEndedAt) {
+            const prevVoice = targetTrack[i - 1]
+            if (
+              !prevVoice ||
+              (prevVoice.begin_at + (prevVoice.ended_at || prevVoice.duration) - prevVoice.start_at) <= voiceStartAt
+            ) {
+              noMatched = false
+              deleteOldVoice()
+              addNewVoice(targetTrack, i)
+            }
+          }
+        }
       }
     },
     UPDATE_VOICE_TEXT(store, { value }) {

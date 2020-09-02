@@ -1,7 +1,10 @@
 <template>
-  <view class="voice-text">
+  <view
+    v-if="voice"
+    class="voice-text"
+  >
     <textarea
-      :value="value"
+      :value="voice.text"
       showConfirmBar=""
       maxlength="200"
       @input="handleChange"
@@ -21,7 +24,7 @@ export default {
     }
 
     return {
-      value: store.getters['live/currentVoice'].text,
+      voice: store.getters['live/currentVoice'],
       handleChange
     }
   }

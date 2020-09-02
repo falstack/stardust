@@ -3,7 +3,12 @@
     class="live-track"
     :class="{ 'is-active': isFocused }"
   >
-    <view class="track-name" @tap="switchTrack">{{ name }}</view>
+    <view
+      class="track-name"
+      @tap="switchTrack"
+    >
+      {{ name }}
+    </view>
     <view class="voice-wrap">
       <Voice
         v-for="voice in item.value"

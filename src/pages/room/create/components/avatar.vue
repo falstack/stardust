@@ -1,21 +1,20 @@
 <template>
   <view class="avatar">
-    <image class="avatar" :src="$utils.resize('https://m1.calibur.tv/cc-19f/1562950958417-r9m.jpeg', { width: 80 })" />
+    <image
+      class="avatar"
+      :src="$utils.resize(item.avatar, { width: 80 })"
+    />
   </view>
 </template>
 
 <script>
 export default {
-  components: {},
-  props: {},
-  data() {
-    return {}
+  props: {
+    item: {
+      type: Object,
+      required: true
+    }
   },
-  computed: {},
-  watch: {},
-  created() {},
-  mounted() {},
-  methods: {}
 }
 </script>
 

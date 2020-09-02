@@ -1,7 +1,11 @@
 <template>
   <view class="voice-track">
-    <button @tap="handleClick(true)">向上</button>
-    <button @tap="handleClick(false)">向下</button>
+    <button @tap="handleClick(true)">
+      向上
+    </button>
+    <button @tap="handleClick(false)">
+      向下
+    </button>
   </view>
 </template>
 

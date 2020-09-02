@@ -1,6 +1,9 @@
 <template>
   <view class="avatar">
-    <image class="face" :src="$utils.resize(user.avatar, { width: 80 })" />
+    <image
+      class="face"
+      :src="$utils.resize(user.avatar, { width: 80 })"
+    />
   </view>
 </template>
 

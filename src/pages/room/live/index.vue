@@ -5,8 +5,12 @@
     </view>
     <view class="flex-shrink-0">
       <view class="buttons">
-        <button @tap="startRecord">开始录音</button>
-        <button @tap="stopRecord">结束录音</button>
+        <button @tap="startRecord">
+          开始录音
+        </button>
+        <button @tap="stopRecord">
+          结束录音
+        </button>
       </view>
       <view class="iphone-bottom-shim" />
     </view>

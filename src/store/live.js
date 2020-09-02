@@ -19,7 +19,8 @@ export default {
       focusTrackId: 0,
       focusVoiceId: 0,
       showVoiceDrawer: false,
-      voiceEditType: ''
+      voiceEditType: '',
+      readers: []
     }
   }),
   mutations: {
@@ -71,6 +72,7 @@ export default {
       }
       store.content.splice(index + 1, 0, newVal)
       store.editor.focusTrackId = newId
+      store.editor.focusVoiceId = 0
     },
     DEL_TRACK(store) {
       const index = getIndex(store.content, store.editor.focusTrackId)
@@ -250,6 +252,18 @@ export default {
           track[i].begin_at += delta * 100
         }
       }
+    },
+    ADD_VOICE_ITEM(store, data) {
+      const index = getIndex(store.content, store.editor.focusTrackId)
+      const track = store.content[index].value
+      const subIndex = store.editor.focusVoiceId ? getIndex(track, store.editor.focusVoiceId) : -1
+      track.splice(subIndex + 1, 0, data)
+      const readerIds = store.editor.readers.map(_ => _.id)
+      const curRenderId = data.reader.id
+      if (readerIds.indexOf(curRenderId) === -1) {
+        store.editor.readers.push(data.reader)
+      }
+      store.editor.focusVoiceId = curRenderId
     }
   },
   actions: {
@@ -259,205 +273,13 @@ export default {
           id: 1,
           type: 'left',
           part: 1,
-          value: [
-            {
-              id: 1,
-              margin_left: 0,
-              begin_at: 0,
-              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
-              text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
-              duration: 10000,
-              volume: 100,
-              start_at: 0,
-              ended_at: 0,
-              color_bubble: '#ff8eb3',
-              color_text: '#fff',
-              sender: {
-                id: 1
-              },
-              author: {
-                id: 1
-              }
-            },
-            {
-              id: 2,
-              margin_left: 0,
-              begin_at: 10000,
-              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
-              text: '测试删除',
-              duration: 10000,
-              volume: 100,
-              start_at: 0,
-              ended_at: 0,
-              color_bubble: '#ff8eb3',
-              color_text: '#fff',
-              sender: {
-                id: 1
-              },
-              author: {
-                id: 1
-              }
-            },
-            {
-              id: 3,
-              margin_left: 0,
-              begin_at: 20000,
-              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
-              text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
-              duration: 10000,
-              volume: 100,
-              start_at: 0,
-              ended_at: 0,
-              color_bubble: '#ff8eb3',
-              color_text: '#fff',
-              sender: {
-                id: 1
-              },
-              author: {
-                id: 1
-              }
-            },
-            {
-              id: 4,
-              margin_left: 0,
-              begin_at: 30000,
-              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
-              text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
-              duration: 10000,
-              volume: 100,
-              start_at: 0,
-              ended_at: 0,
-              color_bubble: '#ff8eb3',
-              color_text: '#fff',
-              sender: {
-                id: 1
-              },
-              author: {
-                id: 1
-              }
-            },
-            {
-              id: 5,
-              margin_left: 0,
-              begin_at: 40000,
-              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
-              text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
-              duration: 10000,
-              volume: 100,
-              start_at: 0,
-              ended_at: 0,
-              color_bubble: '#ff8eb3',
-              color_text: '#fff',
-              sender: {
-                id: 1
-              },
-              author: {
-                id: 1
-              }
-            }
-          ]
+          value: []
         },
         {
           id: 2,
           type: 'right',
           part: 1,
-          value: [
-            {
-              id: 6,
-              margin_left: 0,
-              begin_at: 0,
-              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
-              text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
-              duration: 10000,
-              volume: 100,
-              start_at: 0,
-              ended_at: 0,
-              color_bubble: '#ff8eb3',
-              color_text: '#fff',
-              sender: {
-                id: 1
-              },
-              author: {
-                id: 1
-              }
-            },
-            {
-              id: 7,
-              margin_left: 0,
-              begin_at: 10000,
-              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
-              text: '测试删除',
-              duration: 10000,
-              volume: 100,
-              start_at: 0,
-              ended_at: 0,
-              color_bubble: '#ff8eb3',
-              color_text: '#fff',
-              sender: {
-                id: 1
-              },
-              author: {
-                id: 1
-              }
-            },
-            {
-              id: 8,
-              margin_left: 0,
-              begin_at: 20000,
-              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
-              text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
-              duration: 10000,
-              volume: 100,
-              start_at: 0,
-              ended_at: 0,
-              color_bubble: '#ff8eb3',
-              color_text: '#fff',
-              sender: {
-                id: 1
-              },
-              author: {
-                id: 1
-              }
-            },
-            {
-              id: 9,
-              margin_left: 0,
-              begin_at: 30000,
-              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
-              text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
-              duration: 10000,
-              volume: 100,
-              start_at: 0,
-              ended_at: 0,
-              color_bubble: '#ff8eb3',
-              color_text: '#fff',
-              sender: {
-                id: 1
-              },
-              author: {
-                id: 1
-              }
-            },
-            {
-              id: 10,
-              margin_left: 0,
-              begin_at: 40000,
-              src: 'https://file.calibur.tv/owner/voice/luffy.mp3',
-              text: '我叫蒙奇·D·路飞，是要成为海贼王的男人！',
-              duration: 10000,
-              volume: 100,
-              start_at: 0,
-              ended_at: 0,
-              color_bubble: '#ff8eb3',
-              color_text: '#fff',
-              sender: {
-                id: 1
-              },
-              author: {
-                id: 1
-              }
-            }
-          ]
+          value: []
         },
         {
           id: 3,

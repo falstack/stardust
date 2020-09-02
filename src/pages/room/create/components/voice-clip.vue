@@ -1,5 +1,8 @@
 <template>
-  <view class="voice-clip">
+  <view
+    v-if="voice"
+    class="voice-clip"
+  >
     <MovableArea class="subway">
       <MovableView
         :x="startX"
@@ -38,13 +41,17 @@ export default {
       return store.getters['live/currentVoice']
     })
 
-    const startX = voice.value.start_at
-      ? voice.value.start_at / voice.value.duration * 250
-      : 0
+    const startX = computed(() => {
+      return voice.value.start_at
+        ? voice.value.start_at / voice.value.duration * 250
+        : 0
+    })
 
-    const endedX = voice.value.ended_at
-      ? voice.value.ended_at / voice.value.duration * 250
-      : 250
+    const endedX = computed(() => {
+      return voice.value.ended_at
+        ? voice.value.ended_at / voice.value.duration * 250
+        : 250
+    })
 
     let isRight = true
     const handleChange = throttle((evt, isStart) => {
@@ -75,6 +82,7 @@ export default {
     }, 100)
 
     return {
+      voice,
       handleChange,
       startX,
       endedX

@@ -1,9 +1,17 @@
 <template>
   <view class="voice-move">
-    <button @tap="handleClick(-10)">&lt;&lt;</button>
-    <button @tap="handleClick(-1)">&lt;</button>
-    <button @tap="handleClick(1)">&gt;</button>
-    <button @tap="handleClick(10)">&gt;&gt;</button>
+    <button @tap="handleClick(-10)">
+      &lt;&lt;
+    </button>
+    <button @tap="handleClick(-1)">
+      &lt;
+    </button>
+    <button @tap="handleClick(1)">
+      &gt;
+    </button>
+    <button @tap="handleClick(10)">
+      &gt;&gt;
+    </button>
   </view>
 </template>
 

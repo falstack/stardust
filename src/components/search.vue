@@ -13,7 +13,13 @@
       >
       <text class="iconfont ic-cancel" />
     </view>
-    <button class="close-btn" hover-class="none" @tap="handleClose">取消</button>
+    <button
+      class="close-btn"
+      hover-class="none"
+      @tap="handleClose"
+    >
+      取消
+    </button>
   </view>
 </template>
 

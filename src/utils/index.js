@@ -81,7 +81,7 @@ export const throttle = (fn, gapTime) => {
   return function () {
     let _nowTime = new Date()
     if (_nowTime - _lastTime > gapTime || !_lastTime) {
-      _lastTime = _nowTime;
+      _lastTime = _nowTime
       fn.apply(this, arguments)
     }
   }

@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "url": "https://file.calibur.tv/owner/voice/pikapika.mp3",
+    "text": "皮卡皮~皮卡丘！",
+    "duration": 2000,
+    "reader": {
+      "id": 1,
+      "avatar": "https://m1.calibur.tv/fetch/1569714599/1Rv1oHSc.cn/g",
+      "nickname": "皮卡丘"
+    }
+  },
+  {
+    "id": 2,
+    "url": "https://file.calibur.tv/owner/voice/saber.mp3",
+    "text": "试问，你就是我的master吗？servant saber遵从召唤而来，master请指示。从现在起我的剑将与你的灵魂共存，你的命运将与我同在，从现在开始缔结契约",
+    "duration": 22000,
+    "reader": {
+      "id": 2,
+      "avatar": "https://m1.calibur.tv/cc-18rp8q/1562941106155-42o.jpeg",
+      "nickname": "saber"
+    }
+  },
+  {
+    "id": 3,
+    "url": "https://file.calibur.tv/owner/voice/dio.mp3",
+    "text": "我不做人啦~JOJO！",
+    "duration": 4000,
+    "reader": {
+      "id": 3,
+      "avatar": "https://m1.calibur.tv/cc-mdxds/1567433837066-5ru.jpeg",
+      "nickname": "DIO"
+    }
+  },
+  {
+    "id": 4,
+    "url": "https://file.calibur.tv/owner/voice/reoreoreo.mp3",
+    "text": "reo~reo~reo~reo~reo~reo~reo~reo~reo~",
+    "duration": 4000,
+    "reader": {
+      "id": 4,
+      "avatar": "https://m1.calibur.tv/cc-d5b17/1586960523786-7qe.png",
+      "nickname": "花京院"
+    }
+  },
+  {
+    "id": 5,
+    "url": "https://file.calibur.tv/owner/voice/tel.mp3",
+    "text": "咘噜咘噜咘噜~咘噜咘噜咘噜~",
+    "duration": 6000,
+    "reader": {
+      "id": 5,
+      "avatar": "https://m1.calibur.tv/cc-37av8/1589374897469-olm.png",
+      "nickname": "电话虫"
+    }
+  },
+  {
+    "id": 6,
+    "url": "https://file.calibur.tv/owner/voice/luffy.mp3",
+    "text": "么西么西，我叫蒙奇·D·路飞，是要成为海贼王的男人！",
+    "duration": 4000,
+    "reader": {
+      "id": 6,
+      "avatar": "https://m1.calibur.tv/cc-26lz7/1562840829094-rha.jpeg",
+      "nickname": "路飞"
+    }
+  }
+]

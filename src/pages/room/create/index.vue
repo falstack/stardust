@@ -1,13 +1,20 @@
 <template>
   <view class="room-create">
-    <ScrollView class="display-header" scroll-x="true">
+    <view class="display-header">
       <view class="shim" />
       <view class="avatar-list">
-        <Avatar />
+        <Avatar
+          v-for="item in avatars"
+          :key="item.id"
+          :item="item"
+        />
       </view>
       <view class="shim" />
-    </ScrollView>
-    <view class="track-wrap" scroll-x="true">
+    </view>
+    <view
+      class="track-wrap"
+      scroll-x="true"
+    >
       <Track
         v-for="track in content"
         :key="track.id"
@@ -22,7 +29,6 @@
 <script>
 import { reactive, computed } from 'vue'
 import { useStore } from 'vuex'
-import { ScrollView } from '@tarojs/components'
 import SearchDrawer from './components/searchDrawer'
 import Avatar from './components/avatar'
 import Track from './components/track'
@@ -33,7 +39,6 @@ export default {
     Track,
     Avatar,
     Control,
-    ScrollView,
     SearchDrawer
   },
   setup() {
@@ -44,11 +49,16 @@ export default {
       return store.state.live.content
     })
 
+    const avatars = computed(() => {
+      return store.state.live.editor.readers
+    })
+
     store.dispatch('live/initEditor')
 
     return {
       state,
-      content
+      content,
+      avatars
     }
   }
 }
@@ -69,6 +79,7 @@ export default {
     height: 200px;
     width: 100%;
     white-space: nowrap;
+    overflow-x: auto;
 
     .shim {
       display: inline-block;

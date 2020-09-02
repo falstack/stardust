@@ -1,11 +1,18 @@
 <template>
-  <view class="control">
-    <view v-if="isTrackMode && canRender">
-      <view @tap="handleAddTrack">增加轨道</view>
-      <view @tap="handleAddVoice">增加声源</view>
-      <view @tap="handleDelTrack">删除轨道</view>
+  <view
+    v-if="canRender"
+    class="control"
+  >
+    <view @tap="handleAddTrack">
+      增加轨道
     </view>
-    <view v-if="isVoiceMode && canRender">
+    <view @tap="handleAddVoice">
+      增加声源
+    </view>
+    <view @tap="handleDelTrack">
+      删除轨道
+    </view>
+    <view v-if="hasSelectedVoice">
       <component
         :is="`voice-${selectedVoiceType}`"
         v-if="selectedVoiceType"
@@ -20,14 +27,20 @@
             :class="{ 'is-active': item.type === selectedVoiceType }"
             class="selection-item"
             @tap="handleEditType(item.type)"
-          >{{ item.text }}</view>
+          >
+            {{ item.text }}
+          </view>
         </view>
       </view>
+      <button @tap="handleStartPlay">
+        试听
+      </button>
     </view>
   </view>
 </template>
 
 <script>
+import Taro from '@tarojs/taro'
 import { useStore } from 'vuex'
 import { computed, watch, ref, nextTick } from 'vue'
 import VoiceClip from './voice-clip'
@@ -86,11 +99,7 @@ export default {
       ]
     })
 
-    const isTrackMode = computed(() => {
-      return !!store.state.live.editor.focusTrackId
-    })
-
-    const isVoiceMode = computed(() => {
+    const hasSelectedVoice = computed(() => {
       return !!store.state.live.editor.focusVoiceId
     })
 
@@ -106,6 +115,31 @@ export default {
     const selectedVoiceType = computed(() => {
       return store.state.live.editor.voiceEditType
     })
+
+    const voice = computed(() => {
+      return store.getters['live/currentVoice']
+    })
+
+    const handleStartPlay = () => {
+      if (!voice.value) {
+        return
+      }
+      const audio = Taro.createInnerAudioContext()
+      audio.src = voice.value.url
+      audio.volume = voice.value.volume / 100
+
+      if (voice.value.start_at) {
+        audio.startTime = voice.value.start_at / 1000 | 0
+      }
+
+      audio.play()
+
+      if (voice.value.ended_at) {
+        setTimeout(() => {
+          audio.pause()
+        }, voice.value.ended_at - voice.value.start_at)
+      }
+    }
 
     const handleAddTrack = () => {
       store.commit('live/ADD_TRACK')
@@ -124,15 +158,15 @@ export default {
     }
 
     return {
-      isTrackMode,
-      isVoiceMode,
+      hasSelectedVoice,
       handleDelTrack,
       handleAddTrack,
       handleAddVoice,
       handleEditType,
       voiceEditBar,
       selectedVoiceType,
-      canRender
+      canRender,
+      handleStartPlay
     }
   }
 }

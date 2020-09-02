@@ -1,5 +1,8 @@
 <template>
-  <view :class="`msg-box-${message.float || 'left'}`" class="msg-box">
+  <view
+    :class="`msg-box-${message.float || 'left'}`"
+    class="msg-box"
+  >
     <view class="msg-avatar">
       <UserAvatar :user="message.user" />
     </view>
@@ -7,11 +10,18 @@
       <view class="msg-header">
         <UserNickname :user="message.user" />
       </view>
-      <view :style="wrapperStyle" class="msg-bubble">
+      <view
+        :style="wrapperStyle"
+        class="msg-bubble"
+      >
         <LoadingMsg v-if="message.loading" />
         <view v-else>
           <ContentMsg :content="message.content" />
-          <text v-if="message.status" class="msg-status" :class="`msg-status-${message.status}`" />
+          <text
+            v-if="message.status"
+            class="msg-status"
+            :class="`msg-status-${message.status}`"
+          />
         </view>
       </view>
     </view>

@@ -27,7 +27,12 @@ export default {
     if (props.item.end_at) {
       setTimeout(() => {
         audio.pause()
+        audio.destroy()
       }, props.item.end_at - (props.item.start_at || 0))
+    } else {
+      audio.onEnded(() => {
+        audio.destroy()
+      })
     }
   }
 }

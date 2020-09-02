@@ -137,7 +137,12 @@ export default {
       if (voice.value.ended_at) {
         setTimeout(() => {
           audio.pause()
+          audio.destroy()
         }, voice.value.ended_at - voice.value.start_at)
+      } else {
+        audio.onEnded(() => {
+          audio.destroy()
+        })
       }
     }
 

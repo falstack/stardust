@@ -1,29 +1,21 @@
 <template>
   <view class="index">
-    <TestInput v-model="msg" />
-    <view>msg：{{ msg }}</view>
-    <button @tap="add">
-      add+
-    </button>
+    <view>测试页面</view>
+    <Navigator url="/pages/room/live/index">
+      语音房
+    </Navigator>
+    <Navigator url="/pages/room/create/index">
+      剪辑室
+    </Navigator>
   </view>
 </template>
 
 <script>
-import { ref } from 'vue'
-import TestInput from './testInput'
+import { Navigator } from '@tarojs/components'
 
 export default {
   components: {
-    TestInput
-  },
-  setup() {
-    const msg = ref('hello vue3!')
-    const add = () => msg.value += 'a'
-
-    return {
-      msg,
-      add
-    }
+    Navigator
   }
 }
 </script>

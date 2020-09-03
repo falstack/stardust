@@ -4,11 +4,11 @@
     class="msg-box"
   >
     <view class="msg-avatar">
-      <UserAvatar :user="message.user" />
+      <UserAvatar :user="message.reader" />
     </view>
     <view class="msg-body">
       <view class="msg-header">
-        <UserNickname :user="message.user" />
+        <UserNickname :user="message.reader" />
       </view>
       <view
         :style="wrapperStyle"
@@ -53,25 +53,10 @@ export default {
     }
   },
   setup(props) {
-    const _computeBubbleColor = (msg) => {
-      if (msg.color) {
-        return msg.color
-      }
-
-      const colorEnums = [
-        { bg: '#12b7f5', text: '#fff' },
-        { bg: '#ff8eb3', text: '#fff' }
-      ]
-
-      return colorEnums[msg.user.id % colorEnums.length]
-    }
-
     const wrapperStyle = computed(() => {
-      const color = _computeBubbleColor(props.message)
-
       return {
-        backgroundColor: color.bg,
-        color: color.text
+        backgroundColor: props.message.color_bubble,
+        color: props.message.color_text
       }
     })
 

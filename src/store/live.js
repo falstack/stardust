@@ -257,6 +257,10 @@ export default {
       const index = getIndex(store.content, store.editor.focusTrackId)
       const track = store.content[index].value
       const subIndex = store.editor.focusVoiceId ? getIndex(track, store.editor.focusVoiceId) : -1
+      const prevItem = track[subIndex]
+      if (prevItem) {
+        data.begin_at = prevItem.begin_at + (prevItem.ended_at || prevItem.duration - prevItem.start_at)
+      }
       track.splice(subIndex + 1, 0, data)
       const readerIds = store.editor.readers.map(_ => _.id)
       const curRenderId = data.reader.id

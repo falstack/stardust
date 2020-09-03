@@ -19,9 +19,9 @@
 
 <script>
 import Taro from '@tarojs/taro'
-import { ref, reactive, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { ref, reactive, onMounted, computed, onBeforeUnmount } from 'vue'
 import MsgRoom from '~/components/message/room'
-import messages from './message.json'
 
 export default {
   name: 'RoomLive',
@@ -35,17 +35,55 @@ export default {
       startTime: 0,
       lastIndex: -1
     })
+    const store = useStore()
+
+    const messages = computed(() => {
+      const content = store.state.live.content
+      const result = []
+
+      content.forEach(track => {
+        const item = {
+          type: 'bubble-msg'
+        }
+        if (track.type !== 'bgm') {
+          item.float = track.type
+
+          track.value.forEach(voice => {
+            result.push({
+              ...item,
+              id: voice.id,
+              begin_at: voice.begin_at,
+              color_bubble: voice.color_bubble,
+              color_text: voice.color_text,
+              reader: voice.reader,
+              author_id: voice.author_id,
+              content: [
+                {
+                  type: 'mp3',
+                  url: voice.url,
+                  text: voice.text
+                }
+              ]
+            })
+          })
+        }
+      })
+
+      result.sort((prev, next) => prev.begin_at - next.begin_at)
+
+      return result
+    })
 
     const addMessage = (index) => {
-      roomRef.value.addMessage(messages[index])
+      roomRef.value.addMessage(messages.value[index])
     }
 
     const messageReader = () => {
       state.loopTimer = setInterval(() => {
         let setValue = 0
         let noAppend = true
-        for (let i = state.lastIndex + 1; i < messages.length; ++i) {
-          if (messages[i].start <= Date.now() - state.startTime) {
+        for (let i = state.lastIndex + 1; i < messages.value.length; ++i) {
+          if (messages.value[i].begin_at <= Date.now() - state.startTime) {
             addMessage(i)
             setValue = i
             noAppend = false
@@ -57,7 +95,7 @@ export default {
           return
         }
 
-        if (setValue === messages.length - 1) {
+        if (setValue === messages.value.length - 1) {
           clearInterval(state.loopTimer)
           state.loopTimer = 0
         }
@@ -87,6 +125,10 @@ export default {
     onMounted(() => {
       state.startTime = Date.now()
       messageReader()
+    })
+
+    onBeforeUnmount(() => {
+      clearInterval(state.loopTimer)
     })
 
     return {

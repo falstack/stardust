@@ -8,6 +8,9 @@
           :key="item.id"
           :item="item"
         />
+        <view v-if="avatars.length" class="avatar play-btn" @tap="handlePlay">
+          播
+        </view>
       </view>
       <view class="shim" />
     </view>
@@ -27,7 +30,8 @@
 </template>
 
 <script>
-import { reactive, computed } from 'vue'
+import Taro from '@tarojs/taro'
+import { computed } from 'vue'
 import { useStore } from 'vuex'
 import SearchDrawer from './components/searchDrawer'
 import Avatar from './components/avatar'
@@ -43,7 +47,6 @@ export default {
   },
   setup() {
     const store = useStore()
-    const state = reactive({})
 
     const content = computed(() => {
       return store.state.live.content
@@ -53,12 +56,18 @@ export default {
       return store.state.live.editor.readers
     })
 
+    const handlePlay = () => {
+      Taro.navigateTo({
+        url: '/pages/room/live/index'
+      })
+    }
+
     store.dispatch('live/initEditor')
 
     return {
-      state,
       content,
-      avatars
+      avatars,
+      handlePlay
     }
   }
 }
@@ -100,18 +109,12 @@ export default {
       margin-left: 0;
     }
 
-    .select-btn {
+    .play-btn {
       background-color: #f5f5f7;
-
-      .ic-add {
-        font-size: 50px;
-        color: #3C3F41;
-        display: block;
-        width: 100%;
-        height: 100%;
-        line-height: 100px;
-        text-align: center;
-      }
+      font-size: 50px;
+      color: #3C3F41;
+      text-align: center;
+      line-height: 100px;
     }
   }
 

@@ -26,7 +26,6 @@
 import { MovableArea, MovableView } from '@tarojs/components'
 import { computed } from 'vue'
 import { useStore } from 'vuex'
-import { throttle } from '~/utils'
 
 export default {
   name: '',
@@ -36,7 +35,6 @@ export default {
   },
   setup() {
     const store = useStore()
-
     const voice = computed(() => {
       return store.getters['live/currentVoice']
     })
@@ -53,33 +51,37 @@ export default {
         : 250
     })
 
-    let isRight = true
-    const handleChange = throttle((evt, isStart) => {
-      const reallyStart = isRight && isStart
+    let noCross = true
+    const handleChange = (evt, isStart) => {
+      const reallyStart = noCross && isStart
       const { ended_at, start_at, duration } = voice.value
       const newVal = evt.detail.x / 250 * duration | 0
       let commit
-      if (reallyStart && newVal > ended_at) {
-        commit = {
-          ended_at: newVal
+      if (reallyStart) {
+        if (ended_at && newVal > ended_at) {
+          commit = {
+            ended_at: newVal
+          }
+          noCross = !noCross
+        } else {
+          commit = {
+            start_at: newVal
+          }
         }
-        isRight = !isRight
-      } else if (reallyStart && newVal <= ended_at) {
-        commit = {
-          start_at: newVal
-        }
-      } else if (!reallyStart && newVal < start_at) {
-        commit = {
-          start_at: newVal
-        }
-        isRight = !isRight
       } else {
-        commit = {
-          ended_at: newVal
+        if (newVal < start_at) {
+          commit = {
+            start_at: newVal
+          }
+          noCross = !noCross
+        } else {
+          commit = {
+            ended_at: newVal
+          }
         }
       }
       store.commit('live/CLIP_VOICE_DURATION', commit)
-    }, 100)
+    }
 
     return {
       voice,

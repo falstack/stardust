@@ -68,10 +68,10 @@ export default {
 
     const voiceEditBar = computed(() => {
       return [
-        {
-          text: '裁剪',
-          type: 'clip'
-        },
+        // {
+        //   text: '裁剪',
+        //   type: 'clip'
+        // },
         {
           text: '音量',
           type: 'volume'
@@ -120,8 +120,9 @@ export default {
       return store.getters['live/currentVoice']
     })
 
+    let isPlaying = false
     const handleStartPlay = () => {
-      if (!voice.value) {
+      if (!voice.value || isPlaying) {
         return
       }
       const audio = Taro.createInnerAudioContext()
@@ -129,19 +130,23 @@ export default {
       audio.volume = voice.value.volume / 100
 
       if (voice.value.start_at) {
-        audio.startTime = voice.value.start_at / 1000 | 0
+        // TODO start_at 是毫秒，但是 startTime 现在只支持秒，所以不可用
+        audio.startTime = voice.value.start_at
       }
 
       audio.play()
+      isPlaying = true
 
       if (voice.value.ended_at) {
         setTimeout(() => {
           audio.pause()
           audio.destroy()
+          isPlaying = false
         }, voice.value.ended_at - voice.value.start_at)
       } else {
         audio.onEnded(() => {
           audio.destroy()
+          isPlaying = false
         })
       }
     }

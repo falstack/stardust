@@ -98,10 +98,6 @@ export default {
       store.editor.focusTrackId = store.content[index - 1].id
       store.content.splice(index, 1)
     },
-    ADD_VOICE(store, data) {
-      const index = getIndex(store.content, store.editor.focusTrackId)
-      store.content[index].value.push(data)
-    },
     CHANGE_VOICE_EDIT_TYPE(store, type) {
       store.editor.voiceEditType = type
     },
@@ -301,6 +297,7 @@ export default {
       if (prevItem) {
         data.begin_at = prevItem.begin_at + (prevItem.ended_at || prevItem.duration - prevItem.start_at)
       }
+      data.id = `${data.source_id}-${Date.now()}`
       track.splice(subIndex + 1, 0, data)
       const readerIds = store.editor.readers.map(_ => _.id)
       const curRenderId = data.reader.id

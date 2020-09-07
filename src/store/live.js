@@ -11,6 +11,21 @@ const getIndex = (array, id, key = 'id') => {
   return result
 }
 
+const logTrack = (content) => {
+  const arr = content.map(_ => _.value)
+  const result = []
+  for (let i = 0; i < arr.length; i++) {
+    result[i] = arr[i].map(_ => {
+      return {
+        begin_at: _.begin_at,
+        ended_at: _.begin_at + _.duration
+      }
+    })
+  }
+
+  console.log(result)
+}
+
 export default {
   namespaced: true,
   state: () => ({
@@ -94,11 +109,31 @@ export default {
       const index = getIndex(store.content, store.editor.focusTrackId)
       const track = store.content[index].value
       const subIndex = getIndex(track, store.editor.focusVoiceId)
+      const deleteItem = track[subIndex]
+
+      if (track[subIndex + 1]) {
+        track[subIndex + 1].margin_left =
+          track[subIndex + 1].margin_left +
+          deleteItem.margin_left +
+          (deleteItem.ended_at || deleteItem.duration - deleteItem.start_at) / 100
+      }
+
+      store.editor.readers.forEach((item, index) => {
+        if (item.id === deleteItem.reader.id) {
+          if (item.voice_count === 1) {
+            store.editor.readers.splice(index, 1)
+          } else {
+            store.editor.readers[index].voice_count--
+          }
+        }
+      })
+
       track.splice(subIndex, 1)
       if (subIndex) {
         store.editor.focusVoiceId = track[subIndex - 1].id
       }
       store.editor.voiceEditType = ''
+      logTrack(store.content)
     },
     UPDATE_VOICE_VOLUME(store, { volume }) {
       const index = getIndex(store.content, store.editor.focusTrackId)
@@ -180,6 +215,8 @@ export default {
         }
       }
 
+      logTrack(store.content)
+
       if (noMatched) {
         // TODO：Auto create track
       }
@@ -223,6 +260,7 @@ export default {
       }
 
       if (!delta) {
+        logTrack(store.content)
         return
       }
 
@@ -230,6 +268,7 @@ export default {
       curVoice.begin_at += delta * 100
 
       if (!nextVoice) {
+        logTrack(store.content)
         return
       }
       /**
@@ -252,6 +291,7 @@ export default {
           track[i].begin_at += delta * 100
         }
       }
+      logTrack(store.content)
     },
     ADD_VOICE_ITEM(store, data) {
       const index = getIndex(store.content, store.editor.focusTrackId)
@@ -264,10 +304,17 @@ export default {
       track.splice(subIndex + 1, 0, data)
       const readerIds = store.editor.readers.map(_ => _.id)
       const curRenderId = data.reader.id
-      if (readerIds.indexOf(curRenderId) === -1) {
-        store.editor.readers.push(data.reader)
+      const indexOf = readerIds.indexOf(curRenderId)
+      if (indexOf === -1) {
+        store.editor.readers.push({
+          ...data.reader,
+          voice_count: 1
+        })
+      } else {
+        store.editor.readers[indexOf].voice_count++
       }
       store.editor.focusVoiceId = curRenderId
+      logTrack(store.content)
     }
   },
   actions: {

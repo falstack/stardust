@@ -108,10 +108,7 @@ export default {
       const deleteItem = track[subIndex]
 
       if (track[subIndex + 1]) {
-        track[subIndex + 1].margin_left =
-          track[subIndex + 1].margin_left +
-          deleteItem.margin_left +
-          (deleteItem.ended_at || deleteItem.duration - deleteItem.start_at) / 100
+        track[subIndex + 1].margin_left += deleteItem.margin_left + deleteItem.duration  / 100
       }
 
       store.editor.readers.forEach((item, index) => {
@@ -162,7 +159,7 @@ export default {
       const targetIndex = isUp ? index - 1 : index + 1
       const targetTrack = store.content[targetIndex]
       const voiceStartAt = voice.begin_at
-      const voiceTimeout = (voice.ended_at || voice.duration) - voice.start_at
+      const voiceTimeout =  voice.duration
       const voiceEndedAt = voice.begin_at + voiceTimeout
 
       const deleteOldVoice = () => {
@@ -177,9 +174,9 @@ export default {
           const prevVoice = nextTrack.value[insertIndex - 1]
           if (
             prevVoice &&
-            (prevVoice.begin_at + (prevVoice.ended_at || prevVoice.duration) - prevVoice.start_at) > (voiceStartAt - voice.margin_left * 100)
+            (prevVoice.begin_at + prevVoice.duration) > (voiceStartAt - voice.margin_left * 100)
           ) {
-            voice.margin_left -= (prevVoice.begin_at + (prevVoice.ended_at || prevVoice.duration) - prevVoice.start_at) / 100
+            voice.margin_left -= (prevVoice.begin_at + prevVoice.duration) / 100
           }
           nextTrack.value[insertIndex].margin_left -= (voiceTimeout / 100 + voice.margin_left)
           nextTrack.value.splice(insertIndex, 0, voice)
@@ -201,7 +198,7 @@ export default {
             const prevVoice = targetTrack.value[i - 1]
             if (
               !prevVoice ||
-              (prevVoice.begin_at + (prevVoice.ended_at || prevVoice.duration) - prevVoice.start_at) <= voiceStartAt
+              (prevVoice.begin_at + prevVoice.duration) <= voiceStartAt
             ) {
               noMatched = false
               deleteOldVoice()
@@ -290,14 +287,14 @@ export default {
       logTrack(store.content)
     },
     ADD_VOICE_ITEM(store, data) {
+      data.id = `${data.source_id}-${Date.now()}`
       const index = getIndex(store.content, store.editor.focusTrackId)
       const track = store.content[index].value
       const subIndex = store.editor.focusVoiceId ? getIndex(track, store.editor.focusVoiceId) : -1
       const prevItem = track[subIndex]
       if (prevItem) {
-        data.begin_at = prevItem.begin_at + (prevItem.ended_at || prevItem.duration - prevItem.start_at)
+        data.begin_at = prevItem.begin_at + prevItem.duration
       }
-      data.id = `${data.source_id}-${Date.now()}`
       track.splice(subIndex + 1, 0, data)
       const readerIds = store.editor.readers.map(_ => _.id)
       const curRenderId = data.reader.id
@@ -310,7 +307,7 @@ export default {
       } else {
         store.editor.readers[indexOf].voice_count++
       }
-      store.editor.focusVoiceId = curRenderId
+      store.editor.focusVoiceId = data.id
       logTrack(store.content)
     }
   },

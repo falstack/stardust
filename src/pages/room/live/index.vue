@@ -4,14 +4,7 @@
       <MsgRoom ref="roomRef" />
     </view>
     <view class="flex-shrink-0">
-      <view class="buttons">
-        <button @tap="startRecord">
-          开始录音
-        </button>
-        <button @tap="stopRecord">
-          结束录音
-        </button>
-      </view>
+      <view class="buttons" />
       <view class="iphone-bottom-shim" />
     </view>
   </view>
@@ -53,8 +46,6 @@ export default {
               ...item,
               id: voice.id,
               begin_at: voice.begin_at,
-              color_bubble: voice.color_bubble,
-              color_text: voice.color_text,
               reader: voice.reader,
               author_id: voice.author_id,
               content: [
@@ -168,10 +159,6 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-
-    button {
-      flex: 1;
-    }
   }
 }
 </style>

@@ -7,7 +7,7 @@
       v-for="(item, index) in colorEnum"
       :key="index"
       :style="{ backgroundColor: item.bg, color: item.text }"
-      :class="{ 'is-active': voice.color_bubble === item.bg && voice.color_text === item.text }"
+      :class="{ 'is-active': color.bg === item.bg && color.text === item.text }"
       class="color-item"
       @tap="handleClick(item)"
     >
@@ -19,7 +19,7 @@
 <script>
 import { useStore } from 'vuex'
 import { computed } from 'vue'
-import { colors } from './utils'
+import { colors } from '~/utils'
 
 export default {
   setup() {
@@ -32,11 +32,19 @@ export default {
       return store.getters['live/currentVoice']
     })
 
-    const handleClick = (item) => {
-      store.commit('live/UPDATE_VOICE_COLOR', item)
+    const color = computed(() => {
+      return store.getters['live/readerColor'](voice.value.reader.id)
+    })
+
+    const handleClick = (color) => {
+      store.commit('live/UPDATE_VOICE_COLOR', {
+        color,
+        reader: voice.value.reader
+      })
     }
 
     return {
+      color,
       voice,
       colorEnum,
       handleClick

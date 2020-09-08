@@ -55,8 +55,8 @@ export default {
   setup(props) {
     const wrapperStyle = computed(() => {
       return {
-        backgroundColor: props.message.color_bubble,
-        color: props.message.color_text
+        backgroundColor: props.message.reader.color.bg,
+        color: props.message.reader.color.text
       }
     })
 

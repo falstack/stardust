@@ -9,6 +9,9 @@
     <view @tap="handleAddVoice">
       增加声源
     </view>
+    <view @tap="handleStartRecord">
+      增加录音
+    </view>
     <view @tap="handleDelTrack">
       删除轨道
     </view>
@@ -35,6 +38,14 @@
       <button @tap="handleStartPlay">
         试听
       </button>
+    </view>
+    <view
+      v-if="voiceTime"
+      class="record-wrap"
+    >
+      <view @tap="handleStopRecord">
+        正在录音{{ voiceTime }}
+      </view>
     </view>
   </view>
 </template>
@@ -64,6 +75,7 @@ export default {
   },
   setup() {
     const canRender = ref(true)
+    const voiceTime = ref(0)
     const store = useStore()
 
     const voiceEditBar = computed(() => {
@@ -151,6 +163,54 @@ export default {
       }
     }
 
+    const handleStartRecord = () => {
+      if (voiceTime.value) {
+        return
+      }
+      const recorder = Taro.getRecorderManager()
+      recorder.start({
+        duration: 60000,
+        format: 'mp3'
+      })
+
+      const timer = setInterval(() => {
+        voiceTime.value++
+      }, 1000)
+
+      recorder.onStop((res) => {
+        clearInterval(timer)
+        voiceTime.value = 0
+        const userId = 1
+        const color = store.getters['live/readerColor'](userId)
+
+        const data = {
+          source_id: Date.now(),
+          url: res.tempFilePath,
+          duration: res.duration,
+          text: '...',
+          margin_left: 0,
+          begin_at: 0,
+          start_at: 0,
+          ended_at: 0,
+          volume: 100,
+          reader: {
+            id: userId,
+            avatar: 'https://m1.calibur.tv/cc-19f/1562950958417-r9m.jpeg',
+            nickname: '冰淤',
+            color
+          },
+          author_id: store.state.userInfo ? store.state.userInfo.id : 0
+        }
+
+        store.commit('live/ADD_VOICE_ITEM', data)
+      })
+    }
+
+    const handleStopRecord = () => {
+      const recorder = Taro.getRecorderManager()
+      recorder.stop()
+    }
+
     const handleAddTrack = () => {
       store.commit('live/ADD_TRACK')
     }
@@ -176,7 +236,10 @@ export default {
       voiceEditBar,
       selectedVoiceType,
       canRender,
-      handleStartPlay
+      handleStartPlay,
+      handleStartRecord,
+      handleStopRecord,
+      voiceTime
     }
   }
 }
@@ -222,6 +285,16 @@ export default {
 
   .selection-shim {
     background-color: transparent;
+  }
+
+  .record-wrap {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(#000, 0.5);
+    color: #fff;
   }
 }
 </style>

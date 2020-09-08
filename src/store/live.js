@@ -1,3 +1,5 @@
+import { colors } from '~/utils'
+
 const getIndex = (array, id, key = 'id') => {
   let result = 0
 
@@ -93,6 +95,9 @@ export default {
       const index = getIndex(store.content, store.editor.focusTrackId)
       const type = store.content[index].type
       if (store.content.map(_ => _.type).filter(_ => _ === type).length <= 1) {
+        return
+      }
+      if (store.content[index].value.length) {
         return
       }
       store.editor.focusTrackId = store.content[index - 1].id
@@ -241,12 +246,10 @@ export default {
       const subIndex = getIndex(track, store.editor.focusVoiceId)
       track[subIndex].text = value
     },
-    UPDATE_VOICE_COLOR(store, { bg, text }) {
-      const index = getIndex(store.content, store.editor.focusTrackId)
-      const track = store.content[index].value
-      const subIndex = getIndex(track, store.editor.focusVoiceId)
-      track[subIndex].color_bubble = bg
-      track[subIndex].color_text = text
+    UPDATE_VOICE_COLOR(store, { color, reader }) {
+      const users = store.editor.readers
+      const indexOf = users.map(_ => _.id).indexOf(reader.id)
+      users[indexOf].color = color
     },
     UPDATE_VOICE_MARGIN(store, { value }) {
       const index = getIndex(store.content, store.editor.focusTrackId)
@@ -376,6 +379,14 @@ export default {
       const subIndex = getIndex(track, state.editor.focusVoiceId)
 
       return track[subIndex]
+    },
+    readerColor: (state) => (id) => {
+      const users = state.editor.readers
+      const indexOf = users.map(_ => _.id).indexOf(id)
+      if (indexOf !== -1 && users[indexOf].color) {
+        return users[indexOf].color
+      }
+      return colors[id % colors.length]
     }
   }
 }

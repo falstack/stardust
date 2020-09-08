@@ -26,12 +26,12 @@ export default {
     const store = useStore()
     const voiceStyle = computed(() => {
       const width = (props.item.ended_at || props.item.duration) - props.item.start_at
-
+      const color = store.getters['live/readerColor'](props.item.reader.id)
       return {
-        color: props.item.color_text,
+        color: color.text,
         width: `${width / 50 | 0}px`,
         marginLeft: `${props.item.margin_left * 2}px`,
-        backgroundColor: props.item.color_bubble
+        backgroundColor: color.bg
       }
     })
 

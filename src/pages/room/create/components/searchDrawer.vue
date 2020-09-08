@@ -26,7 +26,6 @@ import { useStore } from 'vuex'
 import Search from '~/components/search'
 import Drawer from '~/components/drawer'
 import source from '../voice.json'
-import { colors } from './utils'
 
 export default {
   components: {
@@ -49,7 +48,7 @@ export default {
     )
 
     const handleAddVoice = (item) => {
-      const color = colors[item.reader.id % colors.length]
+      const color = store.getters['live/readerColor'](item.reader.id)
       const data = {
         ...item,
         margin_left: 0,
@@ -57,8 +56,10 @@ export default {
         start_at: 0,
         ended_at: 0,
         volume: 100,
-        color_bubble: color.bg,
-        color_text: color.text,
+        reader: {
+          ...item.reader,
+          color
+        },
         author_id: store.state.userInfo ? store.state.userInfo.id : 0
       }
 

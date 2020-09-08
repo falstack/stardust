@@ -8,7 +8,11 @@
           :key="item.id"
           :item="item"
         />
-        <view v-if="avatars.length" class="avatar play-btn" @tap="handlePlay">
+        <view
+          v-if="avatars.length"
+          class="avatar play-btn"
+          @tap="handlePlay"
+        >
           播
         </view>
       </view>

@@ -64,7 +64,7 @@ export default {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  transition: width 100ms;
+  /*transition: width 100ms;*/
 
   &.is-active {
     border: 2px solid #fff;

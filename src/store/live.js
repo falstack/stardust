@@ -147,72 +147,93 @@ export default {
       if (isUp && !index) {
         return
       }
-      /**
-       * TODO：最后一条是 BGM 不能变轨到那边
-       */
-      if (!isUp && index === store.content.length - 1) {
+
+      if (!isUp && index >= store.content.length - 2) {
         return
       }
       const track = store.content[index].value
       const subIndex = getIndex(track, store.editor.focusVoiceId)
       const voice = track[subIndex]
       const targetIndex = isUp ? index - 1 : index + 1
-      const targetTrack = store.content[targetIndex]
-      const voiceStartAt = voice.begin_at
-      const voiceTimeout =  voice.duration
-      const voiceEndedAt = voice.begin_at + voiceTimeout
+      const targetTrack = store.content[targetIndex].value
 
       const deleteOldVoice = () => {
         if (track[subIndex + 1]) {
-          track[subIndex + 1].margin_left += (voiceTimeout / 100 + voice.margin_left)
+          track[subIndex + 1].margin_left += (voice.duration / 100 + voice.margin_left)
         }
         track.splice(subIndex, 1)
       }
 
-      const addNewVoice = (nextTrack, insertIndex = -1) => {
-        if (insertIndex !== -1) {
-          const prevVoice = nextTrack.value[insertIndex - 1]
+      let change = false
+
+      if (!targetTrack.length) {
+        change = true
+        deleteOldVoice()
+        voice.margin_left = voice.begin_at / 100
+        targetTrack.push(voice)
+      } else {
+        for (let i = 0; i < targetTrack.length; i++) {
+          const prevVoice = targetTrack[i - 1]
+          const nextVoice = targetTrack[i + 1]
+          const currVoice = targetTrack[i]
+          /**
+           * 是最后一个，并且最后一个的截止时间小于当前的开始时间
+           * 删除老的
+           * 改变当前的 margin-left
+           */
+          if (
+            !nextVoice &&
+            currVoice.begin_at + currVoice.duration <= voice.begin_at
+          ) {
+            deleteOldVoice()
+            voice.margin_left = (voice.begin_at - currVoice.begin_at - currVoice.duration) / 100
+            targetTrack.splice(i + 1, 0, voice)
+            change = true
+            break
+          }
+          /**
+           * 是第一个，并且第一个的开始时间大于当前的结束时间
+           * 删除老的
+           * 第一个的 margin-left 减去当前音源的长度
+           * 当前音源的 margin-left 为开始时间的长度
+           */
+          if (
+            !prevVoice &&
+            currVoice.begin_at >= voice.begin_at + voice.duration
+          ) {
+            deleteOldVoice()
+            currVoice.margin_left -= (voice.begin_at + voice.duration) / 100
+            voice.margin_left = voice.begin_at / 100
+            targetTrack.splice(i, 0, voice)
+            change = true
+            break
+          }
+          /**
+           * 在中间，
+           * 上一个元素的结束时间小于当前的开始时间
+           * 且
+           * 当前元素的开始时间大于当前的结束时间
+           */
           if (
             prevVoice &&
-            (prevVoice.begin_at + prevVoice.duration) > (voiceStartAt - voice.margin_left * 100)
+            prevVoice.begin_at + prevVoice.duration <= voice.begin_at &&
+            voice.begin_at + voice.duration <= currVoice.begin_at
           ) {
-            voice.margin_left -= (prevVoice.begin_at + prevVoice.duration) / 100
+            deleteOldVoice()
+            voice.margin_left = (voice.begin_at - prevVoice.begin_at - prevVoice.duration) / 100
+            currVoice.margin_left -= (voice.begin_at + voice.duration - prevVoice.begin_at - prevVoice.duration) / 100
+            targetTrack.splice(i, 0, voice)
+            change = true
+            break
           }
-          nextTrack.value[insertIndex].margin_left -= (voiceTimeout / 100 + voice.margin_left)
-          nextTrack.value.splice(insertIndex, 0, voice)
-        } else {
-          voice.margin_left = voice.begin_at / 100
-          nextTrack.value.push(voice)
         }
-        store.editor.focusTrackId = nextTrack.id
       }
 
-      let noMatched = true
-      if (!targetTrack.value.length) {
-        noMatched = false
-        deleteOldVoice()
-        addNewVoice(targetTrack)
-      } else {
-        for (let i = 0; i < targetTrack.value.length; i++) {
-          if (targetTrack.value[i].begin_at >= voiceEndedAt) {
-            const prevVoice = targetTrack.value[i - 1]
-            if (
-              !prevVoice ||
-              (prevVoice.begin_at + prevVoice.duration) <= voiceStartAt
-            ) {
-              noMatched = false
-              deleteOldVoice()
-              addNewVoice(targetTrack, i)
-            }
-          }
-        }
+      if (change) {
+        store.editor.focusTrackId = store.content[targetIndex].id
       }
 
       logTrack(store.content)
-
-      if (noMatched) {
-        // TODO：Auto create track
-      }
     },
     UPDATE_VOICE_TEXT(store, { value }) {
       const index = getIndex(store.content, store.editor.focusTrackId)

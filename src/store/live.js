@@ -35,7 +35,6 @@ export default {
     editor: {
       focusTrackId: 0,
       focusVoiceId: 0,
-      showVoiceDrawer: false,
       voiceEditType: '',
       readers: []
     }
@@ -43,9 +42,6 @@ export default {
   mutations: {
     SET_CONTENT(store, data) {
       store.content = data
-    },
-    TOGGLE_VOICE_DRAWER(store) {
-      store.editor.showVoiceDrawer = !store.editor.showVoiceDrawer
     },
     UPDATE_FOCUS_VOICE(store, { id }) {
       const index = getIndex(store.content, store.editor.focusTrackId)
@@ -153,9 +149,10 @@ export default {
         return
       }
 
-      if (!isUp && index >= store.content.length - 2) {
+      if (!isUp && index >= store.content.length - 1) {
         return
       }
+
       const track = store.content[index].value
       const subIndex = getIndex(track, store.editor.focusVoiceId)
       const voice = track[subIndex]
@@ -346,16 +343,52 @@ export default {
         },
         {
           id: 2,
+          type: 'left',
+          part: 2,
+          value: []
+        },
+        {
+          id: 3,
+          type: 'left',
+          part: 3,
+          value: []
+        },
+        {
+          id: 4,
+          type: 'left',
+          part: 4,
+          value: []
+        },
+        {
+          id: 5,
           type: 'right',
           part: 1,
           value: []
         },
         {
-          id: 3,
-          type: 'bgm',
-          part: 1,
+          id: 6,
+          type: 'right',
+          part: 2,
           value: []
-        }
+        },
+        {
+          id: 7,
+          type: 'right',
+          part: 3,
+          value: []
+        },
+        {
+          id: 8,
+          type: 'right',
+          part: 4,
+          value: []
+        },
+        // {
+        //   id: 3,
+        //   type: 'bgm',
+        //   part: 1,
+        //   value: []
+        // }
       ]
       commit('SET_CONTENT', data)
       commit('UPDATE_FOCUS_TRACK', data[0])

@@ -6,7 +6,7 @@
         v-model="value"
         class="input"
         type="text"
-        auto-focus="true"
+        :auto-focus="autofocus ? 'true' : ''"
         confirm-type="search"
         adjustPosition=""
         :placeholder="placeholder"
@@ -33,6 +33,10 @@ export default {
       required: true,
       type: String
     },
+    autofocus: {
+      type: Boolean,
+      default: false
+    },
     placeholder: {
       type: String,
       default: '输入要搜索的内容'
@@ -57,7 +61,7 @@ export default {
     )
 
     const handleClose = () => {
-      store.commit('live/TOGGLE_VOICE_DRAWER')
+      ctx.emit('close')
     }
 
     return {

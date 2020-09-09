@@ -4,6 +4,7 @@
     class="dialog"
   >
     <view
+      v-if="showMask"
       class="dialog__mask"
       @tap="closeDialog"
     />
@@ -24,6 +25,10 @@ export default {
       type: Boolean
     },
     maskClose: {
+      type: Boolean,
+      default: true
+    },
+    showMask: {
       type: Boolean,
       default: true
     }
@@ -74,6 +79,7 @@ export default {
   bottom: 0;
   width: 100%;
   z-index: 999;
+  pointer-events: none;
 
   &__mask {
     position: absolute;
@@ -82,6 +88,7 @@ export default {
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.3);
+    pointer-events: auto;
   }
 
   &__wrap {
@@ -94,6 +101,7 @@ export default {
     background-color: $bg-color;
     padding: $container-padding;
     border-radius: $container-padding;
+    pointer-events: auto;
   }
 }
 </style>

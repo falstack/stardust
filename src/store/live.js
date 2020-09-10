@@ -36,12 +36,16 @@ export default {
       focusTrackId: 0,
       focusVoiceId: 0,
       voiceEditType: '',
-      readers: []
+      readers: [],
+      showSearchDrawer: false
     }
   }),
   mutations: {
     SET_CONTENT(store, data) {
       store.content = data
+    },
+    TOGGLE_SEARCH_DRAWER(store) {
+      store.editor.showSearchDrawer = !store.editor.showSearchDrawer
     },
     UPDATE_FOCUS_VOICE(store, { id }) {
       const index = getIndex(store.content, store.editor.focusTrackId)

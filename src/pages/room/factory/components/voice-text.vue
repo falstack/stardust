@@ -41,4 +41,10 @@ export default {
 </script>
 
 <style lang="scss">
+.voice-text {
+  .dialog__wrap {
+    background-color: rgba(#fff, 0.5);
+    box-shadow: 0 4px 14px rgba(0,0,0,.15);
+  }
+}
 </style>

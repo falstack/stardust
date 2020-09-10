@@ -16,6 +16,12 @@ image {
   display: block;
 }
 
+textarea {
+  width: 100%;
+  font-size: 28px;
+  @extend %breakWord;
+}
+
 input,
 button {
   margin: 0;

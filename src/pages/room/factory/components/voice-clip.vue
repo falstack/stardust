@@ -1,7 +1,7 @@
 <template>
   <view
     v-if="voice"
-    class="voice-clip"
+    class="voice-edit-bar voice-clip"
   >
     <MovableArea class="subway">
       <MovableView

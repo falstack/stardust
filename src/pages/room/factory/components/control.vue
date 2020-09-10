@@ -30,10 +30,12 @@ import VoiceDelete from './voice-delete'
 import VoiceMove from './voice-move'
 import VoiceText from './voice-text'
 import VoiceVolume from './voice-volume'
+import VoicePlay from './voice-play'
 
 export default {
   name: '',
   components: {
+    VoicePlay,
     VoiceClip,
     VoiceColor,
     VoiceDelete,
@@ -47,6 +49,10 @@ export default {
 
     const voiceEditBar = computed(() => {
       return [
+        {
+          text: '播放',
+          type: 'play'
+        },
         // {
         //   text: '裁剪',
         //   type: 'clip'
@@ -75,7 +81,7 @@ export default {
     })
 
     const hasSelectedVoice = computed(() => {
-      return !!store.state.live.editor.focusVoiceId
+      return store.getters['live/currentVoice']
     })
 
     watch([
@@ -123,8 +129,14 @@ export default {
 
 <style lang="scss">
 .selection-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-direction: row;
+  overflow-x: auto;
 
   .selection-item {
     width: 80px;
@@ -138,6 +150,13 @@ export default {
       color: #ff6881;
       background-color: #F4F4F4;
     }
+  }
+}
+
+.control {
+  .voice-edit-bar {
+    background-color: rgba(#fff, 0.5);
+    box-shadow: 0 4px 14px rgba(0,0,0,.15);
   }
 }
 </style>

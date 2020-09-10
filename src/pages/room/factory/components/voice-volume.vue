@@ -1,7 +1,9 @@
 <template>
-  <view class="voice-volume">
+  <view class="voice-edit-bar voice-volume">
     <Slider
       show-value="true"
+      active-color="#3D3D3D"
+      block-size="20"
       :value="currentValue"
       @change="handleChange"
     />
@@ -48,9 +50,15 @@ export default {
   position: fixed;
   left: 50px;
   right: 50px;
-  bottom: 150px;
+  bottom: 180px;
   height: 80px;
   border-radius: 40px;
-  border: 1px solid red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  slider {
+    width: 100%;
+  }
 }
 </style>

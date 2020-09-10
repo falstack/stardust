@@ -1,7 +1,7 @@
 <template>
   <view
     v-if="voice"
-    class="voice-color"
+    class="voice-edit-bar voice-color"
   >
     <view
       v-for="(item, index) in colorEnum"
@@ -57,23 +57,29 @@ export default {
 .voice-color {
   position: fixed;
   left: 50px;
-  bottom: 150px;
+  bottom: 180px;
   right: 50px;
   height: 80px;
   border-radius: 40px;
-  border: 1px solid red;
+  overflow-y: hidden;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-left: 5px;
+  padding-right: 5px;
 
   .color-item {
     display: inline-block;
-    width: 120px;
-    height: 80px;
-    border-radius: 10px;
+    width: 81px;
+    height: 50px;
     text-align: center;
-    line-height: 76px;
-    border: 2px solid transparent;
+    line-height: 50px;
+    outline: 20px solid transparent;
+    margin: 15px;
+    border-radius: 10px;
+    font-size: 24px;
 
     &.is-active {
-      border-color: #fff;
+      outline-color: #f6f6f6;
     }
   }
 }

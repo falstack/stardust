@@ -1,50 +1,39 @@
 <template>
-  <view class="create-btn-wrap">
-    <button
-      class="create-btn"
-      @tap="openDrawer"
-    >
-      音
-    </button>
-    <view class="divider-line" />
-    <Drawer
-      v-model="state.showDrawer"
-      :show-mask="false"
-    >
-      <view class="search-drawer">
-        <Search
-          v-model="state.keyword"
-          @close="closeDrawer"
-        />
-      </view>
-      <view class="flow-wrap">
-        <view
-          v-for="item in state.source"
-          :key="item.id"
-          class="voice-item"
-          @tap="handleAddVoice(item)"
-        >
-          {{ item.reader.nickname }}
-        </view>
-      </view>
-      <view @tap="handleStartRecord">
-        增加录音
-      </view>
+  <Drawer
+    v-model="state.showDrawer"
+    class="search-drawer"
+  >
+    <Search
+      v-model="state.keyword"
+      @close="toggleDrawer"
+    />
+    <view class="flow-wrap">
       <view
-        v-if="state.voiceTime"
-        class="record-wrap"
+        v-for="item in state.source"
+        :key="item.id"
+        class="voice-item"
+        @tap="handleAddVoice(item)"
       >
-        <view @tap="handleStopRecord">
-          正在录音{{ state.voiceTime }}
-        </view>
+        {{ item.reader.nickname }}
       </view>
-    </Drawer>
-  </view>
+    </view>
+    <view @tap="handleStartRecord">
+      增加录音
+    </view>
+    <view
+      v-if="state.voiceTime"
+      class="record-wrap"
+    >
+      <view @tap="handleStopRecord">
+        正在录音{{ state.voiceTime }}
+      </view>
+    </view>
+  </Drawer>
 </template>
 
 <script>
 import Taro from '@tarojs/taro'
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
 import { useStore } from 'vuex'
 import Search from '~/components/search'
 import Drawer from '~/components/drawer'
@@ -63,6 +52,13 @@ export default {
       keyword: '',
       source
     })
+
+    watch(
+      () => store.state.live.editor.showSearchDrawer,
+      val => {
+        state.showDrawer = val
+      }
+    )
 
     const handleAddVoice = (item) => {
       const color = store.getters['live/readerColor'](item.reader.id)
@@ -83,12 +79,8 @@ export default {
       store.commit('live/ADD_VOICE_ITEM', data)
     }
 
-    const openDrawer = () => {
-      state.showDrawer = true
-    }
-
-    const closeDrawer = () => {
-      state.showDrawer = false
+    const toggleDrawer = () => {
+      store.commit('live/TOGGLE_SEARCH_DRAWER')
     }
 
     const handleStartRecord = () => {
@@ -141,47 +133,21 @@ export default {
 
     return {
       state,
-      openDrawer,
-      closeDrawer,
+      toggleDrawer,
       handleAddVoice,
       handleStopRecord,
-      handleStartRecord,
+      handleStartRecord
     }
   }
 }
 </script>
 
 <style lang="scss">
-.create-btn-wrap {
-  .create-btn {
-    position: fixed;
-    left: 50%;
-    bottom: 350px;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 100px;
-    line-height: 100px;
-    border-radius: 100px;
-    border: 1PX solid #e7ecf2;
-    background-color: #fff;
-    overflow: hidden;
-  }
-
-  .divider-line {
-    position: fixed;
-    left: 50%;
-    top: 0;
-    width: 0;
-    bottom: 0;
-    border-right: 1PX dashed #e7ecf2;
-  }
-
-  .drawer__wrap {
-    .flow-wrap {
-      .voice-item {
-        display: block;
-        padding: 20px;
-      }
+.search-drawer {
+  .flow-wrap {
+    .voice-item {
+      display: block;
+      padding: 20px;
     }
   }
 }

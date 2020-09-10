@@ -30,10 +30,17 @@
         :key="track.id"
         :item="track"
       />
-      <CreateBtn />
+      <view class="divider-line" />
+      <button
+        class="create-btn"
+        @tap="openDrawer"
+      >
+        <text class="icon ic-add" />
+      </button>
     </view>
     <view class="footer">
       <view class="footer-wrap">
+        <text />
         <Control />
         <button
           v-if="avatars.length"
@@ -45,6 +52,7 @@
       </view>
       <view class="iphone-bottom-shim" />
     </view>
+    <SearchDrawer />
   </view>
 </template>
 
@@ -55,14 +63,14 @@ import { useStore } from 'vuex'
 import Track from './components/track'
 import Avatar from './components/avatar'
 import Control from './components/control'
-import CreateBtn from './components/create-btn'
+import SearchDrawer from './components/search-drawer'
 
 export default {
   components: {
     Track,
     Avatar,
     Control,
-    CreateBtn
+    SearchDrawer
   },
   setup() {
     const store = useStore()
@@ -89,6 +97,10 @@ export default {
       })
     }
 
+    const openDrawer = () => {
+      store.commit('live/TOGGLE_SEARCH_DRAWER')
+    }
+
     const switchTrack = (item) => {
       store.commit('live/UPDATE_FOCUS_TRACK', item)
     }
@@ -100,6 +112,7 @@ export default {
       avatars,
       content,
       focusId,
+      openDrawer,
       handlePlay,
       switchTrack
     }
@@ -187,6 +200,28 @@ export default {
     overflow-y: auto;
     flex: 1;
     z-index: 0;
+
+    .divider-line {
+      position: fixed;
+      left: 50%;
+      top: 0;
+      width: 0;
+      bottom: 0;
+      border-right: 1PX dashed #e7ecf2;
+    }
+
+    .create-btn {
+      position: sticky;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -65px);
+      width: 80px;
+      height: 130px;
+      line-height: 180px;
+      background-color: #3D3D3D;
+      border-radius: 40px;
+      color: #fff;
+    }
   }
 
   .footer {
@@ -203,17 +238,21 @@ export default {
       height: 80px;
       border-top: 1PX solid #f6f6f6;
       padding: 0 $container-padding;
+      overflow: hidden;
 
       .control {
+        position: relative;
+        height: 100%;
         flex: 1;
       }
 
       .play-btn {
-        text-align: center;
-        width: 100px;
         height: 60px;
         line-height: 57px;
         font-size: 26px;
+        flex-shrink: 0;
+        width: 100px;
+        margin-left: $container-padding;
       }
     }
   }

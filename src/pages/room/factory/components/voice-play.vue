@@ -3,18 +3,32 @@
 </template>
 
 <script>
+import Taro from '@tarojs/taro'
+import { useStore } from 'vuex'
+import { onBeforeUnmount } from 'vue'
+
 export default {
-  name: '',
-  components: {},
-  props: {},
-  data() {
-    return {}
-  },
-  computed: {},
-  watch: {},
-  created() {},
-  mounted() {},
-  methods: {}
+  setup() {
+    const store = useStore()
+    const voice = store.getters['live/currentVoice']
+
+    if (!voice) {
+      return
+    }
+
+    const audio = Taro.createInnerAudioContext()
+    audio.src = voice.url
+
+    audio.play()
+
+    audio.onEnded(() => {
+      audio.destroy()
+    })
+
+    onBeforeUnmount(() => {
+      audio.destroy()
+    })
+  }
 }
 </script>
 

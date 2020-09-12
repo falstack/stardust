@@ -1,7 +1,7 @@
 <template>
   <view class="search-wrap">
     <view class="input-wrap">
-      <text class="iconfont ic-cancel" />
+      <text class="iconfont ic-search" />
       <input
         v-model="value"
         class="input"
@@ -75,7 +75,7 @@ export default {
 <style lang="scss">
 .search-wrap {
   padding: 14px 24px;
-  border-bottom: 1px solid #2a2a2a;
+  border-bottom: 1px solid #e7e7e7;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -83,7 +83,7 @@ export default {
 
   .input-wrap {
     border-radius: 30px;
-    background-color: #1f1f1f;
+    background-color: #f4f4f4;
     height: 60px;
     flex: 1;
     display: flex;
@@ -97,7 +97,7 @@ export default {
       height: 60px;
       line-height: 60px;
       font-size: 26px;
-      color: #e1e1e1;
+      color: #212121;
     }
 
     .iconfont {
@@ -106,14 +106,14 @@ export default {
       height: 60px;
       line-height: 60px;
       text-align: center;
-      color: #e1e1e1;
+      color: #999;
       flex-shrink: 0;
     }
   }
 
   .close-btn {
     font-size: 30px;
-    color: #e1e1e1;
+    color: #ff6881;
     margin-left: 20px;
     flex-shrink: 0;
   }

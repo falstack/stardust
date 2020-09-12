@@ -8,24 +8,28 @@
       @close="toggleDrawer"
     />
     <view class="flow-wrap">
-      <view
+      <text
         v-for="item in state.source"
         :key="item.id"
-        class="voice-item"
+        class="search-item"
         @tap="handleAddVoice(item)"
       >
         {{ item.reader.nickname }}
-      </view>
+      </text>
     </view>
-    <view @tap="handleStartRecord">
-      增加录音
-    </view>
+    <button
+      class="record-btn"
+      :class="{ 'is-active': state.voiceTime }"
+      @tap="handleStartRecord"
+    >
+      <view class="core" />
+    </button>
     <view
       v-if="state.voiceTime"
-      class="record-wrap"
+      class="record-tip"
     >
-      <view @tap="handleStopRecord">
-        正在录音{{ state.voiceTime }}
+      <view>
+        正在录音：{{ state.voiceTime }}s
       </view>
     </view>
   </Drawer>
@@ -85,8 +89,11 @@ export default {
 
     const handleStartRecord = () => {
       if (state.voiceTime) {
+        const recorder = Taro.getRecorderManager()
+        recorder.stop()
         return
       }
+
       const recorder = Taro.getRecorderManager()
       recorder.start({
         duration: 60000,
@@ -126,16 +133,10 @@ export default {
       })
     }
 
-    const handleStopRecord = () => {
-      const recorder = Taro.getRecorderManager()
-      recorder.stop()
-    }
-
     return {
       state,
       toggleDrawer,
       handleAddVoice,
-      handleStopRecord,
       handleStartRecord
     }
   }
@@ -145,10 +146,46 @@ export default {
 <style lang="scss">
 .search-drawer {
   .flow-wrap {
-    .voice-item {
-      display: block;
-      padding: 20px;
+    .search-item {
+      display: inline-block;
+      background-color: #F4F4F4;
+      padding: 12px 32px;
+      font-size: 24px;
+      margin-right: 20px;
+      margin-top: 16px;
+      border-radius: 8px;
     }
+  }
+
+  .record-btn {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin: 50px auto;
+    background-color: #F4F4F4;
+    border: 1PX solid #3D3D3D;
+
+    .core {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      border-radius: 50%;
+      background-color: #3D3D3D;
+    }
+
+    &.is-active {
+      .core {
+        background-color: red;
+      }
+    }
+  }
+
+  .record-tip {
+    text-align: center;
+    font-size: 24px;
   }
 }
 </style>

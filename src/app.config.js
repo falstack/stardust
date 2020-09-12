@@ -4,7 +4,6 @@ export default {
     'pages/user/home/index',
     'pages/user/about/index',
     'pages/room/live/index',
-    'pages/room/create/index',
     'pages/room/factory/index'
   ],
   window: {

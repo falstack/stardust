@@ -32,6 +32,7 @@ export default {
 
     const messages = computed(() => {
       const content = store.state.live.content
+      const readers = store.state.live.editor.readers
       const result = []
 
       content.forEach(track => {
@@ -40,13 +41,12 @@ export default {
         }
         if (track.type !== 'bgm') {
           item.float = track.type
-
           track.value.forEach(voice => {
             result.push({
               ...item,
               id: voice.id,
               begin_at: voice.begin_at,
-              reader: voice.reader,
+              reader: readers.filter(_ => _.id === voice.reader.id)[0],
               author_id: voice.author_id,
               content: [
                 {

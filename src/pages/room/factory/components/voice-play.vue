@@ -17,7 +17,7 @@ export default {
     }
 
     const audio = Taro.createInnerAudioContext()
-    audio.src = voice.url
+    audio.src = voice.src
 
     audio.play()
 

@@ -51,7 +51,7 @@ export default {
               content: [
                 {
                   type: 'mp3',
-                  url: voice.url,
+                  src: voice.src,
                   text: voice.text
                 }
               ]

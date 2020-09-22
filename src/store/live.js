@@ -1,4 +1,5 @@
 import { colors } from '~/utils'
+import http from '~/utils/http'
 
 const getIndex = (array, id, key = 'id') => {
   let result = 0
@@ -38,7 +39,8 @@ export default {
       voiceEditType: '',
       readers: [],
       showSearchDrawer: false
-    }
+    },
+    voices: []
   }),
   mutations: {
     SET_CONTENT(store, data) {
@@ -334,6 +336,9 @@ export default {
       }
       store.editor.focusVoiceId = data.id
       logTrack(store.content)
+    },
+    SET_VOICES(store, data) {
+      store.voices = data
     }
   },
   actions: {
@@ -396,6 +401,12 @@ export default {
       ]
       commit('SET_CONTENT', data)
       commit('UPDATE_FOCUS_TRACK', data[0])
+    },
+    getVoices({ commit }) {
+      http.get('live_room/voice/all')
+        .then(res => {
+          commit('SET_VOICES', res)
+        })
     }
   },
   getters: {

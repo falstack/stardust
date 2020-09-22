@@ -1,35 +1,37 @@
 <template>
-  <Drawer
-    v-model="state.showDrawer"
-    class="search-drawer"
-  >
-    <Search
-      v-model="state.keyword"
-      @close="toggleDrawer"
-    />
-    <view class="flow-wrap">
-      <text
-        v-for="item in state.source"
-        :key="item.id"
-        class="search-item"
-        @tap="handleAddVoice(item)"
+  <Drawer v-model="state.showDrawer">
+    <view class="search-drawer">
+      <view class="drawer-header">
+        <Search
+          v-model="state.keyword"
+          @close="toggleDrawer"
+        />
+      </view>
+      <view class="flow-wrap">
+        <button
+          v-for="item in source"
+          :key="item.id"
+          class="search-item"
+          @tap="handleAddVoice(item)"
+        >
+          <image class="avatar" :src="$utils.resize(item.reader.avatar, 30)" />
+          <text class="text">{{ item.text }}</text>
+        </button>
+      </view>
+      <button
+        class="record-btn"
+        :class="{ 'is-active': state.voiceTime }"
+        @tap="handleStartRecord"
       >
-        {{ item.reader.nickname }}
-      </text>
-    </view>
-    <button
-      class="record-btn"
-      :class="{ 'is-active': state.voiceTime }"
-      @tap="handleStartRecord"
-    >
-      <view class="core" />
-    </button>
-    <view
-      v-if="state.voiceTime"
-      class="record-tip"
-    >
-      <view>
-        正在录音：{{ state.voiceTime }}s
+        <view class="core" />
+      </button>
+      <view
+        v-if="state.voiceTime"
+        class="record-tip"
+      >
+        <view>
+          正在录音：{{ state.voiceTime }}s
+        </view>
       </view>
     </view>
   </Drawer>
@@ -37,11 +39,10 @@
 
 <script>
 import Taro from '@tarojs/taro'
-import { reactive, watch } from 'vue'
+import { reactive, watch, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
 import Search from '~/components/search'
 import Drawer from '~/components/drawer'
-import source from '../voice.json'
 
 export default {
   components: {
@@ -53,8 +54,7 @@ export default {
     const state = reactive({
       showDrawer: false,
       voiceTime: 0,
-      keyword: '',
-      source
+      keyword: ''
     })
 
     watch(
@@ -63,6 +63,10 @@ export default {
         state.showDrawer = val
       }
     )
+
+    const source = computed(() => {
+      return store.state.live.voices
+    })
 
     const handleAddVoice = (item) => {
       const color = store.getters['live/readerColor'](item.reader.id)
@@ -81,6 +85,7 @@ export default {
       }
 
       store.commit('live/ADD_VOICE_ITEM', data)
+      store.commit('live/CHANGE_VOICE_EDIT_TYPE', 'move')
     }
 
     const toggleDrawer = () => {
@@ -130,11 +135,18 @@ export default {
         }
 
         store.commit('live/ADD_VOICE_ITEM', data)
+        store.commit('live/CHANGE_VOICE_EDIT_TYPE', 'text')
+        store.commit('live/TOGGLE_SEARCH_DRAWER')
       })
     }
 
+    onMounted(() => {
+      store.dispatch('live/getVoices')
+    })
+
     return {
       state,
+      source,
       toggleDrawer,
       handleAddVoice,
       handleStartRecord
@@ -145,15 +157,42 @@ export default {
 
 <style lang="scss">
 .search-drawer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .drawer-header {
+    width: 100%;
+    flex-shrink: 0;
+  }
+
   .flow-wrap {
+    overflow-y: auto;
+    width: 100%;
+    flex: 1;
+
     .search-item {
-      display: inline-block;
-      background-color: #F4F4F4;
-      padding: 12px 32px;
-      font-size: 24px;
-      margin-right: 20px;
-      margin-top: 16px;
-      border-radius: 8px;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      border-radius: 0;
+      padding: $container-padding;
+      border-bottom: 1PX solid #e7ecf2;
+
+      .avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: $container-padding;
+        flex-shrink: 0;
+      }
+
+      .text {
+        flex: 1;
+        text-align: left;
+        @extend %oneline;
+      }
     }
   }
 

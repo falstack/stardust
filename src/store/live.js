@@ -49,6 +49,16 @@ export default {
     SET_CONTENT(store, data) {
       store.content = data
     },
+    ADD_SELF_VOICE(store, data) {
+      store.voices[1].unshift(data)
+    },
+    UPDATE_SELF_VOICE(store, { id, text }) {
+      store.voices[1].forEach((item, index) => {
+        if (item.id === id) {
+          store.voices[1][index].text = text
+        }
+      })
+    },
     TOGGLE_SEARCH_DRAWER(store) {
       store.editor.showSearchDrawer = !store.editor.showSearchDrawer
     },
@@ -317,7 +327,6 @@ export default {
       logTrack(store.content)
     },
     ADD_VOICE_ITEM(store, data) {
-      data.id = `${data.source_id}-${Date.now()}`
       const index = getIndex(store.content, store.editor.focusTrackId)
       const track = store.content[index].value
       const subIndex = store.editor.focusVoiceId ? getIndex(track, store.editor.focusVoiceId) : -1

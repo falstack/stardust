@@ -42,13 +42,16 @@
         <template v-else>
           <view class="flex-1">
             <button
-              v-for="item in source"
+              v-for="(item, index) in source"
               :key="item.id"
               class="search-item"
               @tap="handleAddVoice(item)"
             >
-              <image class="avatar" :src="$utils.resize(item.reader.avatar, 30)" />
-              <text class="text">{{ item.text }}</text>
+              <view class="body">
+                <text v-if="item.text" class="text">{{ item.text }}</text>
+                <text v-else class="placeholder">请输入文字</text>
+              </view>
+              <view class="edit" @tap.stop="handleEditAudio(item, index)">修改文字</view>
             </button>
           </view>
           <view class="flex-shrink-0">
@@ -70,6 +73,27 @@
         </template>
       </view>
     </Drawer>
+    <Dialog v-model="state.showDialog">
+      <view class="edit-audio-dialog">
+        <textarea
+          v-model="state.updateAudioText"
+          type="text"
+          placeholder="请输入内容"
+          autoFocus="true"
+          showConfirmBar=""
+          class="textarea"
+          maxlength="500"
+        />
+        <view class="footer">
+          <button class="cancel">
+            取消
+          </button>
+          <button class="submit" @tap="submitUpdateAudioText">
+            确定
+          </button>
+        </view>
+      </view>
+    </Dialog>
   </view>
 </template>
 
@@ -79,6 +103,8 @@ import { reactive, watch, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
 import Search from '~/components/search'
 import Drawer from '~/components/drawer'
+import Dialog from '~/components/dialog'
+import http from '~/utils/http'
 import toast from '~/utils/toast'
 import cache from '~/utils/cache'
 
@@ -87,15 +113,21 @@ let duration = 0
 export default {
   components: {
     Drawer,
+    Dialog,
     Search
   },
   setup() {
     const store = useStore()
     const state = reactive({
       showDrawer: false,
+      showDialog: false,
       voiceTime: 0,
       keyword: '',
-      activeIndex: 0
+      activeIndex: 0,
+      updateAudioText: '',
+      updateAudioIndex: -1,
+      fetchedMyVoice: false,
+      submittingUpdateText: false
     })
 
     watch(
@@ -135,6 +167,14 @@ export default {
       store.commit('live/ADD_VOICE_ITEM', data)
     }
 
+    const handleEditAudio = (item, index) => {
+      if (state.updateAudioIndex !== index) {
+        state.updateAudioText = item.text
+        state.updateAudioIndex = index
+      }
+      state.showDialog = true
+    }
+
     const toggleDrawer = () => {
       store.commit('live/TOGGLE_SEARCH_DRAWER')
     }
@@ -161,10 +201,8 @@ export default {
       })
 
       recorder.onStop((res) => {
-        duration = Date.now() - duration
         clearInterval(timer)
         state.voiceTime = 0
-        const color = store.getters['live/readerColor'](currentUser.value.id)
 
         Taro.uploadFile({
           url: 'https://api.calibur.tv/v1/live_room/voice/create',
@@ -174,7 +212,7 @@ export default {
             Authorization: `Bearer ${cache.get('JWT_TOKEN')}`
           },
           formData: {
-            duration
+            duration: Date.now() - duration
           },
           timeout: 10000,
           success: resp => {
@@ -183,27 +221,7 @@ export default {
               toast.info('录音失败了~')
               return
             }
-            const audio = resData.data
-            const data = {
-              source_id: audio.id,
-              src: audio.src,
-              duration,
-              text: '',
-              margin_left: 0,
-              begin_at: 0,
-              start_at: 0,
-              ended_at: 0,
-              volume: 100,
-              reader: {
-                id: currentUser.value.id,
-                avatar: currentUser.value.avatar,
-                nickname: currentUser.value.nickname,
-                color
-              },
-              author_id: currentUser.value.id
-            }
-
-            store.commit('live/ADD_VOICE_ITEM', data)
+            store.commit('live/ADD_SELF_VOICE', resData.data)
           },
           fail: () => {
             toast.info('录音失败了~')
@@ -218,12 +236,41 @@ export default {
 
     const switchTab = (index) => {
       state.activeIndex = index
-      if (index === 1) {
+      if (index === 1 && !state.fetchedMyVoice) {
         store.dispatch('live/getVoices', {
           type: '1',
           slug: currentUser.value.slug
         })
+        state.fetchedMyVoice = true
       }
+    }
+
+    const submitUpdateAudioText = () => {
+      const currentAudio = source.value[state.updateAudioIndex]
+      if (state.updateAudioText === currentAudio.text) {
+        state.showDialog = false
+        return
+      }
+      if (state.submittingUpdateText) {
+        return
+      }
+
+      state.submittingUpdateText = true
+      const params = {
+        id: currentAudio.id,
+        text: state.updateAudioText
+      }
+      http.post('live_room/voice/update', params)
+        .then(() => {
+          state.showDialog = false
+          store.commit('live/UPDATE_SELF_VOICE', params)
+        })
+        .catch(() => {
+          toast.info('更新失败了')
+        })
+        .finally(() => {
+          state.submittingUpdateText = false
+        })
     }
 
     onMounted(() => {
@@ -239,7 +286,9 @@ export default {
       switchTab,
       toggleDrawer,
       handleAddVoice,
-      handleStartRecord
+      handleEditAudio,
+      handleStartRecord,
+      submitUpdateAudioText
     }
   }
 }
@@ -308,6 +357,16 @@ export default {
           flex-shrink: 0;
         }
 
+        .body {
+          flex: 1;
+          text-align: left;
+          @extend %oneline;
+        }
+
+        .edit {
+          padding-left: $container-padding;
+        }
+
         .text {
           flex: 1;
           text-align: left;
@@ -332,6 +391,29 @@ export default {
     .record-tip {
       text-align: center;
       font-size: 24px;
+    }
+  }
+
+  .edit-audio-dialog {
+    .footer {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1PX solid #e7ecf2;
+      padding-top: $container-padding;
+
+      button {
+        flex: 1;
+      }
+
+      .cancel {
+        border-right: 1PX solid #e7ecf2;
+      }
+
+      .submit {
+        color: #ff6881;
+      }
     }
   }
 }

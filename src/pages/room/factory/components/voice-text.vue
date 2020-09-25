@@ -8,7 +8,8 @@
     <textarea
       :value="voice.text"
       showConfirmBar=""
-      maxlength="200"
+      placeholder="请录入语音对应的文字"
+      maxlength="500"
       @input="handleChange"
     />
   </Dialog>

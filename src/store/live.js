@@ -40,7 +40,10 @@ export default {
       readers: [],
       showSearchDrawer: false
     },
-    voices: []
+    voices: {
+      0: [],
+      1: []
+    }
   }),
   mutations: {
     SET_CONTENT(store, data) {
@@ -337,8 +340,8 @@ export default {
       store.editor.focusVoiceId = data.id
       logTrack(store.content)
     },
-    SET_VOICES(store, data) {
-      store.voices = data
+    SET_VOICES(store, { type, list }) {
+      store.voices[type] = list
     }
   },
   actions: {
@@ -402,10 +405,10 @@ export default {
       commit('SET_CONTENT', data)
       commit('UPDATE_FOCUS_TRACK', data[0])
     },
-    getVoices({ commit }) {
-      http.get('live_room/voice/all')
+    getVoices({ commit }, query) {
+      http.get('live_room/voice/all', query)
         .then(res => {
-          commit('SET_VOICES', res)
+          commit('SET_VOICES', { type: query.type, list: res })
         })
     }
   },

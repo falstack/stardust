@@ -1,40 +1,76 @@
 <template>
-  <Drawer v-model="state.showDrawer">
-    <view class="search-drawer">
-      <view class="drawer-header">
-        <Search
-          v-model="state.keyword"
-          @close="toggleDrawer"
-        />
-      </view>
-      <view class="flow-wrap">
-        <button
-          v-for="item in source"
-          :key="item.id"
-          class="search-item"
-          @tap="handleAddVoice(item)"
-        >
-          <image class="avatar" :src="$utils.resize(item.reader.avatar, 30)" />
-          <text class="text">{{ item.text }}</text>
-        </button>
-      </view>
-      <button
-        class="record-btn"
-        :class="{ 'is-active': state.voiceTime }"
-        @tap="handleStartRecord"
-      >
-        <view class="core" />
-      </button>
-      <view
-        v-if="state.voiceTime"
-        class="record-tip"
-      >
-        <view>
-          正在录音：{{ state.voiceTime }}s
+  <view class="search-drawer">
+    <Drawer v-model="state.showDrawer" size="calc(100% - 120rpx)">
+      <view class="flex-wrap">
+        <view class="flex-shrink-0 switcher-wrap">
+          <button
+            :class="{ 'is-active': state.activeIndex === 0 }"
+            class="btn"
+            @tap="switchTab(0)"
+          >
+            公开声源
+          </button>
+          <button
+            :class="{ 'is-active': state.activeIndex === 1 }"
+            class="btn"
+            @tap="switchTab(1)"
+          >
+            我的声源
+          </button>
         </view>
+        <view class="flex-shrink-0">
+          <Search
+            v-model="state.keyword"
+            :show-cancel="false"
+            placeholder="根据名称或文字过滤"
+            @close="toggleDrawer"
+          />
+        </view>
+        <template v-if="state.activeIndex === 0">
+          <view class="flex-1">
+            <button
+              v-for="item in source"
+              :key="item.id"
+              class="search-item"
+              @tap="handleAddVoice(item)"
+            >
+              <image class="avatar" :src="$utils.resize(item.reader.avatar, 30)" />
+              <text class="text">{{ item.text }}</text>
+            </button>
+          </view>
+        </template>
+        <template v-else>
+          <view class="flex-1">
+            <button
+              v-for="item in source"
+              :key="item.id"
+              class="search-item"
+              @tap="handleAddVoice(item)"
+            >
+              <image class="avatar" :src="$utils.resize(item.reader.avatar, 30)" />
+              <text class="text">{{ item.text }}</text>
+            </button>
+          </view>
+          <view class="flex-shrink-0">
+            <button
+              class="record-btn primary-btn"
+              :class="{ 'is-active': state.voiceTime }"
+              @tap="handleStartRecord"
+            >
+              <text class="iconfont ic-record" />
+              <text v-if="state.voiceTime">
+                录音中：{{ state.voiceTime }}s
+              </text>
+              <text v-else>
+                点击录音
+              </text>
+            </button>
+            <view class="iphone-bottom-shim" />
+          </view>
+        </template>
       </view>
-    </view>
-  </Drawer>
+    </Drawer>
+  </view>
 </template>
 
 <script>
@@ -43,6 +79,10 @@ import { reactive, watch, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
 import Search from '~/components/search'
 import Drawer from '~/components/drawer'
+import toast from '~/utils/toast'
+import cache from '~/utils/cache'
+
+let duration = 0
 
 export default {
   components: {
@@ -54,7 +94,8 @@ export default {
     const state = reactive({
       showDrawer: false,
       voiceTime: 0,
-      keyword: ''
+      keyword: '',
+      activeIndex: 0
     })
 
     watch(
@@ -65,8 +106,15 @@ export default {
     )
 
     const source = computed(() => {
-      return store.state.live.voices
+      const list = store.state.live.voices[state.activeIndex]
+      if (!state.keyword) {
+        return list
+      }
+
+      return list.filter(_ => `${_.alias},${_.text}`.includes(state.keyword))
     })
+
+    const currentUser = computed(() => store.state.userInfo)
 
     const handleAddVoice = (item) => {
       const color = store.getters['live/readerColor'](item.reader.id)
@@ -81,11 +129,10 @@ export default {
           ...item.reader,
           color
         },
-        author_id: store.state.userInfo ? store.state.userInfo.id : 0
+        author_id: currentUser.value.id
       }
 
       store.commit('live/ADD_VOICE_ITEM', data)
-      store.commit('live/CHANGE_VOICE_EDIT_TYPE', 'move')
     }
 
     const toggleDrawer = () => {
@@ -109,44 +156,87 @@ export default {
         state.voiceTime++
       }, 1000)
 
+      recorder.onStart(() => {
+        duration = Date.now()
+      })
+
       recorder.onStop((res) => {
+        duration = Date.now() - duration
         clearInterval(timer)
         state.voiceTime = 0
-        const userId = 1
-        const color = store.getters['live/readerColor'](userId)
+        const color = store.getters['live/readerColor'](currentUser.value.id)
 
-        const data = {
-          source_id: Date.now(),
-          url: res.tempFilePath,
-          duration: res.duration,
-          text: '...',
-          margin_left: 0,
-          begin_at: 0,
-          start_at: 0,
-          ended_at: 0,
-          volume: 100,
-          reader: {
-            id: userId,
-            avatar: 'https://m1.calibur.tv/cc-19f/1562950958417-r9m.jpeg',
-            nickname: '冰淤',
-            color
+        Taro.uploadFile({
+          url: 'https://api.calibur.tv/v1/live_room/voice/create',
+          filePath: res.tempFilePath,
+          name: 'file',
+          header: {
+            Authorization: `Bearer ${cache.get('JWT_TOKEN')}`
           },
-          author_id: store.state.userInfo ? store.state.userInfo.id : 0
-        }
+          formData: {
+            duration
+          },
+          timeout: 10000,
+          success: resp => {
+            const resData = JSON.parse(resp.data)
+            if (resData.code) {
+              toast.info('录音失败了~')
+              return
+            }
+            const audio = resData.data
+            const data = {
+              source_id: audio.id,
+              src: audio.src,
+              duration,
+              text: '',
+              margin_left: 0,
+              begin_at: 0,
+              start_at: 0,
+              ended_at: 0,
+              volume: 100,
+              reader: {
+                id: currentUser.value.id,
+                avatar: currentUser.value.avatar,
+                nickname: currentUser.value.nickname,
+                color
+              },
+              author_id: currentUser.value.id
+            }
 
-        store.commit('live/ADD_VOICE_ITEM', data)
-        store.commit('live/CHANGE_VOICE_EDIT_TYPE', 'text')
-        store.commit('live/TOGGLE_SEARCH_DRAWER')
+            store.commit('live/ADD_VOICE_ITEM', data)
+          },
+          fail: () => {
+            toast.info('录音失败了~')
+          }
+        })
+      })
+
+      recorder.onError(() => {
+        toast.info('录音出错了')
       })
     }
 
+    const switchTab = (index) => {
+      state.activeIndex = index
+      if (index === 1) {
+        store.dispatch('live/getVoices', {
+          type: '1',
+          slug: currentUser.value.slug
+        })
+      }
+    }
+
     onMounted(() => {
-      store.dispatch('live/getVoices')
+      store.dispatch('live/getVoices', {
+        type: '0',
+        slug: ''
+      })
     })
 
     return {
       state,
       source,
+      switchTab,
       toggleDrawer,
       handleAddVoice,
       handleStartRecord
@@ -157,74 +247,92 @@ export default {
 
 <style lang="scss">
 .search-drawer {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-
-  .drawer-header {
-    width: 100%;
-    flex-shrink: 0;
+  .drawer__wrap {
+    border-radius: 20px 20px 0 0;
   }
 
-  .flow-wrap {
-    overflow-y: auto;
-    width: 100%;
-    flex: 1;
+  .flex-wrap {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 
-    .search-item {
+    .flex-shrink-0 {
+      width: 100%;
+      flex-shrink: 0;
+    }
+
+    .switcher-wrap {
       display: flex;
       flex-direction: row;
-      justify-content: flex-start;
+      justify-content: center;
       align-items: center;
-      border-radius: 0;
-      padding: $container-padding;
-      border-bottom: 1PX solid #e7ecf2;
+      width: 290px;
+      margin: 14px auto 0;
+      background-color: #dedede;
+      border-radius: 10px;
+      padding: 5px 0;
 
-      .avatar {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        margin-right: $container-padding;
-        flex-shrink: 0;
-      }
+      .btn {
+        width: 140px;
+        padding: 10px;
+        margin: 0;
+        height: 50px;
+        line-height: 30px;
+        font-size: 26px;
 
-      .text {
-        flex: 1;
-        text-align: left;
-        @extend %oneline;
+        &.is-active {
+          background-color: #fff;
+        }
       }
     }
-  }
 
-  .record-btn {
-    position: relative;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    margin: 50px auto;
-    background-color: #F4F4F4;
-    border: 1PX solid #3D3D3D;
+    .flex-1 {
+      overflow-y: auto;
+      width: 100%;
+      flex: 1;
 
-    .core {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      right: 20px;
-      bottom: 20px;
-      border-radius: 50%;
-      background-color: #3D3D3D;
+      .search-item {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        border-radius: 0;
+        padding: $container-padding;
+        border-bottom: 1PX solid #e7ecf2;
+
+        .avatar {
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          margin-right: $container-padding;
+          flex-shrink: 0;
+        }
+
+        .text {
+          flex: 1;
+          text-align: left;
+          @extend %oneline;
+        }
+      }
     }
 
-    &.is-active {
-      .core {
+    .record-btn {
+      margin: $container-padding;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+
+      &.is-active {
         background-color: red;
+        border-color: red;
       }
     }
-  }
 
-  .record-tip {
-    text-align: center;
-    font-size: 24px;
+    .record-tip {
+      text-align: center;
+      font-size: 24px;
+    }
   }
 }
 </style>

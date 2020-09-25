@@ -11,9 +11,13 @@
         adjustPosition=""
         :placeholder="placeholder"
       >
-      <text class="iconfont ic-cancel" />
+      <text
+        v-if="value"
+        class="iconfont ic-cancel"
+      />
     </view>
     <button
+      v-if="showCancel"
       class="close-btn"
       hover-class="none"
       @tap="handleClose"
@@ -40,6 +44,10 @@ export default {
     placeholder: {
       type: String,
       default: '输入要搜索的内容'
+    },
+    showCancel: {
+      type: Boolean,
+      default: true
     }
   },
   setup(props, ctx) {

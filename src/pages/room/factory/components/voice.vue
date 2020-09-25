@@ -8,7 +8,7 @@
       class="bubble"
       :style="bubbleStyle"
     >
-      {{ item.text }}
+      {{ item.text || '请输入文字' }}
     </view>
   </view>
 </template>

@@ -13,7 +13,8 @@
       >
       <text
         v-if="value"
-        class="iconfont ic-cancel"
+        class="iconfont ic-delete_fill"
+        @tap="handleClear"
       />
     </view>
     <button
@@ -29,7 +30,6 @@
 
 <script>
 import { ref, watch } from 'vue'
-import { useStore } from 'vuex'
 
 export default {
   props: {
@@ -51,7 +51,6 @@ export default {
     }
   },
   setup(props, ctx) {
-    const store = useStore()
     const value = ref(props.modelValue)
 
     watch(
@@ -72,9 +71,14 @@ export default {
       ctx.emit('close')
     }
 
+    const handleClear = () => {
+      value.value = ''
+    }
+
     return {
       value,
-      handleClose
+      handleClose,
+      handleClear
     }
   }
 }

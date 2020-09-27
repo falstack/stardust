@@ -61,18 +61,14 @@ $track-height: 80px;
 
   &__left {
     &.part-1 {
-      left: 0;
-    }
-
-    &.part-2 {
       left: 12.5%;
     }
 
-    &.part-3 {
+    &.part-2 {
       left: 25%;
     }
 
-    &.part-4 {
+    &.part-3 {
       left: 37.5%;
     }
   }
@@ -89,10 +85,10 @@ $track-height: 80px;
     &.part-3 {
       left: 75%
     }
+  }
 
-    &.part-4 {
-      left: 87.5%
-    }
+  &__bgm {
+    left: 87.5%
   }
 }
 </style>

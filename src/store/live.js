@@ -59,6 +59,13 @@ export default {
         }
       })
     },
+    DELETE_SELF_VOICE(store, { id }) {
+      store.voices[1].forEach((item, index) => {
+        if (item.id === id) {
+          store.voices[1].splice(index, 1)
+        }
+      })
+    },
     TOGGLE_SEARCH_DRAWER(store) {
       store.editor.showSearchDrawer = !store.editor.showSearchDrawer
     },
@@ -168,7 +175,13 @@ export default {
         return
       }
 
-      if (!isUp && index >= store.content.length - 1) {
+      // 不能移入 BGM
+      if (!isUp && index >= store.content.length - 2) {
+        return
+      }
+
+      // BGM
+      if (index === store.content.length - 1) {
         return
       }
 
@@ -375,12 +388,6 @@ export default {
           value: []
         },
         {
-          id: 4,
-          type: 'left',
-          part: 4,
-          value: []
-        },
-        {
           id: 5,
           type: 'right',
           part: 1,
@@ -400,16 +407,10 @@ export default {
         },
         {
           id: 8,
-          type: 'right',
+          type: 'bgm',
           part: 4,
           value: []
-        },
-        // {
-        //   id: 3,
-        //   type: 'bgm',
-        //   part: 1,
-        //   value: []
-        // }
+        }
       ]
       commit('SET_CONTENT', data)
       commit('UPDATE_FOCUS_TRACK', data[0])

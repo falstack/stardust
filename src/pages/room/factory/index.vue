@@ -13,6 +13,9 @@
         <view class="shim" />
       </view>
       <view class="tab-wrap">
+        <view class="track-title">
+          Time
+        </view>
         <button
           v-for="item in tracks"
           :key="item.id"
@@ -20,11 +23,12 @@
           :class="{ 'is-active': item.id === focusId }"
           @tap="switchTrack(item)"
         >
-          {{ (item.type === 'left' ? '左' : '右') + item.part }}
+          {{ convertTitle(item) }}
         </button>
       </view>
     </view>
     <view class="section">
+      <Timeline />
       <Track
         v-for="track in content"
         :key="track.id"
@@ -63,13 +67,16 @@ import { useStore } from 'vuex'
 import Track from './components/track'
 import Avatar from './components/avatar'
 import Control from './components/control'
+import Timeline from './components/timeline'
 import SearchDrawer from './components/search-drawer'
+import toast from '~/utils/toast'
 
 export default {
   components: {
     Track,
     Avatar,
     Control,
+    Timeline,
     SearchDrawer
   },
   setup() {
@@ -98,11 +105,23 @@ export default {
     }
 
     const openDrawer = () => {
+      if (focusId.value === 8) {
+        toast.info('暂未开放 BGM')
+        return
+      }
       store.commit('live/TOGGLE_SEARCH_DRAWER')
     }
 
     const switchTrack = (item) => {
       store.commit('live/UPDATE_FOCUS_TRACK', item)
+    }
+
+    const convertTitle = (item) => {
+      if (item.type === 'bgm') {
+        return 'BGM'
+      }
+
+      return (item.type === 'left' ? '左' : '右') + item.part
     }
 
     store.dispatch('live/initEditor')
@@ -114,7 +133,8 @@ export default {
       focusId,
       openDrawer,
       handlePlay,
-      switchTrack
+      switchTrack,
+      convertTitle
     }
   }
 }

@@ -39,7 +39,9 @@ export default {
         const item = {
           type: 'bubble-msg'
         }
-        if (track.type !== 'bgm') {
+        if (track.type === 'bgm') {
+          // BGM
+        } else {
           item.float = track.type
           track.value.forEach(voice => {
             result.push({

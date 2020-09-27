@@ -15,7 +15,7 @@
             class="btn"
             @tap="switchTab(1)"
           >
-            我的声源
+            自制声源
           </button>
         </view>
         <view class="flex-shrink-0">
@@ -51,7 +51,8 @@
                 <text v-if="item.text" class="text">{{ item.text }}</text>
                 <text v-else class="placeholder">请输入文字</text>
               </view>
-              <view class="edit" @tap.stop="handleEditAudio(item, index)">修改文字</view>
+              <view class="iconfont ic-edit" @tap.stop="handleEditAudio(item, index)" />
+              <view class="iconfont ic-delete" @tap.stop="handleDeleteAudio(item, index)" />
             </button>
           </view>
           <view class="flex-shrink-0">
@@ -85,7 +86,7 @@
           maxlength="500"
         />
         <view class="footer">
-          <button class="cancel">
+          <button class="cancel" @tap="handleCloseDialog">
             取消
           </button>
           <button class="submit" @tap="submitUpdateAudioText">
@@ -173,6 +174,31 @@ export default {
         state.updateAudioIndex = index
       }
       state.showDialog = true
+    }
+
+    const handleDeleteAudio = (item) => {
+      Taro.showModal({
+        title: '确认要删除吗?',
+        content: '删除后不影响已公开内容',
+        cancelText: '取消',
+        confirmText: '删除',
+        confirmColor: '#FB7299'
+      })
+        .then(res => {
+          if (res.cancel) {
+            return
+          }
+          http.post('live_room/voice/delete', {
+            id: item.id
+          })
+            .then(() => {
+              store.commit('live/DELETE_SELF_VOICE', item)
+              toast.info('已删除')
+            })
+            .catch(() => {
+              toast.info('操作失败')
+            })
+        })
     }
 
     const toggleDrawer = () => {
@@ -273,6 +299,10 @@ export default {
         })
     }
 
+    const handleCloseDialog = () => {
+      state.showDialog = false
+    }
+
     onMounted(() => {
       store.dispatch('live/getVoices', {
         type: '0',
@@ -287,6 +317,8 @@ export default {
       toggleDrawer,
       handleAddVoice,
       handleEditAudio,
+      handleDeleteAudio,
+      handleCloseDialog,
       handleStartRecord,
       submitUpdateAudioText
     }
@@ -363,8 +395,11 @@ export default {
           @extend %oneline;
         }
 
-        .edit {
-          padding-left: $container-padding;
+        .iconfont {
+          width: 60px;
+          height: 60px;
+          line-height: 60px;
+          text-align: center;
         }
 
         .text {

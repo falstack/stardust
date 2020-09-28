@@ -10,7 +10,12 @@
       :class="{ 'long': !(index % 10) }"
       class="item"
     >
-      <text class="text" v-if="!(index % 10)">{{ index }}</text>
+      <text
+        v-if="!(index % 10)"
+        class="text"
+      >
+        {{ index }}
+      </text>
     </view>
   </view>
 </template>

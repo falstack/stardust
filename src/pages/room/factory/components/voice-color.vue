@@ -33,7 +33,7 @@ export default {
     })
 
     const color = computed(() => {
-      return store.getters['live/readerColor'](voice.value.reader.id)
+      return store.getters['live/readerColor'](voice.value.reader_id)
     })
 
     const handleClick = (color) => {

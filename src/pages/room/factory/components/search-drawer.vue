@@ -1,6 +1,9 @@
 <template>
   <view class="search-drawer">
-    <Drawer v-model="state.showDrawer" size="calc(100% - 120rpx)">
+    <Drawer
+      v-model="state.showDrawer"
+      size="calc(100% - 120rpx)"
+    >
       <view class="flex-wrap">
         <view class="flex-shrink-0 switcher-wrap">
           <button
@@ -34,8 +37,13 @@
               class="search-item"
               @tap="handleAddVoice(item)"
             >
-              <image class="avatar" :src="$utils.resize(item.reader.avatar, 30)" />
-              <text class="text">{{ item.text }}</text>
+              <image
+                class="avatar"
+                :src="$utils.resize(item.reader.avatar, { width: 80 })"
+              />
+              <text class="text">
+                {{ item.text }}
+              </text>
             </button>
           </view>
         </template>
@@ -48,11 +56,27 @@
               @tap="handleAddVoice(item)"
             >
               <view class="body">
-                <text v-if="item.text" class="text">{{ item.text }}</text>
-                <text v-else class="placeholder">请输入文字</text>
+                <text
+                  v-if="item.text"
+                  class="text"
+                >
+                  {{ item.text }}
+                </text>
+                <text
+                  v-else
+                  class="placeholder"
+                >
+                  请输入文字
+                </text>
               </view>
-              <view class="iconfont ic-edit" @tap.stop="handleEditAudio(item, index)" />
-              <view class="iconfont ic-delete" @tap.stop="handleDeleteAudio(item, index)" />
+              <view
+                class="iconfont ic-edit"
+                @tap.stop="handleEditAudio(item, index)"
+              />
+              <view
+                class="iconfont ic-delete"
+                @tap.stop="handleDeleteAudio(item, index)"
+              />
             </button>
           </view>
           <view class="flex-shrink-0">
@@ -86,10 +110,16 @@
           maxlength="500"
         />
         <view class="footer">
-          <button class="cancel" @tap="handleCloseDialog">
+          <button
+            class="cancel"
+            @tap="handleCloseDialog"
+          >
             取消
           </button>
-          <button class="submit" @tap="submitUpdateAudioText">
+          <button
+            class="submit"
+            @tap="submitUpdateAudioText"
+          >
             确定
           </button>
         </view>
@@ -150,22 +180,21 @@ export default {
     const currentUser = computed(() => store.state.userInfo)
 
     const handleAddVoice = (item) => {
-      const color = store.getters['live/readerColor'](item.reader.id)
       const data = {
-        ...item,
+        id: item.id,
+        src: item.src,
+        text: item.text,
+        duration: item.duration,
         margin_left: 0,
         begin_at: 0,
         start_at: 0,
         ended_at: 0,
         volume: 100,
-        reader: {
-          ...item.reader,
-          color
-        },
+        reader_id: item.reader.id,
         author_id: currentUser.value.id
       }
 
-      store.commit('live/ADD_VOICE_ITEM', data)
+      store.commit('live/ADD_VOICE_ITEM', { data, user: item.reader })
     }
 
     const handleEditAudio = (item, index) => {

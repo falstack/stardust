@@ -34,6 +34,7 @@ export default {
   state: () => ({
     content: [],
     editor: {
+      draftId: 0,
       focusTrackId: 0,
       focusVoiceId: 0,
       voiceEditType: '',
@@ -48,6 +49,9 @@ export default {
   mutations: {
     SET_CONTENT(store, data) {
       store.content = data
+    },
+    SET_DRAFT_ID(state, id) {
+      store.editor.draftId = id
     },
     ADD_SELF_VOICE(store, data) {
       store.voices[1].unshift(data)
@@ -339,7 +343,7 @@ export default {
       }
       logTrack(store.content)
     },
-    ADD_VOICE_ITEM(store, data) {
+    ADD_VOICE_ITEM(store, { data, user }) {
       const index = getIndex(store.content, store.editor.focusTrackId)
       const track = store.content[index].value
       const subIndex = store.editor.focusVoiceId ? getIndex(track, store.editor.focusVoiceId) : -1
@@ -349,11 +353,12 @@ export default {
       }
       track.splice(subIndex + 1, 0, data)
       const readerIds = store.editor.readers.map(_ => _.id)
-      const curRenderId = data.reader.id
+      const curRenderId = user.id
       const indexOf = readerIds.indexOf(curRenderId)
       if (indexOf === -1) {
         store.editor.readers.push({
-          ...data.reader,
+          ...user,
+          color: colors[curRenderId % colors.length],
           voice_count: 1
         })
       } else {

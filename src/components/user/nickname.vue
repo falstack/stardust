@@ -1,6 +1,6 @@
 <template>
   <view class="nickname">
-    {{ user.nickname }}
+    {{ user.nickname || user.name }}
   </view>
 </template>
 

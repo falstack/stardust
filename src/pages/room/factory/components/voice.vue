@@ -33,7 +33,7 @@ export default {
 
     const bubbleStyle = computed(() => {
       const height = (props.item.ended_at || props.item.duration) - props.item.start_at
-      const color = store.getters['live/readerColor'](props.item.reader.id)
+      const color = store.getters['live/readerColor'](props.item.reader_id)
       return {
         color: color.text,
         height: `${height / 50 | 0}px`,

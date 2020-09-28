@@ -87,7 +87,7 @@ export default {
     })
 
     const avatars = computed(() => {
-      return store.state.live.editor.readers
+      return store.state.live.readers
     })
 
     const tracks = computed(() => {

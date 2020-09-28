@@ -4,55 +4,9 @@
       <MsgRoom ref="roomRef" />
     </view>
     <view class="flex-shrink-0">
-      <view class="buttons">
-        <button
-          class="primary-btn-plain"
-          @tap="handlePublish(false)"
-        >
-          存草稿
-        </button>
-        <button
-          class="primary-btn"
-          @tap="openPublishDrawer"
-        >
-          发布
-        </button>
-        <Drawer
-          v-model="state.publish.showDrawer"
-          size="80%"
-        >
-          <view class="publish-drawer">
-            <view class="pub-title">
-              标题
-            </view>
-            <input
-              v-model="state.publish.title"
-              type="text"
-              placeholder="取一个有趣的标题吧"
-              adjustPosition=""
-              maxlength="20"
-              class="input"
-            >
-            <view class="pub-title">
-              简介
-            </view>
-            <textarea
-              v-model="state.publish.desc"
-              type="text"
-              placeholder="请输入内容简介"
-              autoFocus="true"
-              showConfirmBar=""
-              class="textarea"
-              maxlength="200"
-            />
-            <button
-              class="primary-btn"
-              @tap="handlePublish(true)"
-            >
-              发布
-            </button>
-          </view>
-        </Drawer>
+      <PublishBar v-if="isEditMode" />
+      <view v-else>
+        bottom bar
       </view>
       <view class="iphone-bottom-shim" />
     </view>
@@ -64,34 +18,28 @@ import Taro from '@tarojs/taro'
 import { useStore } from 'vuex'
 import { ref, reactive, onMounted, computed, onBeforeUnmount } from 'vue'
 import MsgRoom from '~/components/message/room'
-import Drawer from '~/components/drawer'
+import PublishBar from './components/publish-bar'
 import toast from '~/utils/toast'
-import http from '~/utils/http'
 
 export default {
   name: 'RoomLive',
   components: {
-    MsgRoom,
-    Drawer
+    PublishBar,
+    MsgRoom
   },
   setup() {
     const roomRef = ref(null)
     const state = reactive({
       loopTimer: 0,
       startTime: 0,
-      lastIndex: -1,
-      publish: {
-        showDrawer: false,
-        title: '',
-        desc: '',
-        loading: false
-      }
+      lastIndex: -1
     })
     const store = useStore()
+    const params = Taro.getCurrentInstance().router.params
 
     const messages = computed(() => {
       const content = store.state.live.content
-      const readers = store.state.live.editor.readers
+      const readers = store.state.live.readers
       const result = []
 
       content.forEach(track => {
@@ -124,6 +72,10 @@ export default {
       result.sort((prev, next) => prev.begin_at - next.begin_at)
 
       return result
+    })
+
+    const isEditMode = computed(() => {
+      return !params.id
     })
 
     const addMessage = (index) => {
@@ -174,54 +126,28 @@ export default {
       recorder.stop()
     }
 
-    const handlePublish = (isPublish) => {
-      if (isPublish) {
-        if (!state.publish.title) {
-          toast.info('请先输入标题')
-          return
-        }
-
-        if (!state.publish.desc) {
-          toast.info('请先输入简介')
-          return
-        }
+    const startPlay = () => {
+      const runner = () => {
+        state.startTime = Date.now()
+        messageReader()
       }
 
-      if (state.publish.loading) {
+      if (!params.id) {
+        runner()
         return
       }
 
-      state.publish.loading = true
-      http.post('live_room/publish', {
-        id: store.state.live.editor.draftId,
-        content: store.state.live.content,
-        readers: store.state.live.editor.readers,
-        title: state.publish.title || new Date().toLocaleDateString(),
-        desc: state.publish.desc,
-        is_publish: isPublish
-      })
-        .then(liveId => {
-          if (isPublish) {
-            // redirect To live page
-          } else {
-            store.commit('live/SET_DRAFT_ID', liveId)
-          }
+      store.dispatch('live/loadData', params)
+        .then(() => {
+          runner()
         })
         .catch(err => {
           toast.info(err.message)
         })
-        .finally(() => {
-          state.publish.loading = false
-        })
-    }
-
-    const openPublishDrawer = () => {
-      state.publish.showDrawer = true
     }
 
     onMounted(() => {
-      state.startTime = Date.now()
-      messageReader()
+      startPlay()
     })
 
     onBeforeUnmount(() => {
@@ -231,11 +157,10 @@ export default {
     return {
       state,
       roomRef,
+      isEditMode,
       stopRecord,
       addMessage,
-      startRecord,
-      handlePublish,
-      openPublishDrawer
+      startRecord
     }
   }
 }

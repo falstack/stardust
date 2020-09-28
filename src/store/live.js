@@ -33,12 +33,12 @@ export default {
   namespaced: true,
   state: () => ({
     content: [],
+    readers: [],
     editor: {
       draftId: 0,
       focusTrackId: 0,
       focusVoiceId: 0,
       voiceEditType: '',
-      readers: [],
       showSearchDrawer: false
     },
     voices: {
@@ -50,7 +50,10 @@ export default {
     SET_CONTENT(store, data) {
       store.content = data
     },
-    SET_DRAFT_ID(state, id) {
+    SET_READERS(store, data) {
+      store.readers = data
+    },
+    SET_DRAFT_ID(store, id) {
       store.editor.draftId = id
     },
     ADD_SELF_VOICE(store, data) {
@@ -142,12 +145,12 @@ export default {
         track[subIndex + 1].margin_left += deleteItem.margin_left + deleteItem.duration  / 100
       }
 
-      store.editor.readers.forEach((item, index) => {
+      store.readers.forEach((item, index) => {
         if (item.id === deleteItem.reader.id) {
           if (item.voice_count === 1) {
-            store.editor.readers.splice(index, 1)
+            store.readers.splice(index, 1)
           } else {
-            store.editor.readers[index].voice_count--
+            store.readers[index].voice_count--
           }
         }
       })
@@ -280,7 +283,7 @@ export default {
       track[subIndex].text = value
     },
     UPDATE_VOICE_COLOR(store, { color, reader }) {
-      const users = store.editor.readers
+      const users = store.readers
       const indexOf = users.map(_ => _.id).indexOf(reader.id)
       users[indexOf].color = color
     },
@@ -352,17 +355,17 @@ export default {
         data.begin_at = prevItem.begin_at + prevItem.duration
       }
       track.splice(subIndex + 1, 0, data)
-      const readerIds = store.editor.readers.map(_ => _.id)
+      const readerIds = store.readers.map(_ => _.id)
       const curRenderId = user.id
       const indexOf = readerIds.indexOf(curRenderId)
       if (indexOf === -1) {
-        store.editor.readers.push({
+        store.readers.push({
           ...user,
           color: colors[curRenderId % colors.length],
           voice_count: 1
         })
       } else {
-        store.editor.readers[indexOf].voice_count++
+        store.readers[indexOf].voice_count++
       }
       store.editor.focusVoiceId = data.id
       logTrack(store.content)
@@ -420,6 +423,17 @@ export default {
       commit('SET_CONTENT', data)
       commit('UPDATE_FOCUS_TRACK', data[0])
     },
+    loadData({ commit }, { id }) {
+      return new Promise((resolve, reject) => {
+        http.get('live_room/show', { id })
+          .then(res => {
+            commit('SET_CONTENT', res.content)
+            commit('SET_READERS', res.readers)
+            resolve()
+          })
+          .catch(reject)
+      })
+    },
     getVoices({ commit }, query) {
       http.get('live_room/voice/all', query)
         .then(res => {
@@ -447,7 +461,7 @@ export default {
       return track[subIndex]
     },
     readerColor: (state) => (id) => {
-      const users = state.editor.readers
+      const users = state.readers
       const indexOf = users.map(_ => _.id).indexOf(id)
       if (indexOf !== -1 && users[indexOf].color) {
         return users[indexOf].color

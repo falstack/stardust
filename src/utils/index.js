@@ -99,17 +99,17 @@ export const timeAgo = (time) => {
   if (!time) {
     return ''
   }
-  const date = this.adjustDate(time)
+  const date = adjustDate(time)
   const today = new Date().setHours(0, 0, 0, 0)
-  const obj = this.parseDateProps(time)
+  const obj = parseDateProps(time)
   if (today < date) {
-    return `今天${this.pad(obj.hour)}:${this.pad(obj.minutes)}`
+    return `今天${pad(obj.hour)}:${pad(obj.minutes)}`
   }
   if (today - 86400000 < date) {
-    return `昨天${this.pad(obj.hour)}:${this.pad(obj.minutes)}`
+    return `昨天${pad(obj.hour)}:${pad(obj.minutes)}`
   }
   if (today - 172800000 < date) {
-    return `前天${this.pad(obj.hour)}:${this.pad(obj.minutes)}`
+    return `前天${pad(obj.hour)}:${pad(obj.minutes)}`
   }
   const delta = Date.now() - date.getTime()
   if (delta > 86400000 * 365) {
@@ -142,7 +142,7 @@ export const parseDateProps = (time) => {
   if (!time) {
     return null
   }
-  const date = this.adjustDate(time)
+  const date = adjustDate(time)
   if (!date) {
     return null
   }
@@ -158,7 +158,7 @@ export const parseDateProps = (time) => {
 }
 
 export const formatTime = (ts, type = 'ymd') => {
-  const obj = this.parseDateProps(ts)
+  const obj = parseDateProps(ts)
   if (!obj) {
     return ''
   }

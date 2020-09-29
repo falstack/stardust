@@ -5,9 +5,7 @@
     </view>
     <view class="flex-shrink-0">
       <PublishBar v-if="isEditMode" />
-      <view v-else>
-        bottom bar
-      </view>
+      <Toolbar v-else />
       <view class="iphone-bottom-shim" />
     </view>
   </view>
@@ -19,12 +17,14 @@ import { useStore } from 'vuex'
 import { ref, reactive, onMounted, computed, onBeforeUnmount } from 'vue'
 import MsgRoom from '~/components/message/room'
 import PublishBar from './components/publish-bar'
+import Toolbar from './components/toolbar'
 import toast from '~/utils/toast'
 
 export default {
   name: 'RoomLive',
   components: {
     PublishBar,
+    Toolbar,
     MsgRoom
   },
   setup() {
@@ -185,52 +185,6 @@ export default {
   .flex-shrink-0 {
     width: 100%;
     flex-shrink: 0;
-    background-color: #fff;
-  }
-
-  .buttons {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: $container-padding;
-
-    button {
-      flex: 1;
-
-      &:first-child {
-        margin-right: $container-padding / 2;
-      }
-
-      &:last-child {
-        margin-left: $container-padding / 2;
-      }
-    }
-  }
-
-  .publish-drawer {
-    padding: $container-padding;
-    height: 100%;
-    background-color: #fff;
-
-    .pub-title {
-      font-size: 30px;
-      margin-bottom: $container-padding;
-    }
-
-    .input,
-    .textarea {
-      background-color: #f9f9f9;
-      padding: $container-padding;
-      border-radius: $container-padding;
-      margin-bottom: $container-padding;
-      font-size: 28px;
-    }
-
-    .input {
-      height: $container-padding * 4;
-      line-height: $container-padding * 3;
-    }
   }
 }
 </style>

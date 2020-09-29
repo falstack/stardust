@@ -182,6 +182,7 @@ export default {
     const handleAddVoice = (item) => {
       const data = {
         id: item.id,
+        local_id: `${item.id}-${Date.now()}`,
         src: item.src,
         text: item.text,
         duration: item.duration,

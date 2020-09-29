@@ -39,7 +39,7 @@ export default {
     const handleClick = (color) => {
       store.commit('live/UPDATE_VOICE_COLOR', {
         color,
-        reader: voice.value.reader
+        reader_id: voice.value.reader_id
       })
     }
 

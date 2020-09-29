@@ -3,6 +3,7 @@ import { oAuthLogin, getUserRole, logoutAction } from '~/utils/login'
 import toast from '~/utils/toast'
 import cache from '~/utils/cache'
 import live from './live'
+import list from './list'
 
 const store = createStore({
   state: () => ({
@@ -71,7 +72,8 @@ const store = createStore({
     }
   },
   modules: {
-    live
+    live,
+    list
   }
 })
 

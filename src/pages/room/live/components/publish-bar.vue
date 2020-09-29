@@ -2,13 +2,13 @@
   <view class="publish-bar">
     <button
       class="btn primary-btn-plain"
-      @tap="handlePublish(false)"
+      @tap="openPublishDrawer(false)"
     >
       存草稿
     </button>
     <button
       class="btn primary-btn"
-      @tap="openPublishDrawer"
+      @tap="openPublishDrawer(true)"
     >
       发布
     </button>
@@ -35,16 +35,15 @@
           v-model="state.desc"
           type="text"
           placeholder="请输入内容简介"
-          autoFocus="true"
           showConfirmBar=""
           class="textarea"
           maxlength="200"
         />
         <button
           class="primary-btn"
-          @tap="handlePublish(true)"
+          @tap="handlePublish"
         >
-          发布
+          {{ state.isPublish ? '发布' : '存草稿' }}
         </button>
       </view>
     </Drawer>
@@ -66,14 +65,15 @@ export default {
   setup() {
     const store = useStore()
     const state = reactive({
+      isPublish: false,
       showDrawer: false,
-      title: '',
-      desc: '',
+      title: store.state.live.info.title,
+      desc: store.state.live.info.desc,
       loading: false
     })
 
-    const handlePublish = (isPublish) => {
-      if (isPublish) {
+    const handlePublish = () => {
+      if (state.isPublish) {
         if (!state.title) {
           toast.info('请先输入标题')
           return
@@ -90,22 +90,28 @@ export default {
       }
 
       state.loading = true
+      const title = state.title || new Date().toLocaleDateString()
       http.post('live_room/publish', {
         id: store.state.live.editor.draftId,
         content: store.state.live.content,
         readers: store.state.live.readers,
-        title: state.title || new Date().toLocaleDateString(),
+        title: title,
         desc: state.desc,
-        is_publish: isPublish
+        is_publish: state.isPublish
       })
         .then(liveId => {
-          if (isPublish) {
+          if (state.isPublish) {
             Taro.redirectTo({
               url: `/pages/room/live/index?id=${liveId}`
             })
           } else {
             toast.info('保存成功')
+            state.showDrawer = false
             store.commit('live/SET_DRAFT_ID', liveId)
+            store.commit('live/UPDATE_LIVE_INFO', {
+              title,
+              desc: state.desc
+            })
           }
         })
         .catch(err => {
@@ -116,7 +122,8 @@ export default {
         })
     }
 
-    const openPublishDrawer = () => {
+    const openPublishDrawer = (isPublish) => {
+      state.isPublish = isPublish
       state.showDrawer = true
     }
 

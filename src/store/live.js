@@ -1,7 +1,7 @@
 import { colors } from '~/utils'
 import http from '~/utils/http'
 
-const getIndex = (array, id, key = 'id') => {
+const getIndex = (array, id, key) => {
   let result = 0
 
   for (let i = 0; i < array.length; i++) {
@@ -12,6 +12,14 @@ const getIndex = (array, id, key = 'id') => {
   }
 
   return result
+}
+
+const getTrackIndex = (array, id) => {
+  return getIndex(array, id, 'id')
+}
+
+const getVoiceIndex = (array, id) => {
+  return getIndex(array, id, 'local_id')
 }
 
 const logTrack = (content) => {
@@ -44,6 +52,10 @@ export default {
     voices: {
       0: [],
       1: []
+    },
+    info: {
+      title: '',
+      desc: ''
     }
   }),
   mutations: {
@@ -52,6 +64,15 @@ export default {
     },
     SET_READERS(store, data) {
       store.readers = data
+    },
+    SET_LIVE_INFO(store, data) {
+      store.info.title = data.title
+      store.info.desc = data.desc
+    },
+    UPDATE_LIVE_INFO(store, obj) {
+      Object.keys(obj).forEach(key => {
+        store.info[key] = obj[key]
+      })
     },
     SET_DRAFT_ID(store, id) {
       store.editor.draftId = id
@@ -76,10 +97,10 @@ export default {
     TOGGLE_SEARCH_DRAWER(store) {
       store.editor.showSearchDrawer = !store.editor.showSearchDrawer
     },
-    UPDATE_FOCUS_VOICE(store, { id }) {
-      const index = getIndex(store.content, store.editor.focusTrackId)
+    UPDATE_FOCUS_VOICE(store, { local_id }) {
+      const index = getTrackIndex(store.content, store.editor.focusTrackId)
       const track = store.content[index].value
-      const sameTrack = track.map(_ => _.id).filter(_ => _ === id).length
+      const sameTrack = track.map(_ => _.local_id).filter(_ => _ === local_id).length
       if (!sameTrack) {
         let result
         for (let i = 0; i < store.content.length; i++) {
@@ -87,7 +108,7 @@ export default {
             break
           }
           for (let j = 0; j < store.content[i].value.length; j++) {
-            if (store.content[i].value[j].id === id) {
+            if (store.content[i].value[j].local_id === local_id) {
               result = store.content[i].id
               break
             }
@@ -95,16 +116,16 @@ export default {
         }
         store.editor.focusTrackId = result
       }
-      store.editor.focusVoiceId = id
+      store.editor.focusVoiceId = local_id
     },
     UPDATE_FOCUS_TRACK(store, { id }) {
-      const index = getIndex(store.content, id)
+      const index = getTrackIndex(store.content, id)
       const track = store.content[index].value
-      store.editor.focusVoiceId = track.length ? track[0].id : 0
+      store.editor.focusVoiceId = track.length ? track[0].local_id : 0
       store.editor.focusTrackId = id
     },
     ADD_TRACK(store) {
-      const index = getIndex(store.content, store.editor.focusTrackId)
+      const index = getTrackIndex(store.content, store.editor.focusTrackId)
       const type = store.content[index].type
       if (type === 'bgm') {
         return
@@ -121,7 +142,7 @@ export default {
       store.editor.focusVoiceId = 0
     },
     DEL_TRACK(store) {
-      const index = getIndex(store.content, store.editor.focusTrackId)
+      const index = getTrackIndex(store.content, store.editor.focusTrackId)
       const type = store.content[index].type
       if (store.content.map(_ => _.type).filter(_ => _ === type).length <= 1) {
         return
@@ -136,9 +157,9 @@ export default {
       store.editor.voiceEditType = type
     },
     DELETE_VOICE_ITEM(store) {
-      const index = getIndex(store.content, store.editor.focusTrackId)
+      const index = getTrackIndex(store.content, store.editor.focusTrackId)
       const track = store.content[index].value
-      const subIndex = getIndex(track, store.editor.focusVoiceId)
+      const subIndex = getVoiceIndex(track, store.editor.focusVoiceId)
       const deleteItem = track[subIndex]
 
       if (track[subIndex + 1]) {
@@ -146,7 +167,7 @@ export default {
       }
 
       store.readers.forEach((item, index) => {
-        if (item.id === deleteItem.reader.id) {
+        if (item.id === deleteItem.reader_id) {
           if (item.voice_count === 1) {
             store.readers.splice(index, 1)
           } else {
@@ -157,27 +178,27 @@ export default {
 
       track.splice(subIndex, 1)
       if (subIndex) {
-        store.editor.focusVoiceId = track[subIndex - 1].id
+        store.editor.focusVoiceId = track[subIndex - 1].local_id
       }
       store.editor.voiceEditType = ''
       logTrack(store.content)
     },
     UPDATE_VOICE_VOLUME(store, { volume }) {
-      const index = getIndex(store.content, store.editor.focusTrackId)
+      const index = getTrackIndex(store.content, store.editor.focusTrackId)
       const track = store.content[index].value
-      const subIndex = getIndex(track, store.editor.focusVoiceId)
+      const subIndex = getVoiceIndex(track, store.editor.focusVoiceId)
       track[subIndex].volume = volume
     },
     CLIP_VOICE_DURATION(store, data) {
-      const index = getIndex(store.content, store.editor.focusTrackId)
+      const index = getTrackIndex(store.content, store.editor.focusTrackId)
       const track = store.content[index].value
-      const subIndex = getIndex(track, store.editor.focusVoiceId)
+      const subIndex = getVoiceIndex(track, store.editor.focusVoiceId)
       Object.keys(data).forEach(key => {
         track[subIndex][key] = data[key]
       })
     },
     CHANGE_VOICE_TRACK(store, { isUp }) {
-      const index = getIndex(store.content, store.editor.focusTrackId)
+      const index = getTrackIndex(store.content, store.editor.focusTrackId)
       if (isUp && !index) {
         return
       }
@@ -193,7 +214,7 @@ export default {
       }
 
       const track = store.content[index].value
-      const subIndex = getIndex(track, store.editor.focusVoiceId)
+      const subIndex = getVoiceIndex(track, store.editor.focusVoiceId)
       const voice = track[subIndex]
       const targetIndex = isUp ? index - 1 : index + 1
       const targetTrack = store.content[targetIndex].value
@@ -277,20 +298,20 @@ export default {
       logTrack(store.content)
     },
     UPDATE_VOICE_TEXT(store, { value }) {
-      const index = getIndex(store.content, store.editor.focusTrackId)
+      const index = getTrackIndex(store.content, store.editor.focusTrackId)
       const track = store.content[index].value
-      const subIndex = getIndex(track, store.editor.focusVoiceId)
+      const subIndex = getVoiceIndex(track, store.editor.focusVoiceId)
       track[subIndex].text = value
     },
-    UPDATE_VOICE_COLOR(store, { color, reader }) {
+    UPDATE_VOICE_COLOR(store, { color, reader_id }) {
       const users = store.readers
-      const indexOf = users.map(_ => _.id).indexOf(reader.id)
+      const indexOf = users.map(_ => _.id).indexOf(reader_id)
       users[indexOf].color = color
     },
     UPDATE_VOICE_MARGIN(store, { value }) {
-      const index = getIndex(store.content, store.editor.focusTrackId)
+      const index = getTrackIndex(store.content, store.editor.focusTrackId)
       const track = store.content[index].value
-      const subIndex = getIndex(track, store.editor.focusVoiceId)
+      const subIndex = getVoiceIndex(track, store.editor.focusVoiceId)
       let delta
       const curVoice = track[subIndex]
       const nextVoice = track[subIndex + 1]
@@ -347,9 +368,9 @@ export default {
       logTrack(store.content)
     },
     ADD_VOICE_ITEM(store, { data, user }) {
-      const index = getIndex(store.content, store.editor.focusTrackId)
+      const index = getTrackIndex(store.content, store.editor.focusTrackId)
       const track = store.content[index].value
-      const subIndex = store.editor.focusVoiceId ? getIndex(track, store.editor.focusVoiceId) : -1
+      const subIndex = store.editor.focusVoiceId ? getVoiceIndex(track, store.editor.focusVoiceId) : track.length - 1
       const prevItem = track[subIndex]
       if (prevItem) {
         data.begin_at = prevItem.begin_at + prevItem.duration
@@ -367,7 +388,7 @@ export default {
       } else {
         store.readers[indexOf].voice_count++
       }
-      store.editor.focusVoiceId = data.id
+      store.editor.focusVoiceId = data.local_id
       logTrack(store.content)
     },
     SET_VOICES(store, { type, list }) {
@@ -429,6 +450,8 @@ export default {
           .then(res => {
             commit('SET_CONTENT', res.content)
             commit('SET_READERS', res.readers)
+            commit('SET_LIVE_INFO', res)
+            commit('SET_DRAFT_ID', id)
             resolve()
           })
           .catch(reject)
@@ -446,7 +469,7 @@ export default {
       if (!state.editor.focusTrackId) {
         return null
       }
-      const index = getIndex(state.content, state.editor.focusTrackId)
+      const index = getTrackIndex(state.content, state.editor.focusTrackId)
       return state.content[index]
     },
     currentVoice: (state) => {
@@ -454,9 +477,9 @@ export default {
         return null
       }
 
-      const index = getIndex(state.content, state.editor.focusTrackId)
+      const index = getTrackIndex(state.content, state.editor.focusTrackId)
       const track = state.content[index].value
-      const subIndex = getIndex(track, state.editor.focusVoiceId)
+      const subIndex = getVoiceIndex(track, state.editor.focusVoiceId)
 
       return track[subIndex]
     },

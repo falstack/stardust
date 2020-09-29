@@ -43,13 +43,11 @@ export default {
     })
 
     const isFocused = computed(() => {
-      return store.state.live.editor.focusVoiceId === props.item.id
+      return store.state.live.editor.focusVoiceId === props.item.local_id
     })
 
     const handleClick = () => {
-      store.commit('live/UPDATE_FOCUS_VOICE', {
-        id: props.item.id
-      })
+      store.commit('live/UPDATE_FOCUS_VOICE', props.item)
     }
 
     return {

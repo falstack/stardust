@@ -18,6 +18,7 @@ export default {
 
     const audio = Taro.createInnerAudioContext()
     audio.src = voice.src
+    audio.volume = voice.volume / 100
 
     audio.play()
 

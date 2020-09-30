@@ -61,7 +61,8 @@ export default {
                 {
                   type: 'mp3',
                   src: voice.src,
-                  text: voice.text
+                  text: voice.text,
+                  volume: voice.volume
                 }
               ]
             })

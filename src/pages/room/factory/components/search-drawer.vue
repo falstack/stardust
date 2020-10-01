@@ -41,9 +41,14 @@
                 class="avatar"
                 :src="$utils.resize(item.reader.avatar, { width: 80 })"
               />
-              <text class="text">
-                {{ item.text }}
-              </text>
+              <view class="body">
+                <text class="text">
+                  {{ item.text }}
+                </text>
+                <view class="meta">
+                  <text>时长：{{ (item.duration / 1000).toFixed(1) }}s</text>
+                </view>
+              </view>
             </button>
           </view>
         </template>
@@ -56,18 +61,12 @@
               @tap="handleAddVoice(item)"
             >
               <view class="body">
-                <text
-                  v-if="item.text"
-                  class="text"
-                >
-                  {{ item.text }}
+                <text class="text">
+                  {{ item.text || '请输入文字' }}
                 </text>
-                <text
-                  v-else
-                  class="placeholder"
-                >
-                  请输入文字
-                </text>
+                <view class="meta">
+                  <text>时长：{{ (item.duration / 1000).toFixed(1) }}s</text>
+                </view>
               </view>
               <view
                 class="iconfont ic-edit"
@@ -406,7 +405,7 @@ export default {
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
-        align-items: center;
+        align-items: flex-start;
         border-radius: 0;
         padding: $container-padding;
         border-bottom: 1PX solid #e7ecf2;
@@ -422,7 +421,7 @@ export default {
         .body {
           flex: 1;
           text-align: left;
-          @extend %oneline;
+          line-height: 35px;
         }
 
         .iconfont {
@@ -433,9 +432,13 @@ export default {
         }
 
         .text {
-          flex: 1;
-          text-align: left;
-          @extend %oneline;
+          display: block;
+          margin-bottom: 10px;
+          @include mutiline(35px)
+        }
+
+        .meta {
+          color: $color-text-gray;
         }
       }
     }

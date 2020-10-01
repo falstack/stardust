@@ -54,8 +54,10 @@ export default {
       1: []
     },
     info: {
+      id: 0,
       title: '',
-      desc: ''
+      desc: '',
+      author: {}
     }
   }),
   mutations: {
@@ -66,8 +68,10 @@ export default {
       store.readers = data
     },
     SET_LIVE_INFO(store, data) {
-      store.info.title = data.title
+      store.info.id = data.id
       store.info.desc = data.desc
+      store.info.title = data.title
+      store.info.author = data.author
     },
     UPDATE_LIVE_INFO(store, obj) {
       Object.keys(obj).forEach(key => {

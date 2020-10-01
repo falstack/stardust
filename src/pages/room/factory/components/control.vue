@@ -28,7 +28,10 @@
       </view>
       <Drawer v-model="state.showDraftDrawer">
         <view class="draft-drawer">
-          <view v-if="!drafts.length" class="nothing">
+          <view
+            v-if="!drafts.length"
+            class="nothing"
+          >
             还没有创建草稿
           </view>
           <button

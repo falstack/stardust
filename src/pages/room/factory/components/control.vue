@@ -6,9 +6,14 @@
     <template v-if="hasSelectedVoice">
       <component
         :is="`voice-${selectedVoiceType}`"
-        v-if="selectedVoiceType"
+        v-if="selectedVoiceType && selectedVoiceType !== 'play'"
       />
       <view class="selection-wrap">
+        <VoicePlay
+          :class="{ 'is-active': 'play' === selectedVoiceType }"
+          class="selection-item"
+          @tap="handleEditType('play')"
+        />
         <button
           v-for="item in voiceEditBar"
           :key="item.type"
@@ -56,10 +61,10 @@ export default {
 
     const voiceEditBar = computed(() => {
       return [
-        {
-          text: '播放',
-          type: 'play'
-        },
+        // {
+        //   text: '播放',
+        //   type: 'play'
+        // },
         // {
         //   text: '裁剪',
         //   type: 'clip'

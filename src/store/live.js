@@ -37,6 +37,13 @@ const logTrack = (content) => {
   console.log(result)
 }
 
+const defaultInfo = () => ({
+  id: 0,
+  title: '',
+  desc: '',
+  author: {}
+})
+
 export default {
   namespaced: true,
   state: () => ({
@@ -53,12 +60,7 @@ export default {
       0: [],
       1: []
     },
-    info: {
-      id: 0,
-      title: '',
-      desc: '',
-      author: {}
-    }
+    info: defaultInfo()
   }),
   mutations: {
     SET_CONTENT(store, data) {
@@ -446,6 +448,9 @@ export default {
         }
       ]
       commit('SET_CONTENT', data)
+      commit('SET_READERS', [])
+      commit('SET_LIVE_INFO', defaultInfo())
+      commit('SET_DRAFT_ID', 0)
       commit('UPDATE_FOCUS_TRACK', data[0])
     },
     loadData({ commit }, { id }) {

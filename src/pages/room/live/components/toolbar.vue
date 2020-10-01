@@ -101,6 +101,7 @@ export default {
 
     .iconfont {
       font-size: 46px;
+      color: #9e9e9e;
     }
   }
 }

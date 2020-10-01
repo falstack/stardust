@@ -34,10 +34,10 @@
         <textarea
           v-model="state.desc"
           type="text"
-          placeholder="请输入内容简介"
+          placeholder="请输入内容介绍"
           showConfirmBar=""
           class="textarea"
-          maxlength="200"
+          maxlength="1000"
         />
         <button
           class="primary-btn"

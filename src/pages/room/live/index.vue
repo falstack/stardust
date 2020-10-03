@@ -140,6 +140,7 @@ export default {
 
       store.dispatch('live/loadData', params)
         .then(() => {
+          // TODO：判断 visit_state 是公开还是草稿
           runner()
         })
         .catch(err => {

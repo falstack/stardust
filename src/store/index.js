@@ -4,6 +4,7 @@ import toast from '~/utils/toast'
 import cache from '~/utils/cache'
 import live from './live'
 import list from './list'
+import * as api from '~/utils/api'
 
 const store = createStore({
   state: () => ({
@@ -73,7 +74,7 @@ const store = createStore({
   },
   modules: {
     live,
-    list
+    list: list({ api })
   }
 })
 

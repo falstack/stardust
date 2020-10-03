@@ -1,46 +1,38 @@
-import http from '~/utils/http'
+import { initState, initData, loadMore, updateState, utils } from '@flowlist/js-core'
+import { setter, getter, cache } from './utils'
 
-export default {
+export default ({ api }) => ({
   namespaced: true,
-  state: () => ({
-    userLiveDraft: []
-  }),
-  mutations: {
-    SET_USER_LIVE_DRAFT(store, data) {
-      store.userLiveDraft = data
+  state: () => ({}),
+  actions: {
+    initData({ state }, { func, type, query, uniqueKey, callback, cacheTimeout }) {
+      return initData({
+        getter: getter(state), setter: setter(state), cache,
+        api, func, type, query, uniqueKey, callback, cacheTimeout
+      })
     },
-    DEL_USER_LIVE_DRAFT(store, id) {
-      store.userLiveDraft.forEach((item, index) => {
-        if (item.id === id) {
-          store.userLiveDraft.splice(index, 1)
-        }
+    loadMore({ state }, { type, func, query, uniqueKey, errorRetry, callback, cacheTimeout }) {
+      return loadMore({
+        getter: getter(state), setter: setter(state), cache,
+        api, func, type, query, uniqueKey, errorRetry, callback, cacheTimeout
       })
     }
   },
-  actions: {
-    getUserLiveDraft({ state, commit }) {
-      if (state.userLiveDraft.length) {
-        return
-      }
-      http.get('live_room/drafts')
-        .then(res => {
-          commit('SET_USER_LIVE_DRAFT', res.result)
-        })
+  mutations: {
+    INIT_STATE(state, { func, type, query }) {
+      initState({
+        getter: getter(state), setter: setter(state),
+        func, type, query
+      })
     },
-    delUserLiveDraft({ commit }, { id }) {
-      return new Promise((resolve, reject) => {
-        http.post('live_room/delete', {
-          id
-        })
-          .then(() => {
-            commit('DEL_USER_LIVE_DRAFT', id)
-            resolve()
-          })
-          .catch(reject)
+    UPDATE_DATA(state, { type, func, query, id, method, changeKey, value, cacheTimeout, uniqueKey }) {
+      updateState({
+        getter: getter(state), setter: setter(state), cache,
+        type, func, query, method, value, id, uniqueKey, changeKey, cacheTimeout
       })
     }
   },
   getters: {
-
+    getFlow: state => ({ func, type, query }) => state[utils.generateFieldName({ func, type, query })]
   }
-}
+})

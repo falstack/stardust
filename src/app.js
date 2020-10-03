@@ -1,8 +1,9 @@
-import {createApp} from 'vue'
+import { createApp } from 'vue'
 import store from './store'
 import * as utils from '~/utils'
 import cache from '~/utils/cache'
 import { getUserInfo } from '~/utils/login'
+import ListView from '~/components/ListView'
 import './app.scss'
 
 const app = createApp({
@@ -12,6 +13,7 @@ const app = createApp({
 })
 
 app.use(store)
+app.component(ListView.name, ListView)
 
 app.config.devtools = true
 app.config.errorHandler = (err, vm, info) => {

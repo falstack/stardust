@@ -12,6 +12,9 @@ import { Navigator } from '@tarojs/components'
 export default {
   components: {
     Navigator
+  },
+  setup() {
+    return {}
   }
 }
 </script>

@@ -1,40 +1,47 @@
 <template>
   <view class="draft-bar">
-    <button class="btn" @tap="openDraftDrawer">
+    <button
+      class="btn"
+      @tap="openDraftDrawer"
+    >
       草稿箱
     </button>
     <Drawer v-model="state.showDraftDrawer">
       <view class="draft-drawer">
-        <view
-          v-if="!drafts.length"
-          class="nothing"
+        <ListView
+          ref="loaderRef"
+          func="getUserLiveDraft"
         >
-          还没有创建草稿
-        </view>
-        <button
-          v-for="item in drafts"
-          :key="item.id"
-          class="draft-item"
-          @tap="switchDraft(item)"
-        >
-          <view class="edit">
-            <text
-              class="iconfont ic-delete"
-              @tap.stop="handleDelete(item)"
-            />
-          </view>
-          <view class="content">
-            <view class="title">
-              {{ item.title }}
-            </view>
-            <view class="desc">
-              {{ item.desc || '暂无简介' }}
-            </view>
-            <view class="updated_at">
-              {{ $utils.timeAgo(item.updated_at) }}
-            </view>
-          </view>
-        </button>
+          <template #default="{ list }">
+            <button
+              v-for="item in list"
+              :key="item.id"
+              class="draft-item"
+              @tap="switchDraft(item)"
+            >
+              <view class="edit">
+                <text
+                  class="iconfont ic-delete"
+                  @tap.stop="handleDelete(item)"
+                />
+              </view>
+              <view class="content">
+                <view class="title">
+                  {{ item.title }}
+                </view>
+                <view class="desc">
+                  {{ item.desc || '暂无简介' }}
+                </view>
+                <view class="updated_at">
+                  {{ $utils.timeAgo(item.updated_at) }}
+                </view>
+              </view>
+            </button>
+          </template>
+          <template #nothing>
+            <view>还没有创建草稿</view>
+          </template>
+        </ListView>
       </view>
     </Drawer>
   </view>
@@ -44,7 +51,7 @@
 import Taro from '@tarojs/taro'
 import Drawer from '~/components/drawer'
 import { useStore } from 'vuex'
-import { reactive, computed } from 'vue'
+import { ref, reactive } from 'vue'
 import toast from '~/utils/toast'
 
 export default {
@@ -53,18 +60,14 @@ export default {
     Drawer
   },
   setup() {
+    const loaderRef = ref(null)
     const store = useStore()
     const state = reactive({
       showDraftDrawer: false
     })
 
-    const drafts = computed(() => {
-      return store.state.list.userLiveDraft
-    })
-
     const openDraftDrawer = () => {
       state.showDraftDrawer = true
-      store.dispatch('list/getUserLiveDraft')
     }
 
     const switchDraft = (item) => {
@@ -89,8 +92,12 @@ export default {
           if (res.cancel) {
             return
           }
-          store.dispatch('list/delUserLiveDraft', item)
+
+          http.post('live_room/delete', {
+            id: item.id
+          })
             .then(() => {
+              loaderRef.value.remove(item.id)
               toast.info('删除成功')
             })
             .catch(err => {
@@ -100,11 +107,11 @@ export default {
     }
 
     return {
+      state,
+      loaderRef,
       openDraftDrawer,
       handleDelete,
-      switchDraft,
-      drafts,
-      state
+      switchDraft
     }
   }
 }

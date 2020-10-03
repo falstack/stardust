@@ -65,7 +65,7 @@ export default {
       _setResolve()
     }
 
-    const _handleMsgLoaded = (index) => {
+    const handleMsgLoaded = (index) => {
       state.list[index].loading = false
       if (state.list[index].next) {
         return
@@ -73,7 +73,7 @@ export default {
       _handleResolve(state.list[index].item)
     }
 
-    const _handleMsgResolve = (id) => {
+    const handleMsgResolve = (id) => {
       if (state.last_pending_id !== id) {
         return
       }
@@ -124,8 +124,8 @@ export default {
       addMessage,
       addWidget,
       updateMessage,
-      _handleMsgLoaded,
-      _handleMsgResolve
+      handleMsgLoaded,
+      handleMsgResolve
     }
   }
 }

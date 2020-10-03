@@ -14,6 +14,7 @@ export default {
     backgroundTextStyle: 'dark'
   },
   tabBar: {
+    custom: true,
     color: '#9e9e9e',
     selectedColor: '#000',
     backgroundColor: '#f9f9f9',

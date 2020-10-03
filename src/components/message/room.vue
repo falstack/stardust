@@ -1,7 +1,5 @@
 <template>
-  <view v-if="false" />
   <ScrollView
-    v-else
     scroll-y="true"
     show-scrollbar=""
     scroll-with-animation="true"
@@ -10,8 +8,8 @@
   >
     <BubbleMsg
       v-for="item in state.list"
-      :id="`id-${item.id}`"
-      :key="item.id"
+      :id="`id-${item.local_id || item.id}`"
+      :key="item.local_id || item.id"
       :message="item"
     />
   </ScrollView>

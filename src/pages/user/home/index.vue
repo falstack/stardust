@@ -1,42 +1,13 @@
 <template>
-  <view class="user-home">
-    <view class="iphone-top-shim" />
-    <view class="user-panel">
-      <GuestPanel v-if="isGuest" />
-      <SignedPanel v-else />
-    </view>
-  </view>
+  <UserHome />
 </template>
 
 <script>
-import GuestPanel from './components/GuestPanel'
-import SignedPanel from './components/SignedPanel'
-import { computed } from 'vue'
-import { useStore } from 'vuex'
+import UserHome from './components/index'
 
 export default {
-  name: 'UserHome',
   components: {
-    GuestPanel,
-    SignedPanel
-  },
-  setup() {
-    const store = useStore()
-    const isGuest = computed(() => store.getters.isGuest)
-
-    return {
-      isGuest
-    }
+    UserHome
   }
 }
 </script>
-
-<style lang="scss">
-.user-home {
-  padding-top: 120px;
-
-  .user-panel {
-    padding: $container-padding;
-  }
-}
-</style>

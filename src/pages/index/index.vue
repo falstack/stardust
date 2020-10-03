@@ -1,20 +1,36 @@
 <template>
   <view class="index">
-    <Navigator url="/pages/room/factory/index">
-      剪辑室
-    </Navigator>
+    <LaunchPage v-if="state.tabIndex === 0" />
+    <HomePage v-else-if="state.tabIndex === 1" />
+    <Tabbar @switch="handleTabSwitch" />
   </view>
 </template>
 
 <script>
-import { Navigator } from '@tarojs/components'
+import { reactive } from 'vue'
+import LaunchPage from '~/pages/index/components//index'
+import HomePage from '~/pages/user/home/components/index'
+import Tabbar from '~/components/tabbar'
 
 export default {
   components: {
-    Navigator
+    Tabbar,
+    HomePage,
+    LaunchPage
   },
   setup() {
-    return {}
+    const state = reactive({
+      tabIndex: 0
+    })
+
+    const handleTabSwitch = (index) => {
+      state.tabIndex = index
+    }
+
+    return {
+      state,
+      handleTabSwitch
+    }
   }
 }
 </script>

@@ -1,3 +1,4 @@
+import Taro from '@tarojs/taro'
 import { createApp } from 'vue'
 import store from './store'
 import * as utils from '~/utils'
@@ -22,6 +23,10 @@ app.config.errorHandler = (err, vm, info) => {
 }
 app.config.globalProperties.$utils = utils
 app.config.globalProperties.$env = process.env.TARO_ENV
+
+if (!cache.get('SYSTEM_INFO')) {
+  cache.set('SYSTEM_INFO', Taro.getSystemInfoSync())
+}
 
 if (cache.get('JWT_TOKEN')) {
   store.commit('UPDATE_USER_INFO', cache.get('USER_INFO'))

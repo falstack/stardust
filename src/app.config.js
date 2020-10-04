@@ -3,6 +3,7 @@ export default {
     'pages/index/index',
     'pages/user/home/index',
     'pages/user/about/index',
+    'pages/user/public/index',
     'pages/room/live/index',
     'pages/room/factory/index'
   ],

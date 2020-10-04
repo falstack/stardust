@@ -33,8 +33,6 @@ export default {
 
 <style lang="scss">
 .user-home {
-  padding-top: 120px;
-
   .user-panel {
     padding: $container-padding;
   }

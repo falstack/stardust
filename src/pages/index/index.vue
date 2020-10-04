@@ -1,24 +1,29 @@
 <template>
   <view class="index">
-    <LaunchPage v-if="state.tabIndex === 0" />
-    <HomePage v-else-if="state.tabIndex === 1" />
+    <Navbar />
+    <LaunchPage v-if="state.tabIndex === 0" ref="refPage0" />
+    <HomePage v-else-if="state.tabIndex === 1" ref="refPage1" />
     <Tabbar @switch="handleTabSwitch" />
   </view>
 </template>
 
 <script>
-import { reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import LaunchPage from '~/pages/index/components//index'
 import HomePage from '~/pages/user/home/components/index'
+import Navbar from '~/components/navbar'
 import Tabbar from '~/components/tabbar'
 
 export default {
   components: {
+    Navbar,
     Tabbar,
     HomePage,
     LaunchPage
   },
   setup() {
+    const refPage0 = ref(null)
+    const refPage1 = ref(null)
     const state = reactive({
       tabIndex: 0
     })
@@ -29,7 +34,16 @@ export default {
 
     return {
       state,
+      refPage0,
+      refPage1,
       handleTabSwitch
+    }
+  },
+  onReachBottom() {
+    switch (this.state.tabIndex) {
+      case 0:
+        this.refPage0.listRef.loadMore()
+        break
     }
   }
 }

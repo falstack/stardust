@@ -38,22 +38,23 @@ export const resize = (url, options = {}) => {
 }
 
 export const getMenuRect = () => {
-  const cacheData = cache.get('capsule-rect')
-  if (cacheData) {
-    return cacheData
+  if (cache.get('MENU-RECT')) {
+    return
   }
+
   const menuRect = Taro.getMenuButtonBoundingClientRect()
-  if (!menuRect.height) {
-    return null
+  const margin = menuRect.top - systemInfo.statusBarHeight
+  const height = menuRect.height
+  const width = menuRect.left
+
+  const rect = {
+    width,
+    height,
+    margin
   }
-  Taro.getSystemInfo({
-    success: res => {
-      menuRect.right = (res.screenWidth - menuRect.right) || 8
-      menuRect.header = menuRect.top + menuRect.right + menuRect.height
-      cache.set('capsule-rect', menuRect, false)
-      return menuRect
-    }
-  })
+  cache.set('MENU-RECT', rect)
+
+  return rect
 }
 
 export const debounce = (wait, func1, func2) => {

@@ -99,10 +99,12 @@
         </view>
       </view>
     </template>
+    <view class="list-view__shim" />
   </view>
 </template>
 
 <script>
+import Taro from '@tarojs/taro'
 import { utils, ENUM } from '@flowlist/js-core'
 import { computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
@@ -407,6 +409,20 @@ export default {
       retry
     }
   },
+  mounted() {
+    // const ob = Taro.createIntersectionObserver(this.$el, {
+    //   thresholds: [0]
+    // })
+    //
+    // ob.relativeToViewport({ bottom: 0 }).observe('.list-view__shim', (e) => {
+    //   console.log(e)
+    //   if (e.intersectionRatio <= 0) {
+    //     return
+    //   }
+    // })
+    //
+    // console.log(ob)
+  }
   // watch: {
   //   query: {
   //     handler: function () {

@@ -1,8 +1,14 @@
 <template>
   <view class="index">
     <Navbar />
-    <LaunchPage v-if="state.tabIndex === 0" ref="refPage0" />
-    <HomePage v-else-if="state.tabIndex === 1" ref="refPage1" />
+    <LaunchPage
+      v-if="state.tabIndex === 0"
+      ref="refPage0"
+    />
+    <HomePage
+      v-else-if="state.tabIndex === 1"
+      ref="refPage1"
+    />
     <Tabbar @switch="handleTabSwitch" />
   </view>
 </template>

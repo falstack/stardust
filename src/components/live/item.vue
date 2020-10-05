@@ -1,13 +1,19 @@
 <template>
-  <Navigator
+  <view
     class="live-item"
-    :url="`/pages/room/live/index?id=${item.id}`"
+    @tap="linkToLive"
   >
     <view class="aside">
-      <Avatar :user="item.author" />
+      <Avatar
+        :user="item.author"
+        @tap.native="linkToUser"
+      />
     </view>
     <view class="section">
-      <Nickname :user="item.author" />
+      <Nickname
+        :user="item.author"
+        @tap.native="linkToUser"
+      />
       <view class="title">
         {{ item.title }}
       </view>
@@ -15,18 +21,17 @@
         {{ item.desc }}
       </view>
     </view>
-  </Navigator>
+  </view>
 </template>
 
 <script>
-import { Navigator } from '@tarojs/components'
+import Taro from '@tarojs/taro'
 import Avatar from '~/components/user/avatar'
 import Nickname from '~/components/user/nickname'
 
 export default {
   name: '',
   components: {
-    Navigator,
     Avatar,
     Nickname
   },
@@ -36,9 +41,22 @@ export default {
       required: true
     }
   },
-  setup() {
-    return {
+  setup(props) {
+    const linkToLive = () => {
+      Taro.navigateTo({
+        url: `/pages/room/live/index?id=${props.item.id}`
+      })
+    }
 
+    const linkToUser = () => {
+      Taro.navigateTo({
+        url: `/pages/user/public/index?id=${props.item.id}`
+      })
+    }
+
+    return {
+      linkToLive,
+      linkToUser
     }
   }
 }

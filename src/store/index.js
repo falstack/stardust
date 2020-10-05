@@ -3,6 +3,7 @@ import { oAuthLogin, getUserRole, logoutAction } from '~/utils/login'
 import toast from '~/utils/toast'
 import cache from '~/utils/cache'
 import live from './live'
+import model from './model'
 import list from './list'
 import * as api from '~/utils/api'
 
@@ -74,6 +75,7 @@ const store = createStore({
   },
   modules: {
     live,
+    model,
     list: list({ api })
   }
 })

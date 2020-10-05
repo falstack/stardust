@@ -39,3 +39,8 @@
   /* autoprefixer: ignore next */
   -webkit-box-orient: vertical;
 }
+
+@mixin filter-blur($size: 2) {
+  filter: blur($size + px);
+  filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=$size, MakeShadow=false);
+}

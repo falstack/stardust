@@ -3,8 +3,14 @@
     v-if="user"
     class="user-public"
   >
-    <Navbar :background="user.banner">
-      {{ user }}
+    <Navbar :background="user.banner" :title="user.nickname">
+      <view>123</view>
+      <view>123</view>
+      <view>123</view>
+      <view>123</view>
+      <view>123</view>
+      <view>123</view>
+      <view>123</view>
     </Navbar>
   </view>
 </template>

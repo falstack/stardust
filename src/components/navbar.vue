@@ -7,6 +7,7 @@
       >
         <view
           :style="coreStyle"
+          :class="{ 'has-bg': state.hasBg }"
           class="navbar__core"
         >
           <slot name="title">
@@ -169,6 +170,10 @@ export default {
     justify-content: flex-start;
     align-items: center;
 
+    &.has-bg {
+      color: #fff;
+    }
+
     .iconfont {
       height: 88px;
       width: 88px;
@@ -190,15 +195,15 @@ export default {
     top: -12.5%;
     width: 125%;
     height: 125%;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 80%;
     z-index: -1;
-    @include filter-blur(20);
+    // @include filter-blur(20);
 
     image {
-      width: 100%;
-      height: 100%;
+      position: relative;
+      left: 10%;
+      top: 10%;
+      width: 80%;
+      height: 80%;
     }
   }
 

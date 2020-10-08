@@ -1,5 +1,5 @@
-import cache from '~/utils/cache'
 import Taro from '@tarojs/taro'
+import cache from '~/utils/cache'
 
 const systemInfo = Taro.getSystemInfoSync()
 

@@ -52,7 +52,7 @@
     "babel-preset-taro": "3.0.14",
     "eslint": "^7.10.0",
     "eslint-config-taro": "3.0.14",
-    "eslint-plugin-vue": "^7.0.0",
+    "eslint-plugin-vue": "^7.0.1",
     "vue-loader": "^16.0.0-beta.3"
   }
 }

@@ -50,7 +50,7 @@
       class="btn"
       @tap="handleClick"
     >
-      <text class="icon ic-add" />
+      <text class="iconfont ic-add" />
     </button>
   </view>
 </template>

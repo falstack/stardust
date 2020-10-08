@@ -9,7 +9,20 @@
           :style="coreStyle"
           class="navbar__core"
         >
-          <slot name="title" />
+          <slot name="title">
+            <view
+              v-if="showBack"
+              class="iconfont ic-back"
+              @tap="goBack"
+            />
+            <view
+              v-else
+              class="iconfont"
+            />
+            <view class="title">
+              {{ title }}
+            </view>
+          </slot>
         </view>
       </view>
       <view
@@ -33,13 +46,18 @@
 </template>
 
 <script>
+import Taro from '@tarojs/taro'
 import { reactive, computed, onMounted } from 'vue'
-import { getMenuRect } from '~/utils'
+import { getMenuRect, back } from '~/utils'
 import cache from '~/utils/cache'
 
 export default {
   props: {
     background: {
+      type: String,
+      default: ''
+    },
+    title: {
       type: String,
       default: ''
     }
@@ -77,6 +95,10 @@ export default {
       }
     })
 
+    const showBack = computed(() => {
+      return Taro.getCurrentInstance().router.path !== '/pages/index/index'
+    })
+
     const calcMenuRect = () => {
       if (state.rect) {
         return
@@ -87,12 +109,18 @@ export default {
       }, 5000)
     }
 
+    const goBack = () => {
+      back()
+    }
+
     onMounted(() => {
       calcMenuRect()
     })
 
     return {
       state,
+      goBack,
+      showBack,
       shimStyle,
       wrapStyle,
       coreStyle
@@ -135,7 +163,25 @@ export default {
   &__core {
     width: 400px;
     height: 88px;
-    padding: 0 $container-padding;
+    padding-right: $container-padding;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    .iconfont {
+      height: 88px;
+      width: 88px;
+      line-height: 88px;
+      text-align: center;
+      font-size: 46px;
+      flex-shrink: 0;
+    }
+
+    .title {
+      flex: 1;
+      @extend %oneline;
+    }
   }
 
   &__bg {

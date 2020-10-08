@@ -3697,10 +3697,10 @@ eslint-config-taro@3.0.14:
     "@typescript-eslint/parser" "^2.x"
     babel-eslint "^10.0.0"
 
-eslint-plugin-vue@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.npm.taobao.org/eslint-plugin-vue/download/eslint-plugin-vue-7.0.0.tgz?cache=0&sync_timestamp=1601439531921&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Feslint-plugin-vue%2Fdownload%2Feslint-plugin-vue-7.0.0.tgz#abaf59dec3aa50228b37a89ca1239893c96c981f"
-  integrity sha1-q69Z3sOqUCKLN6icoSOYk8lsmB8=
+eslint-plugin-vue@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.npm.taobao.org/eslint-plugin-vue/download/eslint-plugin-vue-7.0.1.tgz#8e69a9041bb9719c018f154fdcacbb17713e0240"
+  integrity sha1-jmmpBBu5cZwBjxVP3Ky7F3E+AkA=
   dependencies:
     eslint-utils "^2.1.0"
     natural-compare "^1.4.0"

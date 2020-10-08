@@ -39,7 +39,7 @@
         class="create-btn"
         @tap="openDrawer"
       >
-        <text class="icon ic-add" />
+        <text class="iconfont ic-add" />
       </button>
     </view>
     <view class="footer">

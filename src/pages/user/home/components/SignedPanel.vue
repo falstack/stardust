@@ -6,7 +6,7 @@
         :src="$utils.resize(user.avatar, { width: 70 })"
       />
       <text
-        class="icon ic-setting"
+        class="iconfont ic-setting"
         @tap="toUserAbout"
       />
       <Navigator

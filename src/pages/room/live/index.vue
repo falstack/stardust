@@ -162,11 +162,22 @@ export default {
 
     return {
       state,
+      store,
       roomRef,
       isEditMode,
       stopRecord,
       addMessage,
       startRecord
+    }
+  },
+  onShareAppMessage() {
+    if (this.isEditMode) {
+      return undefined
+    }
+
+    return {
+      title: this.store.state.live.info.title,
+      path: `/pages/room/live/index?id=${this.store.state.live.info.id}`
     }
   }
 }

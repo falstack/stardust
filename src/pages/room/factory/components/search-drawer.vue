@@ -105,6 +105,7 @@
           placeholder="请输入内容"
           autoFocus="true"
           showConfirmBar=""
+          adjustPosition="true"
           class="textarea"
           maxlength="500"
         />
@@ -234,7 +235,7 @@ export default {
       store.commit('live/TOGGLE_SEARCH_DRAWER')
     }
 
-    const handleStartRecord = () => {
+    const beginRecord = () => {
       if (state.voiceTime) {
         const recorder = Taro.getRecorderManager()
         recorder.stop()
@@ -279,14 +280,38 @@ export default {
             store.commit('live/ADD_SELF_VOICE', resData.data)
           },
           fail: (err) => {
-            console.log(err)
+            Taro.showModal({
+              title: 'error',
+              content: JSON.stringify(err)
+            })
             toast.info('录音失败了!')
           }
         })
       })
 
       recorder.onError(() => {
-        toast.info('录音出错了')
+        toast.info('录音出错了.')
+      })
+    }
+
+    const handleStartRecord = () => {
+      Taro.getSetting({
+        success(res) {
+          if (!res.authSetting['scope.record']) {
+            Taro.authorize({
+              scope: 'scope.record',
+              success: () => {
+                beginRecord()
+              },
+              fail: () => {
+                toast.info('请先授权~')
+              }
+            })
+            return
+          }
+
+          beginRecord()
+        }
       })
     }
 
@@ -303,10 +328,15 @@ export default {
 
     const submitUpdateAudioText = () => {
       const currentAudio = source.value[state.updateAudioIndex]
+      if (!currentAudio) {
+        return
+      }
+
       if (state.updateAudioText === currentAudio.text) {
         state.showDialog = false
         return
       }
+
       if (state.submittingUpdateText) {
         return
       }
@@ -319,12 +349,12 @@ export default {
       http.post('live_room/voice/update', params)
         .then(() => {
           state.showDialog = false
+          state.updateAudioIndex = -1
           store.commit('live/UPDATE_SELF_VOICE', params)
+          state.submittingUpdateText = false
         })
         .catch(() => {
           toast.info('更新失败了')
-        })
-        .finally(() => {
           state.submittingUpdateText = false
         })
     }

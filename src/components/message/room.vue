@@ -89,7 +89,7 @@ export default {
       message.next = null
 
       state.list.push(message)
-      state.last_message_id = message.id
+      state.last_message_id = message.local_id || message.id
 
       const isPromise = message.async || false
       if (isPromise) {
@@ -102,7 +102,7 @@ export default {
 
     const addWidget = (widget) => {
       state.list.push(widget)
-      state.last_message_id = widget.id
+      state.last_message_id = message.local_id || message.id
     }
 
     const updateMessage = (id, obj) => {

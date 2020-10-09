@@ -54,6 +54,7 @@ export default {
             result.push({
               ...item,
               id: voice.id,
+              local_id: voice.local_id,
               begin_at: voice.begin_at,
               reader: readers.filter(_ => _.id === voice.reader_id)[0],
               author_id: voice.author_id,
@@ -141,6 +142,9 @@ export default {
       store.dispatch('live/loadData', params)
         .then(() => {
           // TODO：判断 visit_state 是公开还是草稿
+          Taro.setNavigationBarTitle({
+            title: store.state.live.info.title
+          })
           runner()
         })
         .catch(err => {

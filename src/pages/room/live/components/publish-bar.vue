@@ -112,12 +112,11 @@ export default {
               title,
               desc: state.desc
             })
+            state.loading = false
           }
         })
         .catch(err => {
           toast.info(err.message)
-        })
-        .finally(() => {
           state.loading = false
         })
     }

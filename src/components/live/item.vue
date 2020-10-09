@@ -3,7 +3,7 @@
     class="live-item"
     @tap="linkToLive"
   >
-    <view class="aside">
+    <view v-if="showUser" class="aside">
       <Avatar
         :user="item.author"
         @tap.native="linkToUser"
@@ -11,6 +11,7 @@
     </view>
     <view class="section">
       <Nickname
+        v-if="showUser"
         :user="item.author"
         @tap.native="linkToUser"
       />
@@ -39,6 +40,10 @@ export default {
     item: {
       type: Object,
       required: true
+    },
+    showUser: {
+      type: Boolean,
+      default: true
     }
   },
   setup(props) {
@@ -50,7 +55,7 @@ export default {
 
     const linkToUser = () => {
       Taro.navigateTo({
-        url: `/pages/user/public/index?id=${props.item.id}`
+        url: `/pages/user/public/index?id=${props.item.author.id}`
       })
     }
 

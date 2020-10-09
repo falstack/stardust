@@ -10,14 +10,10 @@
           首页
         </view>
         <view class="tab">
-          <Navigator
-            class="create-btn"
-            hover-class="none"
-            url="/pages/room/factory/index"
-          >
+          <view class="create-btn" @tap="handleCreate">
             <view class="right" />
             <view class="left" />
-          </Navigator>
+          </view>
         </view>
         <view
           class="tab"
@@ -32,12 +28,11 @@
 </template>
 
 <script>
-import { Navigator } from '@tarojs/components'
+import Taro from '@tarojs/taro'
+import { useStore } from 'vuex'
+import toast from '~/utils/toast'
 
 export default {
-  components: {
-    Navigator
-  },
   props: {
     defaultIndex: {
       type: Number,
@@ -45,12 +40,26 @@ export default {
     }
   },
   setup(props, ctx) {
+    const store = useStore()
+
     const handleClick = (index) => {
       ctx.emit('switch', index)
     }
 
+    const handleCreate = () => {
+      if (store.getters.isGuest) {
+        toast.info('请先登录')
+        return
+      }
+
+      Taro.navigateTo({
+        url: '/pages/room/factory/index'
+      })
+    }
+
     return {
-      handleClick
+      handleClick,
+      handleCreate
     }
   }
 }

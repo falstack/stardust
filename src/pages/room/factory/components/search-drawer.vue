@@ -278,8 +278,9 @@ export default {
             }
             store.commit('live/ADD_SELF_VOICE', resData.data)
           },
-          fail: () => {
-            toast.info('录音失败了~')
+          fail: (err) => {
+            console.log(err)
+            toast.info('录音失败了!')
           }
         })
       })

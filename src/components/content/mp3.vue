@@ -6,7 +6,8 @@
 
 <script>
 import Taro from '@tarojs/taro'
-import { onBeforeUnmount } from 'vue'
+import { onBeforeUnmount, watch } from 'vue'
+import { useStore } from 'vuex'
 
 export default {
   props: {
@@ -16,18 +17,28 @@ export default {
     }
   },
   setup(props) {
+    const store = useStore()
     const audio = Taro.createInnerAudioContext()
+    let canceler
     audio.src = props.item.src
     audio.volume = props.item.volume / 100
 
     audio.play()
 
+    audio.onPlay(() => {
+      canceler = watch(() => store.state.live.playing, (val) => {
+        val ? audio.play() : audio.pause()
+      })
+    })
+
     audio.onEnded(() => {
       audio.destroy()
+      canceler()
     })
 
     onBeforeUnmount(() => {
       audio.destroy()
+      canceler()
     })
   }
 }

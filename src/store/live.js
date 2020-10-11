@@ -60,9 +60,13 @@ export default {
       0: [],
       1: []
     },
+    playing: false,
     info: defaultInfo()
   }),
   mutations: {
+    SET_PLAYING(store, data) {
+      store.playing = data
+    },
     SET_CONTENT(store, data) {
       store.content = data
     },

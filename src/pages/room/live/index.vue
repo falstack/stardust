@@ -5,7 +5,10 @@
     </view>
     <view class="flex-shrink-0">
       <PublishBar v-if="isEditMode" />
-      <Toolbar v-else />
+      <Toolbar
+        v-else
+        @play="togglePlay"
+      />
       <view class="iphone-bottom-shim" />
     </view>
   </view>
@@ -19,6 +22,7 @@ import MsgRoom from '~/components/message/room'
 import PublishBar from './components/publish-bar'
 import Toolbar from './components/toolbar'
 import toast from '~/utils/toast'
+import event from '~/utils/event'
 
 export default {
   name: 'RoomLive',
@@ -32,6 +36,7 @@ export default {
     const state = reactive({
       loopTimer: 0,
       startTime: 0,
+      stopTime: 0,
       lastIndex: -1
     })
     const store = useStore()
@@ -104,7 +109,13 @@ export default {
         if (setValue === messages.value.length - 1) {
           clearInterval(state.loopTimer)
           state.loopTimer = 0
+          state.startTime = 0
+          state.stopTime = 0
+          state.lastIndex = -1
+          store.commit('live/SET_PLAYING', false)
+          return
         }
+
         state.lastIndex = setValue
       }, 160)
     }
@@ -128,14 +139,9 @@ export default {
       recorder.stop()
     }
 
-    const startPlay = () => {
-      const runner = () => {
-        state.startTime = Date.now()
-        messageReader()
-      }
-
+    const initAutoPlay = () => {
       if (!params.id) {
-        runner()
+        startPlay()
         return
       }
 
@@ -145,19 +151,56 @@ export default {
           Taro.setNavigationBarTitle({
             title: store.state.live.info.title
           })
-          runner()
+          startPlay()
         })
         .catch(err => {
           toast.info(err.message)
         })
     }
 
-    onMounted(() => {
+    const pausePlay = () => {
+      if (!store.state.live.playing) {
+        return
+      }
+      state.stopTime = Date.now()
+      clearInterval(state.loopTimer)
+      store.commit('live/SET_PLAYING', false)
+    }
+
+    const startPlay = () => {
+      if (store.state.live.playing) {
+        return
+      }
+      state.startTime += (Date.now() - state.stopTime)
+      store.commit('live/SET_PLAYING', true)
+      messageReader()
+    }
+
+    const togglePlay = () => {
+      if (store.state.live.playing) {
+        pausePlay()
+        return
+      }
       startPlay()
+    }
+
+    onMounted(() => {
+      initAutoPlay()
+
+      event.on('PAGE_ON_SHOW', () => {
+        startPlay()
+      })
+
+      event.on('PAGE_ON_HIDE', () => {
+        pausePlay()
+      })
     })
 
     onBeforeUnmount(() => {
       clearInterval(state.loopTimer)
+
+      event.off('PAGE_ON_SHOW')
+      event.off('PAGE_ON_HIDE')
     })
 
     return {
@@ -167,7 +210,10 @@ export default {
       isEditMode,
       stopRecord,
       addMessage,
-      startRecord
+      startRecord,
+      startPlay,
+      pausePlay,
+      togglePlay
     }
   },
   onShareAppMessage() {
@@ -179,6 +225,12 @@ export default {
       title: this.store.state.live.info.title,
       path: `/pages/room/live/index?id=${this.store.state.live.info.id}`
     }
+  },
+  onShow() {
+    event.emit('PAGE_ON_SHOW')
+  },
+  onHide() {
+    event.emit('PAGE_ON_HIDE')
   }
 }
 </script>

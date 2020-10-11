@@ -9,7 +9,9 @@
     <view class="control">
       <button
         hover-class="none"
-        class="iconfont ic-playing"
+        class="iconfont"
+        :class="[playing ? 'ic-playing' : 'ic-paused']"
+        @tap="handlePlaying"
       />
       <button
         hover-class="none"
@@ -45,7 +47,7 @@ import { reactive, computed } from 'vue'
 import { useStore } from 'vuex'
 
 export default {
-  setup() {
+  setup(props, ctx) {
     const store = useStore()
     const state = reactive({
       comment: ''
@@ -55,9 +57,19 @@ export default {
       return store.state.live.info.author
     })
 
+    const playing = computed(() => {
+      return store.state.live.playing
+    })
+
+    const handlePlaying = () => {
+      ctx.emit('play')
+    }
+
     return {
       state,
-      author
+      author,
+      playing,
+      handlePlaying
     }
   }
 }

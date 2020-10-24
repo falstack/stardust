@@ -3,36 +3,31 @@
     v-if="voice"
     class="voice-edit-bar voice-clip"
   >
-    <MovableArea class="subway">
-      <MovableView
+    <movable-area class="subway">
+      <movable-view
         :x="startX"
         direction="horizontal"
         animation=""
         class="radio"
         @change="handleChange($event, true)"
       />
-      <MovableView
+      <movable-view
         :x="endedX"
         direction="horizontal"
         animation=""
         class="radio"
         @change="handleChange($event, false)"
       />
-    </MovableArea>
+    </movable-area>
   </view>
 </template>
 
 <script>
-import { MovableArea, MovableView } from '@tarojs/components'
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 
 export default {
   name: '',
-  components: {
-    MovableArea,
-    MovableView
-  },
   setup() {
     const store = useStore()
     const voice = computed(() => {

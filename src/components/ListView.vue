@@ -104,7 +104,6 @@
 </template>
 
 <script>
-import Taro from '@tarojs/taro'
 import { utils, ENUM } from '@flowlist/js-core'
 import { computed, onMounted } from 'vue'
 import { useStore } from 'vuex'

@@ -9,7 +9,7 @@
         class="iconfont ic-setting"
         @tap="toUserAbout"
       />
-      <Navigator
+      <navigator
         :url="`/pages/user/public/index?id=${user.id}`"
         class="user-meta"
         hover-class="none"
@@ -22,7 +22,7 @@
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <text>光玉：{{ user.wallet_money }}</text>
         </view>
-      </Navigator>
+      </navigator>
     </view>
     <view class="user-social panel-wrap">
       <view class="panel-item">
@@ -63,15 +63,11 @@
 
 <script>
 import Taro from '@tarojs/taro'
-import { Navigator } from '@tarojs/components'
 import { useStore } from 'vuex'
 import { computed } from 'vue'
 
 export default {
   name: 'SignedPanel',
-  components: {
-    Navigator
-  },
   setup() {
     const store = useStore()
     const user = computed(() => store.state.userInfo)

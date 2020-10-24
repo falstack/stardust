@@ -1,5 +1,5 @@
 <template>
-  <ScrollView
+  <scroll-view
     scroll-y="true"
     show-scrollbar=""
     scroll-with-animation="true"
@@ -12,19 +12,17 @@
       :key="item.local_id || item.id"
       :message="item"
     />
-  </ScrollView>
+  </scroll-view>
 </template>
 
 <script>
 import { reactive } from 'vue'
-import { ScrollView } from '@tarojs/components'
 import BubbleMsg from './bubble'
 
 export default {
   name: 'MsgRoom',
   components: {
-    BubbleMsg,
-    ScrollView
+    BubbleMsg
   },
   props: {
     list: {

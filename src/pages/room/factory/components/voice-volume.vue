@@ -1,6 +1,6 @@
 <template>
   <view class="voice-edit-bar voice-volume">
-    <Slider
+    <slider
       show-value="true"
       active-color="#3D3D3D"
       block-size="20"
@@ -11,15 +11,11 @@
 </template>
 
 <script>
-import { Slider } from '@tarojs/components'
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 
 export default {
   name: '',
-  components: {
-    Slider
-  },
   setup() {
     const store = useStore()
 

@@ -32,7 +32,7 @@
           class="btn primary-btn-plain"
           open-type="getPhoneNumber"
           hover-class="none"
-          @getPhoneNumber="{getUserPhone}"
+          @getPhoneNumber="getUserPhone"
         >
           一键授权手机号
         </button>

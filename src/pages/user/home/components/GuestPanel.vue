@@ -3,39 +3,203 @@
     <view class="login-tips">
       你还没登录呢，喵 o(一︿一+)o
     </view>
-    <PhoneCodeBox type="sign_up" />
+    <view class="buttons">
+      <button
+        class="btn primary-btn-plain"
+        open-type="getPhoneNumber"
+        hover-class="none"
+        @getphonenumber="getUserPhone"
+      >
+        注册
+      </button>
+      <view class="divider" />
+      <button
+        class="btn primary-btn"
+        open-type="getPhoneNumber"
+        hover-class="none"
+        @getphonenumber="getUserPhone"
+      >
+        登录
+      </button>
+    </view>
+    <Drawer v-model="state.showBindOAuth" size="100%">
+      <view class="bind-auth-drawer">
+        <view class="title">
+          继续操作前请先绑定邮箱
+        </view>
+        <view class="input-wrap">
+          <input
+            v-model="state.emailAddress"
+            class="input"
+            type="text"
+            auto-focus="true"
+            adjustPosition=""
+            placeholder="邮箱"
+          >
+        </view>
+        <view class="input-wrap">
+          <input
+            v-model="state.emailCode"
+            class="input"
+            type="number"
+            adjustPosition=""
+            placeholder="验证码"
+          >
+        </view>
+        <view class="buttons">
+          <button
+            class="btn primary-btn-plain"
+            @tap="sendMessage"
+          >
+            {{ state.sendMessageTimeout ? `${state.sendMessageTimeout}s后可重新获取` : '获取邮箱验证码' }}
+          </button>
+          <view class="divider" />
+          <button
+            class="btn primary-btn"
+            hover-class="none"
+            @tap="verifyEmail"
+          >
+            完成认证
+          </button>
+        </view>
+      </view>
+    </Drawer>
   </view>
 </template>
 
 <script>
-import PhoneCodeBox from './PhoneCodeBox'
-
-/**
- * 登录：
- * 使用手机号登录，然后再去绑定微信号，这样用户就可以登录不同的账号了
- * 1. 通过 wx.login 获取 code，为一键授权获取手机号做准备
- * 2. 获取手机号
- * -  如果走一键授权获取手机号，服务端解析出手机号（sign_up）后，返回 phone_number 和 message_code
- * ----------
- * -  如果走短信验证码流程，同样是 sign_up（已经去掉了 must_new 的校验）发验证码
- * -  60s 发一次验证码，这个过程中也可以走一键授权流程，总之要拿到 message_code
- * 3. 客户端拿着返回值走用户注册流程，如果未注册则创建账户，最终都会返回 jwt_token 给客户端
- * 4. 客户端通过 jwt_token 去拿到 user，判断是否 bind_sns
- * 5. 用户绑定成功，即为登录成功了~
- *
- * 注册：
- * 1. 调取 wx.getUserInfo 拿用户信息
- * 2. 走第三方账号的登录注册流程
- * 3. 拿到 user 后，检查是否绑定了手机号
- * 4. 绑定手机号，成功后即为注册完成
- */
+import { reactive, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { sendEmailMessage, wechatLogin, getAuthCode, bindEmail, getUserInfo } from '~/utils/login'
+import cache from '~/utils/cache'
+import toast from '~/utils/toast'
+import Drawer from '~/components/drawer'
 
 export default {
-  name: 'GuestPanel',
+  name: 'PhoneCodeBox',
   components: {
-    PhoneCodeBox
+    Drawer
   },
-  setup() {}
+  setup() {
+    const store = useStore()
+    const state = reactive({
+      phoneNumber: '',
+      messageCode: '',
+      emailAddress: '',
+      emailCode: '',
+      sendMessageTimeout: 0,
+      submitting: false,
+      showBindOAuth: false
+    })
+
+    const refreshCode = async () => {
+      const code = await getAuthCode()
+      store.commit('SET_AUTH_CODE', code)
+    }
+
+    const overLoopTimeout = () => {
+      if (state.sendMessageTimeout <= 1) {
+        state.sendMessageTimeout = 0
+        return
+      }
+      setTimeout(() => {
+        state.sendMessageTimeout--
+        overLoopTimeout()
+      }, 1000)
+    }
+
+    const getUserPhone = (evt) => {
+      if (!evt.detail.iv) {
+        toast.info('请先授权')
+        return
+      }
+
+      wechatLogin({
+        code: store.state.authCode,
+        encrypted_data: evt.detail.encryptedData,
+        iv: evt.detail.iv
+      })
+        .then(async (token) => {
+          cache.set('JWT_TOKEN', token)
+          const user = await getUserInfo()
+          store.commit('UPDATE_USER_INFO', user)
+          state.showBindOAuth = store.getters.isGuest
+        })
+        .catch((err) => {
+          toast.info(err.message)
+        })
+        .finally(() => {
+          refreshCode()
+        })
+    }
+
+    const sendMessage = () => {
+      if (state.sendMessageTimeout || state.submitting) {
+        return
+      }
+
+      if (
+        !state.emailAddress ||
+        !/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(state.emailAddress)
+      ) {
+        toast.info('请输入正确的邮箱账号~')
+        return
+      }
+
+      state.submitting = true
+      sendEmailMessage(state.emailAddress, 'bind_email')
+        .then(() => {
+          state.sendMessageTimeout = 60
+          overLoopTimeout()
+        })
+        .catch(err => {
+          toast.info(err.message)
+        })
+        .finally(() => {
+          state.submitting = false
+        })
+    }
+
+    const verifyEmail = () => {
+      if (
+        !state.emailAddress ||
+        !/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(state.emailAddress)
+      ) {
+        toast.info('请输入正确的邮箱账号~')
+        return
+      }
+
+      if (
+        !state.emailCode ||
+        !/^\d{6}$/.test(state.emailCode)
+      ) {
+        toast.info('请输入正确的验证码~')
+        return
+      }
+
+      bindEmail(state.emailAddress, state.emailCode)
+        .then(() => {
+          const user = { ...store.state.userInfo }
+          user.providers.bind_email = true
+          store.commit('UPDATE_USER_INFO', user)
+          toast.info('邮箱绑定成功~')
+        })
+        .catch(err => {
+          toast.info(err.message)
+        })
+    }
+
+    onMounted(() => {
+      refreshCode()
+    })
+
+    return {
+      state,
+      verifyEmail,
+      sendMessage,
+      getUserPhone
+    }
+  }
 }
 </script>
 
@@ -50,21 +214,53 @@ export default {
     text-align: center;
   }
 
-  .btn-wrap {
+  .buttons {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin-top: 30px;
 
-    .primary-btn,
-    .primary-btn-plain {
-      border-radius: 10px;
-      padding: 0 50px;
-      height: 70px;
-      line-height: 70px;
-      font-size: 30px;
-      font-weight: 500;
+    .btn {
+      flex: 1;
+    }
+
+    .divider {
+      flex-shrink: 0;
+      width: $container-padding;
+    }
+  }
+
+  .bind-auth-drawer {
+    padding: $container-padding;
+
+    .title {
+      text-align: center;
+      padding-bottom: $container-padding * 2;
+    }
+
+    .input-wrap {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #F5F5F5;
+      padding: 30px 20px;
+      border-radius: 20px;
+      margin-bottom: 40px;
+
+      .area {
+        border-right: 1PX solid #3D3D3D;
+        padding-right: 10px;
+        margin-right: 10px;
+        font-size: 30px;
+        line-height: 30px;
+        height: 30px;
+      }
+
+      .input {
+        flex: 1;
+        font-size: 30px;
+      }
     }
   }
 }

@@ -1,32 +1,5 @@
 import Taro from '@tarojs/taro'
 import http from '~/utils/http'
-import cache from '~/utils/cache'
-
-const env = process.env.TARO_ENV
-
-const step_0_get_jwt_token_by_access = form => {
-  return http.post('sign/register', form)
-}
-
-const step_2_get_token_or_user_by_code = code => {
-  return http.post(`sign/${env}_mini_app_get_token`, { code, app_name: 'sign_love' })
-}
-
-const step_3_get_secret_data_from_system = () => {
-  return new Promise((resolve, reject) => {
-    Taro.getUserInfo({
-      withCredentials: true,
-      success(data) {
-        resolve(data)
-      },
-      fail() {
-        reject()
-      }
-    })
-  })
-}
-
-const step_4_exec_user_info = form => http.post(`sign/${env}_mini_app_login`, form)
 
 export const getAuthCode = () => {
   return new Promise((resolve, reject) => {
@@ -45,92 +18,16 @@ export const getAuthCode = () => {
   })
 }
 
-export const oAuthLogin = () => {
-  return new Promise((resolve, reject) => {
-    getAuthCode()
-      .then(code => {
-        step_2_get_token_or_user_by_code(code)
-          .then(resp => {
-            if (resp.type === 'token') {
-              cache.set('JWT_TOKEN', resp.data)
-              getUserInfo()
-                .then(resolve)
-                .catch(reject)
-            } else {
-              step_3_get_secret_data_from_system()
-                .then(user => {
-                  step_4_exec_user_info({
-                    user: user.userInfo,
-                    signature: user.signature,
-                    iv: user.iv,
-                    encrypted_data: user.encryptedData,
-                    session_key: resp.data,
-                    app_name: 'sign_love'
-                  })
-                    .then(token => {
-                      cache.set('JWT_TOKEN', token)
-                      getUserInfo()
-                        .then(resolve)
-                        .catch(reject)
-                    })
-                    .catch(reject)
-                })
-                .catch(reject)
-            }
-          })
-          .catch(reject)
-      })
-      .catch(reject)
-  })
-}
-
-export const getWechatPhone = (form) => http.post('sign/get_wechat_phone', {
+export const wechatLogin = (form) => http.post('sign/login_wechat', {
   ...form,
   app_name: 'sign_love'
 })
-
-export const bindPhone = ({ phone, authCode }) => http.post('sign/bind_phone', {
-  phone,
-  authCode
-})
-
-export const bindUser = (form) => {
-  return new Promise((resolve, reject) => {
-    getAuthCode()
-      .then(code => {
-        http.post(`sign/bind_${env}_user`, {
-          ...form,
-          code,
-          app_name: 'sign_love'
-        })
-          .then(resolve)
-          .catch(reject)
-      })
-      .catch(reject)
-  })
-}
-
-export const accessLogin = (form) => {
-  return new Promise((resolve, reject) => {
-    step_0_get_jwt_token_by_access(form)
-      .then(token => {
-        cache.set('JWT_TOKEN', token)
-        getUserInfo().then(resolve).catch(reject)
-      })
-      .catch(reject)
-  })
-}
 
 export const getUserInfo = () => http.post('sign/get_user_info')
 
 export const getUserRole = () => http.get('user/roles')
 
 export const logoutAction = () => http.post('sign/logout')
-
-export const sendPhoneMessage = (phone_number, type) => http.post('sign/message', {
-  type,
-  phone_number
-})
 
 export const sendEmailMessage = (email_address, type) => http.post('sign/email', {
   type,

@@ -3,7 +3,10 @@
     v-if="user"
     class="user-public"
   >
-    <Navbar :background="user.banner" :title="user.nickname">
+    <Navbar
+      :background="user.banner"
+      :title="user.nickname"
+    >
       <view>123</view>
       <view>123</view>
       <view>123</view>

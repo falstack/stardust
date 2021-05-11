@@ -15,7 +15,7 @@
       <template v-if="size === '100%'">
         <view class="drawer__close">
           <text
-            class="iconfont ic-cancel"
+            class="iconfont ic-remove"
             @tap="closeDrawer"
           />
         </view>

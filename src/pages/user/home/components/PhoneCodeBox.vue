@@ -1,81 +1,80 @@
 <template>
   <view class="phone-code-box">
-    <view
-      v-if="state.showMessageBox"
-      class="message-wrap"
-    >
-      <CodeInput
-        v-model="state.messageCode"
-        @submit="handleSubmit"
-      />
-    </view>
-    <view
-      v-else
-      class="input-wrap"
-    >
-      <view class="area">
-        + 86
-      </view>
-      <input
-        v-model="state.phoneNumber"
-        class="input"
-        type="number"
-        auto-focus="true"
-        confirm-type="send"
-        adjustPosition=""
-        placeholder="请输入您的手机号"
-      >
-    </view>
     <view class="buttons">
-      <template v-if="$env === 'weapp'">
-        <button
-          class="btn primary-btn-plain"
-          open-type="getPhoneNumber"
-          hover-class="none"
-          @getPhoneNumber="getUserPhone"
-        >
-          一键授权手机号
-        </button>
-        <view class="divider" />
-      </template>
+      <button
+        class="btn primary-btn-plain"
+        open-type="getPhoneNumber"
+        hover-class="none"
+        @getphonenumber="getUserPhone"
+      >
+        注册
+      </button>
+      <view class="divider" />
       <button
         class="btn primary-btn"
-        @tap="sendMessage"
+        open-type="getPhoneNumber"
+        hover-class="none"
+        @getphonenumber="getUserPhone"
       >
-        {{ state.sendMessageTimeout ? `${state.sendMessageTimeout}s后可重新获取` : '获取短信验证码' }}
+        登录
       </button>
     </view>
-    <Dialog v-model="state.showBindOAuth">
-      <view class="bind-auth-dialog">
-        <view class="tip">
-          继续操作前请先绑定{{ $env === 'weapp' ? '微信' : 'QQ' }}号
+    <Drawer v-model="state.showBindOAuth" size="100%">
+      <view class="bind-auth-drawer">
+        <view class="title">
+          继续操作前请先绑定邮箱
         </view>
-        <button
-          class="primary-btn"
-          open-type="getUserInfo"
-          hover-class="none"
-          @getUserInfo="bindUserAction"
-        >
-          一键授权绑定
-        </button>
+        <view class="input-wrap">
+          <input
+            v-model="state.emailAddress"
+            class="input"
+            type="text"
+            auto-focus="true"
+            adjustPosition=""
+            placeholder="邮箱"
+          >
+        </view>
+        <view class="input-wrap">
+          <input
+            v-model="state.emailCode"
+            class="input"
+            type="number"
+            adjustPosition=""
+            placeholder="验证码"
+          >
+        </view>
+        <view class="buttons">
+          <button
+            class="btn primary-btn-plain"
+            @tap="sendMessage"
+          >
+            {{ state.sendMessageTimeout ? `${state.sendMessageTimeout}s后可重新获取` : '获取邮箱验证码' }}
+          </button>
+          <view class="divider" />
+          <button
+            class="btn primary-btn"
+            hover-class="none"
+            @tap="verifyEmail"
+          >
+            完成认证
+          </button>
+        </view>
       </view>
-    </Dialog>
+    </Drawer>
   </view>
 </template>
 
 <script>
-import { reactive } from 'vue'
+import { reactive, onMounted } from 'vue'
 import { useStore } from 'vuex'
-import { sendPhoneMessage, bindUser, bindPhone, getWechatPhone, accessLogin } from '~/utils/login'
+import { sendEmailMessage, getWechatPhone, accessLogin, getAuthCode, bindEmail } from '~/utils/login'
 import toast from '~/utils/toast'
-import Dialog from '~/components/dialog'
-import CodeInput from './CodeInput'
+import Drawer from '~/components/drawer'
 
 export default {
   name: 'PhoneCodeBox',
   components: {
-    CodeInput,
-    Dialog
+    Drawer
   },
   props: {
     type: {
@@ -88,46 +87,35 @@ export default {
     const state = reactive({
       phoneNumber: '',
       messageCode: '',
+      emailAddress: '',
+      emailCode: '',
       sendMessageTimeout: 0,
-      showMessageBox: false,
+      submitting: false,
       showBindOAuth: false
     })
 
-    const getUserPhoneCallback = () => {
-      const user = { ...store.state.userInfo }
-      user.providers.bind_phone = true
-      store.commit('UPDATE_USER_INFO', user)
+    const refreshCode = async () => {
+      const code = await getAuthCode()
+      store.commit('SET_AUTH_CODE', code)
     }
 
     const handleSubmit = () => {
-      if (props.type === 'bind_phone') {
-        bindPhone({
-          phone: state.phoneNumber,
-          authCode: state.messageCode
+      accessLogin({
+        access: state.phoneNumber,
+        authCode: state.messageCode
+      })
+        .then(user => {
+          store.commit('UPDATE_USER_INFO', user)
+          state.showBindOAuth = store.getters.isGuest
         })
-          .then(getUserPhoneCallback)
-          .catch((err) => {
-            toast.info(err.message)
-          })
-      } else {
-        accessLogin({
-          access: state.phoneNumber,
-          authCode: state.messageCode,
-          isRegister: true
+        .catch((err) => {
+          toast.info(err.message)
+          state.messageCode = ''
         })
-          .then(user => {
-            store.commit('UPDATE_USER_INFO', user)
-            state.showBindOAuth = store.getters.isGuest
-          })
-          .catch((err) => {
-            toast.info(err.message)
-            state.messageCode = ''
-          })
-      }
     }
 
     const overLoopTimeout = () => {
-      if (state.sendMessageTimeout === 1) {
+      if (state.sendMessageTimeout <= 1) {
         state.sendMessageTimeout = 0
         return
       }
@@ -137,12 +125,12 @@ export default {
       }, 1000)
     }
 
-    // return _ctx.getUserPhone.apply(_ctx, arguments);
     const getUserPhone = (evt) => {
       if (!evt.detail.iv) {
         toast.info('请先授权')
         return
       }
+
       getWechatPhone({
         code: store.state.authCode,
         encrypted_data: evt.detail.encryptedData,
@@ -150,72 +138,84 @@ export default {
         type: props.type
       })
         .then((data) => {
-          if (props.type === 'bind_phone') {
-            getUserPhoneCallback()
-          } else {
-            state.phoneNumber = data.phone_number
-            state.messageCode = data.message_code
-            handleSubmit()
-          }
+          state.phoneNumber = data.phone_number
+          state.messageCode = data.message_code
+          handleSubmit()
         })
         .catch((err) => {
           toast.info(err.message)
         })
+        .finally(() => {
+          refreshCode()
+        })
     }
 
     const sendMessage = () => {
-      if (state.sendMessageTimeout) {
+      if (state.sendMessageTimeout || state.submitting) {
         return
       }
 
       if (
-        !state.phoneNumber ||
-        state.phoneNumber.length !== 11 ||
-        !/^\d+$/.test(state.phoneNumber)
+        !state.emailAddress ||
+        !/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(state.emailAddress)
       ) {
-        toast.info('请输入正确的手机号~')
+        toast.info('请输入正确的邮箱账号~')
         return
       }
 
-      state.sendMessageTimeout = 60
-      overLoopTimeout()
-
-      sendPhoneMessage(state.phoneNumber, props.type)
+      state.submitting = true
+      sendEmailMessage(state.emailAddress, 'bind_email')
         .then(() => {
-          state.showMessageBox = true
+          state.sendMessageTimeout = 60
+          overLoopTimeout()
+        })
+        .catch(err => {
+          toast.info(err.message)
+        })
+        .finally(() => {
+          state.submitting = false
+        })
+    }
+
+    const verifyEmail = () => {
+      if (
+        !state.emailAddress ||
+        !/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(state.emailAddress)
+      ) {
+        toast.info('请输入正确的邮箱账号~')
+        return
+      }
+
+      if (
+        !state.emailCode ||
+        !/^\d{6}$/.test(state.emailCode)
+      ) {
+        toast.info('请输入正确的验证码~')
+        return
+      }
+
+      bindEmail(state.emailAddress, state.emailCode)
+        .then(() => {
+          const user = { ...store.state.userInfo }
+          user.providers.bind_email = true
+          store.commit('UPDATE_USER_INFO', user)
+          toast.info('邮箱绑定成功~')
         })
         .catch(err => {
           toast.info(err.message)
         })
     }
 
-    const bindUserAction = (evt) => {
-      if (!evt.detail.userInfo) {
-        toast.info('授权后才能登录')
-        return
-      }
-      bindUser({
-        iv: evt.detail.iv,
-        signature: evt.detail.signature,
-        encrypted_data: evt.detail.encryptedData,
-        user_info: evt.detail.userInfo
-      })
-      .then(() => {
-        const user = { ...store.state.userInfo }
-        user.providers[`bind_${process.env.TARO_ENV}`] = true
-        store.commit('UPDATE_USER_INFO', user)
-      })
-      .catch((err) => {
-        toast.info(err.message)
-      })
-    }
+    onMounted(() => {
+      refreshCode()
+    })
 
     return {
       state,
+      verifyEmail,
       sendMessage,
       getUserPhone,
-      handleSubmit,
-      bindUserAction
+      handleSubmit
     }
   }
 }
@@ -223,35 +223,6 @@ export default {
 
 <style lang="scss">
 .phone-code-box {
-  .message-wrap {
-    padding: 12px 0 53px;
-  }
-
-  .input-wrap {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #F5F5F5;
-    padding: 30px 20px;
-    border-radius: 20px;
-    margin-bottom: 40px;
-
-    .area {
-      border-right: 1PX solid #3D3D3D;
-      padding-right: 10px;
-      margin-right: 10px;
-      font-size: 30px;
-      line-height: 30px;
-      height: 30px;
-    }
-
-    .input {
-      flex: 1;
-      font-size: 30px;
-    }
-  }
-
   .buttons {
     display: flex;
     flex-direction: row;
@@ -268,12 +239,37 @@ export default {
     }
   }
 
-  .bind-auth-dialog {
+  .bind-auth-drawer {
     padding: $container-padding;
 
-    .tip {
+    .title {
       text-align: center;
       padding-bottom: $container-padding * 2;
+    }
+
+    .input-wrap {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #F5F5F5;
+      padding: 30px 20px;
+      border-radius: 20px;
+      margin-bottom: 40px;
+
+      .area {
+        border-right: 1PX solid #3D3D3D;
+        padding-right: 10px;
+        margin-right: 10px;
+        font-size: 30px;
+        line-height: 30px;
+        height: 30px;
+      }
+
+      .input {
+        flex: 1;
+        font-size: 30px;
+      }
     }
   }
 }

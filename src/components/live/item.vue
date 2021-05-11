@@ -3,7 +3,10 @@
     class="live-item"
     @tap="linkToLive"
   >
-    <view v-if="showUser" class="aside">
+    <view
+      v-if="showUser"
+      class="aside"
+    >
       <Avatar
         :user="item.author"
         @tap.native="linkToUser"

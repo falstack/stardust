@@ -10,7 +10,10 @@
           首页
         </view>
         <view class="tab">
-          <view class="create-btn" @tap="handleCreate">
+          <view
+            class="create-btn"
+            @tap="handleCreate"
+          >
             <view class="right" />
             <view class="left" />
           </view>

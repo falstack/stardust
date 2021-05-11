@@ -61,7 +61,12 @@ const store = createStore({
         return true
       }
 
-      return Object.values(state.userInfo.providers).filter(_ => _).length < 2
+      if (!state.userInfo.providers.bind_email) {
+        return true
+      }
+
+      // return Object.values(state.userInfo.providers).filter(_ => _).length < 2
+      return false
     },
     hasRole: (role) => (state) => {
       if (!state.userInfo) {

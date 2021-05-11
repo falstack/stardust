@@ -3,52 +3,11 @@
     <view class="login-tips">
       你还没登录呢，喵 o(一︿一+)o
     </view>
-    <view class="btn-wrap">
-      <button
-        class="primary-btn-plain"
-        open-type="getUserInfo"
-        hover-class="none"
-        @getUserInfo="signUpAction"
-      >
-        注册
-      </button>
-      <button
-        class="primary-btn"
-        hover-class="none"
-        @tap="signInAction"
-      >
-        登录
-      </button>
-    </view>
-    <Drawer
-      v-model="state.showDrawer"
-      size="100%"
-    >
-      <view class="login-drawer">
-        <view class="title">
-          登录
-        </view>
-        <PhoneCodeBox type="sign_up" />
-      </view>
-    </Drawer>
-    <Dialog v-model="state.showDialog">
-      <view class="bind-phone-dialog">
-        <view class="tip">
-          继续操作前请先绑定手机号
-        </view>
-        <PhoneCodeBox type="bind_phone" />
-      </view>
-    </Dialog>
+    <PhoneCodeBox type="sign_up" />
   </view>
 </template>
 
 <script>
-import { reactive } from 'vue'
-import Drawer from '~/components/drawer'
-import Dialog from '~/components/dialog'
-import toast from '~/utils/toast'
-import { useStore } from 'vuex'
-import { getAuthCode } from '~/utils/login'
 import PhoneCodeBox from './PhoneCodeBox'
 
 /**
@@ -74,53 +33,20 @@ import PhoneCodeBox from './PhoneCodeBox'
 export default {
   name: 'GuestPanel',
   components: {
-    Drawer,
-    Dialog,
     PhoneCodeBox
   },
-  setup() {
-    const store = useStore()
-    const state = reactive({
-      showDrawer: false,
-      showDialog: false,
-    })
-
-    const signInAction = async () => {
-      const code = await getAuthCode()
-      store.commit('SET_AUTH_CODE', code)
-      state.showDrawer = true
-    }
-
-    const signUpAction = async (evt) => {
-      if (!evt.detail.userInfo) {
-        toast.info('授权后才能注册')
-        return
-      }
-      await store.dispatch('userLogin')
-      const code = await getAuthCode()
-      store.commit('SET_AUTH_CODE', code)
-      if (store.getters.isGuest) {
-        state.showDialog = true
-      }
-    }
-
-    return {
-      state,
-      signUpAction,
-      signInAction
-    }
-  }
+  setup() {}
 }
 </script>
 
 <style lang="scss">
 .guest-panel {
-  width: 420px;
+  width: 500px;
   margin: 0 auto;
-  padding-bottom: 120px;
 
   .login-tips {
     font-size: 30px;
+    padding-bottom: 120px;
     text-align: center;
   }
 
@@ -139,26 +65,6 @@ export default {
       line-height: 70px;
       font-size: 30px;
       font-weight: 500;
-    }
-  }
-
-  .login-drawer {
-    width: 500px;
-    margin: 0 auto;
-
-    .title {
-      text-align: center;
-      font-size: 44px;
-      margin-bottom: 60px;
-    }
-  }
-
-  .bind-phone-dialog {
-    padding: $container-padding;
-
-    .tip {
-      text-align: center;
-      padding-bottom: $container-padding;
     }
   }
 }

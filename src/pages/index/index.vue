@@ -45,6 +45,12 @@ export default {
       handleTabSwitch
     }
   },
+  onShareAppMessage() {
+    return {
+      title: '测试分享',
+      path: '/pages/index/index'
+    }
+  },
   onReachBottom() {
     switch (this.state.tabIndex) {
       case 0:

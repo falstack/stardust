@@ -1,6 +1,5 @@
 import { createStore } from 'vuex'
-import { oAuthLogin, getUserRole, logoutAction } from '~/utils/login'
-import toast from '~/utils/toast'
+import { logoutAction } from '~/utils/login'
 import cache from '~/utils/cache'
 import live from './live'
 import model from './model'
@@ -26,20 +25,6 @@ const store = createStore({
     }
   },
   actions: {
-    async userLogin(ctx) {
-      try {
-        const user = await oAuthLogin()
-        ctx.commit('UPDATE_USER_INFO', user)
-        if (user && user.title.length) {
-          const roles = await getUserRole()
-          ctx.commit('UPDATE_USER_ROLE', roles)
-        }
-      } catch (e) {
-        toast.info('登录失败，请稍后再试~')
-        cache.remove('JWT_TOKEN')
-        cache.remove('USER_INFO')
-      }
-    },
     async userLogout(ctx) {
       try {
         await logoutAction()

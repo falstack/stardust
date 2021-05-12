@@ -23,7 +23,9 @@ export const wechatLogin = (form) => http.post('sign/login_wechat', {
   app_name: 'sign_love'
 })
 
-export const getUserInfo = () => http.post('sign/get_user_info')
+export const getUserInfo = () => http.get('sign/get_user_info', {
+  with_group: 1
+})
 
 export const getUserRole = () => http.get('user/roles')
 

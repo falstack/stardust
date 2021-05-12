@@ -5,10 +5,6 @@
         class="avatar"
         :src="$utils.resize(user.avatar, { width: 70 })"
       />
-      <text
-        class="iconfont ic-setting"
-        @tap="toUserAbout"
-      />
       <navigator
         :url="`/pages/user/public/index?id=${user.id}`"
         class="user-meta"
@@ -17,13 +13,16 @@
         <view class="nickname">
           {{ user.nickname }}
         </view>
+        <!--
         <view class="pocket">
           <text>团子：{{ user.wallet_coin }}</text>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <text>光玉：{{ user.wallet_money }}</text>
         </view>
+        -->
       </navigator>
     </view>
+    <!--
     <view class="user-social panel-wrap">
       <view class="panel-item">
         <view class="label">
@@ -58,11 +57,22 @@
         </view>
       </view>
     </view>
+    -->
+    <view>
+      <navigator url="/pages/user/profile/index">
+        个人资料
+      </navigator>
+      <view>
+        实名认证
+      </view>
+      <view>
+        择偶标准
+      </view>
+    </view>
   </view>
 </template>
 
 <script>
-import Taro from '@tarojs/taro'
 import { useStore } from 'vuex'
 import { computed } from 'vue'
 
@@ -72,15 +82,8 @@ export default {
     const store = useStore()
     const user = computed(() => store.state.userInfo)
 
-    const toUserAbout = () => {
-      Taro.navigateTo({
-        url: '/pages/user/about/index'
-      })
-    }
-
     return {
-      user,
-      toUserAbout
+      user
     }
   }
 }
@@ -117,12 +120,6 @@ export default {
         font-size: 24px;
         color: $color-text-gray;
       }
-    }
-
-    .ic-setting {
-      float: right;
-      font-size: 40px;
-      margin: 30px $container-padding / 2;
     }
   }
 

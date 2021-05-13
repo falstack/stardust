@@ -22,7 +22,10 @@
         登录
       </button>
     </view>
-    <Drawer v-model="state.showBindOAuth" size="100%">
+    <Drawer
+      v-model="state.showBindOAuth"
+      size="100%"
+    >
       <view class="bind-auth-drawer">
         <view class="title">
           继续操作前请先绑定邮箱

@@ -7,11 +7,16 @@
 <script>
 import Taro from '@tarojs/taro'
 import http from '~/utils/http'
+import toast from '~/utils/toast'
 import { reactive, onMounted } from 'vue'
 
 export default {
   name: 'Uploader',
-  setup() {
+  modelValue: {
+    required: true,
+    type: String
+  },
+  setup(props, ctx) {
     const state = reactive({
       action: '',
       formData: {}
@@ -49,7 +54,10 @@ export default {
               if (data.code) {
                 return
               }
-              console.log(data.data.link)
+              ctx.emit('update:modelValue', data.data.link)
+            },
+            fail: () => {
+              toast.info('图片上传失败')
             }
           })
         }

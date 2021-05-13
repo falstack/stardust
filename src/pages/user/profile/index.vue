@@ -1,52 +1,130 @@
 <template>
   <view class="user-profile">
     <view class="input-wrap">
-      <view class="label">昵称</view>
+      <view class="label">
+        头像
+      </view>
+      <Uploader v-model="state.avatar">
+        <image
+          class="avatar"
+          :src="$utils.resize(state.avatar, { width: 70 })"
+        />
+      </Uploader>
+    </view>
+    <view class="input-wrap">
+      <view class="label">
+        名字
+      </view>
       <input
         v-model="state.nickname"
         type="text"
         maxlength="14"
+        placeholder="你的名字"
       >
     </view>
     <view class="input-wrap">
-      <view class="label">头像</view>
-      <Uploader>
-        点击选择头像
-      </Uploader>
-    </view>
-    <view class="input-wrap">
-      <view class="label">性别</view>
+      <view class="label">
+        性别
+      </view>
       <radio-group @change="onSexChange">
-        <label v-for="item in sexList" :key="item.value" class="checkbox-list__label">
-          <radio class="checkbox-list__checkbox" :value="item.value" :checked="item.checked">{{ item.text }}</radio>
+        <label
+          v-for="item in sexList"
+          :key="item.value"
+          class="checkbox-list__label"
+        >
+          <radio
+            color="#fb7299"
+            :checked="state.meta.sex === item.value"
+            class="checkbox-list__checkbox"
+            :value="item.value"
+          >{{ item.text }}</radio>
         </label>
       </radio-group>
     </view>
     <view class="input-wrap">
-      <view class="label">生日</view>
-      <picker mode="date" start="1980-01-01" end="2002-12-31" @change="onBirthdayChange">
+      <view class="label">
+        生日
+      </view>
+      <picker
+        :value="state.meta.birthday"
+        mode="date"
+        start="1980-01-01"
+        end="2002-12-31"
+        @change="onBirthdayChange"
+      >
         <view class="picker">
-          当前选择：{{state.birthday}}
+          {{ state.meta.birthday || '点击选择' }}
         </view>
       </picker>
     </view>
     <view class="input-wrap">
-      <view class="label">身高（cm）</view>
-      <slider step="1" :value="state.bodyHeight" show-value="true" min="100" max="200" @change="onBodyHeightChange" />
+      <view class="label">
+        身高（cm）
+      </view>
+      <view class="slide-wrap">
+        <slider
+          block-size="20"
+          active-color="#fb7299"
+          step="1"
+          :value="state.meta.bodyHeight"
+          show-value="true"
+          min="100"
+          max="200"
+          @change="onBodyHeightChange"
+        />
+      </view>
     </view>
     <view class="input-wrap">
-      <view class="label">体重（kg）</view>
-      <slider step="1" :value="state.bodyWeight" show-value="true" min="30" max="130" @change="onBodyWeightChange" />
+      <view class="label">
+        体重（kg）
+      </view>
+      <view class="slide-wrap">
+        <slider
+          block-size="20"
+          active-color="#fb7299"
+          step="1"
+          :value="state.meta.bodyWeight"
+          show-value="true"
+          min="30"
+          max="130"
+          @change="onBodyWeightChange"
+        />
+      </view>
     </view>
     <view class="input-wrap">
-      <view class="label">职业</view>
-      <input type="text">
+      <view class="label">
+        职业名称
+      </view>
+      <input
+        v-model="state.meta.work"
+        type="text"
+        placeholder="如：程序员"
+      >
     </view>
+    <view class="input-wrap">
+      <view class="label">
+        微信号
+      </view>
+      <input
+        v-model="state.meta.link"
+        type="text"
+        placeholder="填写你的微信号"
+      >
+    </view>
+    <button
+      class="primary-btn"
+      @tap="handleSubmit"
+    >
+      点击保存
+    </button>
   </view>
 </template>
 
 <script>
 import Uploader from '~/components/uploader'
+import http from '~/utils/http'
+import toast from '~/utils/toast'
+import { useStore } from 'vuex'
 import { reactive } from 'vue'
 
 export default {
@@ -55,45 +133,60 @@ export default {
     Uploader
   },
   setup() {
+    const store = useStore()
     const state = reactive({
-      nickname: '',
-      bodyHeight: 150,
-      bodyWeight: 50,
-      messageCode: '',
-      emailAddress: '',
-      emailCode: '',
-      sendMessageTimeout: 0,
-      submitting: false,
-      showBindOAuth: false
+      nickname: store?.state?.userInfo?.nickname,
+      avatar: store?.state?.userInfo?.avatar,
+      meta: {
+        sex: null,
+        birthday: null,
+        bodyHeight: 0,
+        bodyWeight: 0,
+        work: '',
+        link: '',
+        ...(store?.state?.userInfo?.meta || {})
+      }
     })
 
     const sexList = [
       {
-        value: 0,
-        text: '女',
-        checked: false
+        value: '0',
+        text: '女'
       },
       {
-        value: 1,
-        text: '男',
-        checked: false
+        value: '1',
+        text: '男'
       }
     ]
 
     const onSexChange = (evt) => {
-      console.log('onSexChange', evt)
+      state.meta.sex = evt.detail.value
     }
 
     const onBodyHeightChange = (evt) => {
-      console.log('onBodyHeightChange', evt)
+      state.meta.bodyHeight = evt.detail.value
     }
 
     const onBodyWeightChange = (evt) => {
-      console.log('onBodyWeightChange', evt)
+      state.meta.bodyWeight = evt.detail.value
     }
 
     const onBirthdayChange = (evt) => {
-      console.log('onBirthdayChange', evt)
+      state.meta.birthday = evt.detail.value
+    }
+
+    const handleSubmit = () => {
+      http.post('user/profile', state)
+      .then(() => {
+        toast.info('保存成功')
+        store.commit('UPDATE_USER_INFO', {
+          ...store.state.userInfo,
+          ...state
+        })
+      })
+      .catch((err) => {
+        toast.info(err.message)
+      })
     }
 
     return {
@@ -102,7 +195,8 @@ export default {
       onSexChange,
       onBodyHeightChange,
       onBodyWeightChange,
-      onBirthdayChange
+      onBirthdayChange,
+      handleSubmit
     }
   }
 }
@@ -110,6 +204,44 @@ export default {
 
 <style lang="scss">
 .user-profile {
-  padding: $container-padding;
+  .input-wrap {
+    background-color: #fff;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin-bottom: 20px;
+    min-height: 100px;
+
+    .avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 10%;
+      border: 1px solid #fafafa;
+    }
+
+    input {
+      text-align: right;
+    }
+
+    radio {
+      margin-left: 10px;
+    }
+
+    slider {
+      margin-right: 0;
+    }
+
+    .slide-wrap {
+      width: 60%;
+      min-width: 200px;
+    }
+  }
+
+  .primary-btn {
+    display: block;
+    margin: 30px 20px;
+  }
 }
 </style>

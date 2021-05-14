@@ -12,9 +12,23 @@ import { reactive, onMounted } from 'vue'
 
 export default {
   name: 'Uploader',
-  modelValue: {
-    required: true,
-    type: String
+  props: {
+    modelValue: {
+      required: true,
+      type: String
+    },
+    count: {
+      type: Number,
+      default: 1
+    },
+    sourceType: {
+      type: Array,
+      default: () => ['album']
+    },
+    sizeType: {
+      type: String,
+      default: 'compressed'
+    }
   },
   setup(props, ctx) {
     const state = reactive({
@@ -40,9 +54,9 @@ export default {
 
     const selectImage = () => {
       Taro.chooseImage({
-        count: 1,
-        sourceType: ['album'],
-        sizeType: 'compressed',
+        count: props.count,
+        sourceType: props.sourceType,
+        sizeType: props.sizeType,
         success: res => {
           Taro.uploadFile({
             url: state.action,

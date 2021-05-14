@@ -93,20 +93,38 @@
     </view>
     <view class="input-wrap">
       <view class="label">
-        职业名称
+        职业
       </view>
-      <input
-        v-model="state.meta.work"
-        type="text"
-        placeholder="如：程序员"
+      <picker
+        mode="selector"
+        :range="workList"
+        @change="onWorkChange"
       >
+        <view class="picker">
+          {{ state.meta.work || '点击选择' }}
+        </view>
+      </picker>
+    </view>
+    <view class="input-wrap">
+      <view class="label">
+        坐标
+      </view>
+      <picker
+        mode="selector"
+        :range="locationList"
+        @change="onLocationChange"
+      >
+        <view class="picker">
+          {{ state.meta.location || '点击选择' }}
+        </view>
+      </picker>
     </view>
     <view class="input-wrap">
       <view class="label">
         微信号
       </view>
       <input
-        v-model="state.meta.link"
+        v-model="state.meta.wechat"
         type="text"
         placeholder="填写你的微信号"
       >
@@ -143,7 +161,8 @@ export default {
         bodyHeight: 0,
         bodyWeight: 0,
         work: '',
-        link: '',
+        wechat: '',
+        location: '',
         ...(store?.state?.userInfo?.meta || {})
       }
     })
@@ -159,8 +178,20 @@ export default {
       }
     ]
 
+    const locationList = ['上海', '北京', '南京', '杭州', '武汉', '芜湖', '重庆']
+
+    const workList = ['程序员', '设计师', '产品经理', '商务', '运营', '审核', '项目管理', '其它']
+
     const onSexChange = (evt) => {
       state.meta.sex = evt.detail.value
+    }
+
+    const onWorkChange = (evt) => {
+      state.meta.work = workList[evt.detail.value]
+    }
+
+    const onLocationChange = (evt) => {
+      state.meta.location = locationList[evt.detail.value]
     }
 
     const onBodyHeightChange = (evt) => {
@@ -176,6 +207,8 @@ export default {
     }
 
     const handleSubmit = () => {
+      state.nickname = state.nickname.trim()
+      state.meta.wechat = state.meta.wechat.trim()
       http.post('user/profile', state)
       .then(() => {
         toast.info('保存成功')
@@ -192,7 +225,11 @@ export default {
     return {
       state,
       sexList,
+      workList,
+      locationList,
       onSexChange,
+      onWorkChange,
+      onLocationChange,
       onBodyHeightChange,
       onBodyWeightChange,
       onBirthdayChange,

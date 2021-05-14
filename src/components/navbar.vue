@@ -47,7 +47,6 @@
 </template>
 
 <script>
-import Taro from '@tarojs/taro'
 import { reactive, computed, onMounted } from 'vue'
 import { getMenuRect, back } from '~/utils'
 import cache from '~/utils/cache'
@@ -57,6 +56,10 @@ export default {
     background: {
       type: String,
       default: ''
+    },
+    showBack: {
+      type: Boolean,
+      default: false
     },
     title: {
       type: String,
@@ -96,10 +99,6 @@ export default {
       }
     })
 
-    const showBack = computed(() => {
-      return Taro.getCurrentInstance().router.path !== '/pages/index/index'
-    })
-
     const calcMenuRect = () => {
       if (state.rect) {
         return
@@ -121,7 +120,6 @@ export default {
     return {
       state,
       goBack,
-      showBack,
       shimStyle,
       wrapStyle,
       coreStyle

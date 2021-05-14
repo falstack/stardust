@@ -62,12 +62,12 @@
       <navigator url="/pages/user/profile/index">
         个人资料
       </navigator>
-      <view>
+      <navigator url="/pages/user/realname/index">
         实名认证
-      </view>
-      <view>
+      </navigator>
+      <navigator url="/pages/user/readme/index">
         择偶标准
-      </view>
+      </navigator>
     </view>
   </view>
 </template>

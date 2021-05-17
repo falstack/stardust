@@ -11,14 +11,12 @@ export default {
     }
   },
   actions: {
-    getModelData({ state, commit }, { type, id }) {
-      if (state.user && state.user.id === +id) {
+    getModelData({ state, commit }, { type, slug }) {
+      if (state.user && state.user.slug === slug) {
         return
       }
 
-      http.get('user/show', {
-        slug: id
-      })
+      http.get('user/show', { slug })
         .then(data => {
           commit('SET_MODEL_DATA', { type, data })
         })
@@ -28,8 +26,8 @@ export default {
     }
   },
   getters: {
-    current: (state) => ({ type, id }) => {
-      if (!state[type] || state[type].id !== +id) {
+    current: (state) => ({ type, slug }) => {
+      if (!state[type] || state[type].slug !== slug) {
         return null
       }
 

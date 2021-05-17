@@ -1,3 +1,4 @@
 export default {
-  navigationStyle: 'custom'
+  navigationBarTitleText: '单身码',
+  enablePullDownRefresh: true
 }

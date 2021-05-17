@@ -46,7 +46,7 @@
       >
         <view class="iconfont ic-nianling" />
         <view class="name">
-          {{ item.meta.birthday }}
+          {{ convertBirthday(item.meta.birthday) }}
         </view>
       </view>
       <view
@@ -67,15 +67,6 @@
           {{ item.meta.bodyWeight }}kg
         </view>
       </view>
-      <view
-        v-if="item.meta.work"
-        class="item work"
-      >
-        <view class="iconfont ic-gongzuo" />
-        <view class="name">
-          {{ item.meta.work }}
-        </view>
-      </view>
     </view>
   </view>
 </template>
@@ -89,6 +80,15 @@ export default {
       type: Object,
       required: true
     }
+  },
+  setup() {
+    const convertBirthday = (date) => {
+      return `${date.split('-')[0].slice(2, 4)}年`
+    }
+
+    return {
+      convertBirthday
+    }
   }
 }
 </script>
@@ -98,6 +98,7 @@ export default {
   background-color: #fff;
   padding: 15px;
   margin-bottom: 20px;
+  margin-top: 20px;
 
   .header {
     display: flex;
@@ -137,7 +138,6 @@ export default {
     .left {
       flex: 1;
       padding-right: 15px;
-      text-indent: 2em;
       color: #999;
       @include mutiline(40px, 6);
       @extend %breakWord;
@@ -162,9 +162,10 @@ export default {
     align-items: center;
     padding-top: 15px;
     border-top: 1px solid rgba(0,0,0,.05);
+    @extend %oneline;
 
     .item {
-      margin-right: 15px;
+      margin-right: 20px;
       display: flex;
       flex-direction: row;
       justify-content: center;

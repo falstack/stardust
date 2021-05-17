@@ -8,11 +8,11 @@ export default {
     'pages/user/public/index',
   ],
   window: {
-    navigationBarBackgroundColor: '#f9f9f9',
-    navigationBarTitleText: '签约幸福',
-    navigationBarTextStyle: 'black',
+    navigationBarTitleText: '单身码',
     backgroundColor: '#f9f9f9',
-    backgroundTextStyle: 'dark'
+    backgroundTextStyle: 'dark',
+    navigationBarBackgroundColor: '#fb7299',
+    navigationBarTextStyle: 'white'
   },
   tabBar: {
     custom: false,
@@ -24,11 +24,15 @@ export default {
     list: [
       {
         pagePath: 'pages/index/index',
-        text: '首页',
+        text: 'TA',
+        iconPath: 'assets/tab_1.png',
+        selectedIconPath: 'assets/tab_1_selected.png'
       },
       {
         pagePath: 'pages/user/home/index',
-        text: '我的',
+        text: '我',
+        iconPath: 'assets/tab_3.png',
+        selectedIconPath: 'assets/tab_3_selected.png'
       }
     ]
   }

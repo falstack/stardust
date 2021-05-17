@@ -1,7 +1,7 @@
 <template>
-  <view class-name="user-home">
+  <view class="user-home">
     <Navbar />
-    <view class-name="user-panel">
+    <view class="user-panel">
       <GuestPanel v-if="isGuest" />
       <SignedPanel v-else />
     </view>
@@ -35,8 +35,7 @@ export default {
 
 <style lang="scss">
 .user-home {
-  .user-panel {
-    padding: $container-padding;
-  }
+  background-color: #fff;
+  min-height: 100vh;
 }
 </style>

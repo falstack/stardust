@@ -1,15 +1,15 @@
 <template>
   <view class="signed-panel">
-    <view class="user-info">
+    <navigator
+      class="user-info"
+      :url="`/pages/user/public/index?slug=${user.slug}`"
+      hover-class="none"
+    >
       <image
         class="avatar"
         :src="$utils.resize(user.avatar, { width: 70 })"
       />
-      <navigator
-        :url="`/pages/user/public/index?id=${user.id}`"
-        class="user-meta"
-        hover-class="none"
-      >
+      <view class="user-meta">
         <view class="nickname">
           {{ user.nickname }}
         </view>
@@ -20,8 +20,9 @@
           <text>光玉：{{ user.wallet_money }}</text>
         </view>
         -->
-      </navigator>
-    </view>
+      </view>
+      <view class="iconfont ic-forward" />
+    </navigator>
     <!--
     <view class="user-social panel-wrap">
       <view class="panel-item">
@@ -58,15 +59,31 @@
       </view>
     </view>
     -->
-    <view>
+    <view class="hr" />
+    <view class="menu-panel">
       <navigator url="/pages/user/profile/index">
-        个人资料
+        <view class="iconfont ic-gerenziliao" />
+        <view class="text">
+          个人资料
+        </view>
       </navigator>
       <navigator url="/pages/user/realname/index">
-        实名认证
+        <view class="iconfont ic-shiming" />
+        <view class="text">
+          实名认证
+        </view>
       </navigator>
       <navigator url="/pages/user/readme/index">
-        择偶标准
+        <view class="iconfont ic-duixiang" />
+        <view class="text">
+          择偶标准
+        </view>
+      </navigator>
+      <navigator url="/pages/user/readme/index">
+        <view class="iconfont ic-ico" />
+        <view class="text">
+          单身码
+        </view>
       </navigator>
     </view>
   </view>
@@ -92,16 +109,19 @@ export default {
 <style lang="scss">
 .signed-panel {
   .user-info {
-    padding-left: $container-padding / 2;
+    position: relative;
+    padding-left: $container-padding;
     margin-bottom: $container-padding * 1.5;
+    padding-right: 100px;
 
     .avatar {
       width: 140px;
       height: 140px;
-      border-radius: 50%;
+      border-radius: 10%;
       float: left;
       margin-right: $container-padding;
       background-color: $color-background-container;
+      border: 1px solid #fafafa;
     }
 
     .user-meta {
@@ -114,12 +134,20 @@ export default {
 
       .nickname {
         font-size: 34px;
+        width: 100%;
+        @extend %oneline;
       }
 
       .pocket {
         font-size: 24px;
         color: $color-text-gray;
       }
+    }
+
+    .ic-forward {
+      position: absolute;
+      right: 30px;
+      top: 50px;
     }
   }
 
@@ -156,6 +184,44 @@ export default {
       font-size: 24px;
       margin-top: 5px;
       color: $color-text-gray;
+    }
+  }
+
+  .hr {
+    height: 30px;
+    background-color: #f9f9f9;
+  }
+
+  .menu-panel {
+    navigator {
+      height: 60px;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      padding: $container-padding;
+      border-bottom: 1px solid rgba(0,0,0,.05);
+    }
+
+    .iconfont {
+      margin-right: 10px;
+      font-size: 40px;
+    }
+
+    .ic-gerenziliao {
+      color: #fb7299;
+    }
+
+    .ic-shiming {
+      color: goldenrod;
+    }
+
+    .ic-duixiang {
+      color: #00a1d6;
+    }
+
+    .ic-ico {
+      color: limegreen;
     }
   }
 }

@@ -107,6 +107,20 @@
     </view>
     <view class="input-wrap">
       <view class="label">
+        学历
+      </view>
+      <picker
+        mode="selector"
+        :range="studyList"
+        @change="onStudyChange"
+      >
+        <view class="picker">
+          {{ state.meta.study || '点击选择' }}
+        </view>
+      </picker>
+    </view>
+    <view class="input-wrap">
+      <view class="label">
         坐标
       </view>
       <picker
@@ -182,12 +196,18 @@ export default {
 
     const workList = ['程序员', '设计师', '产品经理', '商务', '运营', '审核', '项目管理', '其它']
 
+    const studyList = ['初中', '高中', '专科', '本科', '硕士', '博士']
+
     const onSexChange = (evt) => {
       state.meta.sex = evt.detail.value
     }
 
     const onWorkChange = (evt) => {
       state.meta.work = workList[evt.detail.value]
+    }
+
+    const onStudyChange = (evt) => {
+      state.meta.study = studyList[evt.detail.value]
     }
 
     const onLocationChange = (evt) => {
@@ -227,8 +247,10 @@ export default {
       sexList,
       workList,
       locationList,
+      studyList,
       onSexChange,
       onWorkChange,
+      onStudyChange,
       onLocationChange,
       onBodyHeightChange,
       onBodyWeightChange,

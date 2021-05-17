@@ -5,37 +5,21 @@ const systemInfo = Taro.getSystemInfoSync()
 
 const DPR = Math.max(parseInt(systemInfo.pixelRatio || 2), 2)
 
-export const resize = (url, options = {}) => {
-  if (!url) {
+export const resize = (path, { width, height } = {}) => {
+  if (!path) {
     return ''
   }
 
-  if (/imageMogr2/.test(url)) {
-    return url
-  }
+  const url = trimHttp(path)
+  const w = width ? `,w_${(width * DPR) | 0}` : ''
+  const h = height ? `,h_${(height * DPR) | 0}` : ''
+  const m = w && h ? ',m_fill' : ''
+  const r = w || h ? '/resize' : ''
 
-  const link = /^http/.test(url) ? url : `https://m1.calibur.tv/${url}`
-
-  const format = '/format/png'
-  const mode = options.mode === undefined ? 1 : options.mode
-
-  if ((mode === 1 && !options.width) || (!options.width && !options.height)) {
-    return `${link}?imageMogr2/auto-orient/strip${format}`
-  }
-
-  let width
-  let height
-
-  if (mode === 1) {
-    width = `/w/${options.width * DPR | 0}`
-    height = options.height ? `/h/${options.height * DPR | 0}` : `/h/${options.width * DPR | 0}`
-  } else {
-    width = options.width ? `/w/${options.width * DPR | 0}` : ''
-    height = options.height ? `/h/${options.height * DPR | 0}` : ''
-  }
-
-  return `${link}?imageMogr2/auto-orient/strip|imageView2/${mode}${width}${height}${format}`
+  return `${url}?x-oss-process=image/auto-orient,1${r}${w}${h}${m}`
 }
+
+export const trimHttp = (url) => (url ? url.replace(/^http:/, '') : '')
 
 export const getMenuRect = () => {
   if (cache.get('MENU-RECT')) {

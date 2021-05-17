@@ -210,6 +210,7 @@ export default {
 .guest-panel {
   width: 500px;
   margin: 0 auto;
+  padding-top: 100px;
 
   .login-tips {
     font-size: 30px;

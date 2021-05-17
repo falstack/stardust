@@ -1,7 +1,24 @@
 <template>
-  <view>
-    <Navbar />
-    <view class="listview">
+  <view class="listview">
+    <view
+      v-if="!state.fetched && state.loading"
+      class="loading-image"
+    >
+      <image :src="state.loadingImage" />
+    </view>
+    <view
+      v-if="!state.result.length && state.error"
+      class="loading-image"
+    >
+      <view>请求失败请重试</view>
+      <button
+        class="primary-btn"
+        @tap="initData(true)"
+      >
+        重试
+      </button>
+    </view>
+    <view class="list">
       <UserCard
         v-for="item in state.result"
         :key="item.slug"
@@ -12,14 +29,16 @@
 </template>
 
 <script>
+import Taro from '@tarojs/taro'
 import http from '~/utils/http'
-import Navbar from '~/components/navbar'
+// import Navbar from '~/components/navbar'
 import UserCard from '~/components/user/card'
 import { reactive, onMounted } from 'vue'
+import loadingImage from '../../assets/loading.gif'
 
 export default {
   components: {
-    Navbar,
+    // Navbar,
     UserCard
   },
   setup() {
@@ -30,6 +49,7 @@ export default {
       loading: false,
       error: null,
       fetched: false,
+      loadingImage
     })
 
     const initData = (refresh = false) => {
@@ -37,15 +57,16 @@ export default {
         return
       }
 
+      state.error = null
       if (!refresh) {
         state.loading = true
-        state.error = null
       }
 
       http.get('user/about_flow')
         .then(res => {
           state.result = res.result
           state.noMore = res.result.length < 20
+          state.nothing = !res.result.length
           state.fetched = true
         })
         .catch((err) => {
@@ -53,6 +74,9 @@ export default {
         })
         .finally(() => {
           state.loading = false
+          if (refresh) {
+            Taro.stopPullDownRefresh()
+          }
         })
     }
 
@@ -68,9 +92,8 @@ export default {
         seen_ids: state.result.map(_ => _.id).join(',')
       })
         .then(res => {
-          state.result = res.result
+          state.result = state.result.concat(res.result)
           state.noMore = res.result.length < 20
-          state.fetched = true
         })
         .catch((err) => {
           state.error = err
@@ -86,8 +109,15 @@ export default {
 
     return {
       state,
+      initData,
       loadMore
     }
+  },
+  onPullDownRefresh() {
+    this.initData(true)
+  },
+  onReachBottom() {
+    this.loadMore()
   },
   onShareAppMessage() {
     return {
@@ -99,4 +129,35 @@ export default {
 </script>
 
 <style lang="scss">
+.listview {
+  background-color: #fff;
+
+  .loading-image {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    image {
+      display: block;
+      width: 346px;
+      height: 367px;
+    }
+
+    view {
+      color: #6d757a;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 0 50px;
+    }
+  }
+
+  .list {
+    background-color: #f9f9f9;
+  }
+}
 </style>

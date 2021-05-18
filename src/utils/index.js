@@ -5,7 +5,7 @@ const systemInfo = Taro.getSystemInfoSync()
 
 const DPR = Math.max(parseInt(systemInfo.pixelRatio || 2), 2)
 
-export const resize = (path, { width, height, dpr } = {}) => {
+export const resize = (path, { width, height, dpr, mode } = {}) => {
   if (!path) {
     return ''
   }
@@ -14,7 +14,7 @@ export const resize = (path, { width, height, dpr } = {}) => {
   const _dpr = dpr || DPR
   const w = width ? `,w_${(width * _dpr) | 0}` : ''
   const h = height ? `,h_${(height * _dpr) | 0}` : ''
-  const m = w && h ? ',m_fill' : ''
+  const m = mode ? `,m_${mode}` : (w && h ? ',m_fill' : '')
   const r = w || h ? '/resize' : ''
 
   return `${url}?x-oss-process=image/auto-orient,1${r}${w}${h}${m}`

@@ -8,7 +8,7 @@
         v-model="state.realname"
         type="text"
         maxlength="14"
-        placeholder="请输入"
+        placeholder="请输入你的姓名"
       >
     </view>
     <view class="input-wrap">
@@ -18,7 +18,7 @@
       <input
         v-model="state.idcard"
         type="text"
-        placeholder="请输入"
+        placeholder="请输入你的身份证"
       >
     </view>
     <button
@@ -27,6 +27,11 @@
     >
       点击保存
     </button>
+    <view class="tips">
+      <view>
+        PS：实名认证是为了防止一个用户有多个微信号
+      </view>
+    </view>
   </view>
 </template>
 
@@ -105,6 +110,16 @@ export default {
   .primary-btn {
     display: block;
     margin: 30px 20px;
+  }
+
+  .tips {
+    padding: 0 $container-padding;
+
+    view {
+      margin: $container-padding / 2 0;
+      font-size: 28px;
+      color: $color-text-gray;
+    }
   }
 }
 </style>

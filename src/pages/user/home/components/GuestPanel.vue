@@ -37,7 +37,7 @@
             type="text"
             auto-focus="true"
             adjustPosition=""
-            placeholder="邮箱"
+            placeholder="邮箱账号"
           >
         </view>
         <view class="input-wrap">
@@ -46,15 +46,23 @@
             class="input"
             type="number"
             adjustPosition=""
-            placeholder="验证码"
+            placeholder="收到的邮件验证码"
           >
+        </view>
+        <view class="tips">
+          <view>
+            1. 为了过滤虚假信息，只有邮箱后缀相同的用户能看到彼此
+          </view>
+          <view>
+            2. 目前只支持 @bilibili（内测）、@tencent（审核） 邮箱后缀注册
+          </view>
         </view>
         <view class="buttons">
           <button
             class="btn primary-btn-plain"
             @tap="sendMessage"
           >
-            {{ state.sendMessageTimeout ? `${state.sendMessageTimeout}s后可重新获取` : '获取邮箱验证码' }}
+            {{ state.sendMessageTimeout ? `${state.sendMessageTimeout}s后可重新获取` : '发送邮箱验证码' }}
           </button>
           <view class="divider" />
           <button
@@ -173,6 +181,14 @@ export default {
       }
 
       if (
+        !state.emailAddress.endsWith('@bilibili.com') &&
+        !state.emailAddress.endsWith('@tencent.com')
+      ) {
+        toast.info('目前只支持部分邮箱后缀认证~')
+        return
+      }
+
+      if (
         !state.emailCode ||
         !/^\d{6}$/.test(state.emailCode)
       ) {
@@ -264,6 +280,16 @@ export default {
       .input {
         flex: 1;
         font-size: 30px;
+      }
+    }
+
+    .tips {
+      padding: $container-padding 0;
+
+      view {
+        margin: $container-padding / 2 0;
+        font-size: 28px;
+        color: $color-text-gray;
       }
     }
   }

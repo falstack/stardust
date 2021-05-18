@@ -1,4 +1,4 @@
 export default {
-  navigationBarTitleText: '单身码',
+  navigationBarTitleText: '签约幸福',
   enablePullDownRefresh: true
 }

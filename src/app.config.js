@@ -6,9 +6,10 @@ export default {
     'pages/user/realname/index',
     'pages/user/readme/index',
     'pages/user/public/index',
+    'pages/user/code/index'
   ],
   window: {
-    navigationBarTitleText: '单身码',
+    navigationBarTitleText: '签约幸福',
     backgroundColor: '#f9f9f9',
     backgroundTextStyle: 'dark',
     navigationBarBackgroundColor: '#fb7299',

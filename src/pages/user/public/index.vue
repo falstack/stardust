@@ -12,11 +12,11 @@
           {{ user.nickname }}
         </view>
         <view
-          v-if="user.meta.sex !== null"
+          v-if="user.meta && user.meta.sex !== null"
           class="sex"
         >
           <view
-            v-if="user.meta.sex === 0"
+            v-if="user.meta.sex == 0"
             class="iconfont ic-nv"
           />
           <view
@@ -29,7 +29,10 @@
           class="iconfont ic-shiming"
         />
       </view>
-      <view class="nav-meta">
+      <view
+        v-if="user.meta"
+        class="nav-meta"
+      >
         <view class="item location">
           <view
             v-if="user.meta.location"
@@ -150,7 +153,7 @@
       >
         <text class="iconfont ic-lianai" />
         <text>
-          与TA牵手
+          与TA签约
         </text>
       </view>
       <text class="line" />
@@ -199,13 +202,13 @@
     <Dialog v-model="state.showTogetherDialog">
       <view class="together-drawer">
         <view>
-          1. 点击下方「发起邀请」按钮后，把消息分享给TA，同意后你们就会成为情侣~
+          1. 点击下方「发起签约」按钮后，把消息分享给TA，同意后你们就会成为情侣~
         </view>
         <view>
-          2. 牵手的绑定和解绑都要双方操作并确认，请勿随意与别人牵手~
+          2. 签约的绑定和解绑都要双方操作并确认，请勿随意与别人签约~
         </view>
         <view>
-          3. 牵手即为"交往中"，所以同一时间只能与一个人牵手~
+          3. 签约即为"交往中"，所以同一时间只能与一个人签约~
         </view>
         <button
           class="primary-btn"
@@ -214,7 +217,7 @@
           :data-path="togetherData.path"
           :data-image-url="togetherData.imageUrl"
         >
-          发起邀请
+          发起签约
         </button>
       </view>
     </Dialog>
@@ -226,10 +229,10 @@
           <image :src="$utils.resize(user.avatar, { width: 50 })" />
         </view>
         <view>
-          1. 这是"牵手"邀请，接受后你的情感状态将变更为「交往中」
+          1. 这是一份契约，接受后你的情感状态将变更为「交往中」
         </view>
         <view>
-          2. 一个人同一时间只能与一个人牵手，牵手的绑定和解绑都要双方操作并确认，你无法独自更改状态~
+          2. 一个人同一时间只能与一个人签约，签约的绑定和解绑都要双方操作并确认，你无法独自更改状态~
         </view>
         <view>
           3. 如果你的心中早已有了答案，那么就勇敢的做决定吧！
@@ -238,7 +241,7 @@
           class="primary-btn"
           @tap="sendConfirm"
         >
-          接受邀请
+          确认签约
         </button>
       </view>
     </Dialog>
@@ -330,7 +333,7 @@ export default {
       const token = md5(`${self.value.id}${user.value.slug}${self.value.slug}${time}`)
 
       return {
-        title: `「${self.value.nickname}」向你发送了一份邀请，请尽快查收~`,
+        title: `「${self.value.nickname}」向你发送了一份契约，请尽快查收~`,
         path: `/pages/user/public/index?slug=${self.value.slug}&from=share_together&target=${user.value.slug}&token=${token}&ts=${time}`,
         imageUrl: self.value.avatar
       }
@@ -377,8 +380,7 @@ export default {
       }
 
       return self.value.love_type === user.value.love_type &&
-        self.value.love_slug === user.value.slug &&
-        user.value.love_slug === self.value.slug
+        user.value.love_user === self.value.id
     })
 
     const isSameCompany = computed(() => {
@@ -464,7 +466,7 @@ export default {
       }
 
       if (isSelf.value) {
-        toast.info('不能和自己牵手')
+        toast.info('不能和自己签约')
         return
       }
 
@@ -505,6 +507,15 @@ export default {
         return
       }
 
+      if (isSelf.value) {
+        toast.info('私密消息发送成功，等待对方验收吧~')
+        return
+      }
+
+      if (self.value.love_type) {
+        return
+      }
+
       if (self.value.slug !== params.target) {
         return
       }
@@ -527,6 +538,15 @@ export default {
         return
       }
 
+      if (isSelf.value) {
+        toast.info('私密消息发送成功')
+        return
+      }
+
+      if (!self.value.love_type) {
+        return
+      }
+
       if (self.value.slug !== params.target) {
         return
       }
@@ -542,7 +562,7 @@ export default {
     const sendConfirm = () => {
       Taro.showModal({
         title: '提示',
-        content: '确认要接受邀请吗？',
+        content: '确认要签约吗？',
         cancelText: '拒绝',
         cancelColor: '#6d757a',
         confirmText: '接受',
@@ -562,8 +582,10 @@ export default {
                 love_type: 1,
                 love_user: params.slug
               })
-              Taro.redirectTo({
-                url: `/pages/user/public/index?slug=${params.slug}&refresh=1`
+              store.getters['model/current']({
+                type: 'user',
+                slug: params.slug,
+                refresh: true
               })
             })
             .catch((err) => {
@@ -593,10 +615,12 @@ export default {
                 store.commit('UPDATE_USER_INFO', {
                   ...self.value,
                   love_type: 0,
-                  love_user: ''
+                  love_user: 0
                 })
-                Taro.redirectTo({
-                  url: `/pages/user/public/index?slug=${params.slug}&refresh=1`
+                store.getters['model/current']({
+                  type: 'user',
+                  slug: params.slug,
+                  refresh: true
                 })
               })
               .catch((err) => {
@@ -613,6 +637,8 @@ export default {
           shareTogetherProcess()
           shareSingleProcess()
         }
+      }, {
+        immediate: true
       })
     })
 
@@ -642,12 +668,14 @@ export default {
       }
     } else {
       shareData = {
-        title: `${this.user.nickname}的个人空间`,
+        title: `${this.user.nickname}的自我介绍`,
         path: `/pages/user/public/index?slug=${this.user.slug}`,
         imageUrl: this.user.avatar
       }
     }
     shareData.imageUrl = resize(shareData.imageUrl, { width: 500, height: 400, dpr: 1 })
+    this.state.showSingleDialog = false
+    this.state.showTogetherDialog = false
     return shareData
   }
 }

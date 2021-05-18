@@ -79,7 +79,7 @@
           择偶标准
         </view>
       </navigator>
-      <navigator url="/pages/user/readme/index">
+      <navigator url="/pages/user/code/index">
         <view class="iconfont ic-ico" />
         <view class="text">
           单身码
@@ -213,7 +213,7 @@ export default {
     }
 
     .ic-shiming {
-      color: goldenrod;
+      color: gold;
     }
 
     .ic-duixiang {

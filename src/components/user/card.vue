@@ -9,11 +9,11 @@
         {{ item.nickname }}
       </view>
       <view
-        v-if="item.meta.sex !== null"
+        v-if="item.meta && item.meta.sex !== null"
         class="sex"
       >
         <view
-          v-if="item.meta.sex === 0"
+          v-if="item.meta.sex == 0"
           class="iconfont ic-nv"
         />
         <view
@@ -34,12 +34,15 @@
         <image :src="item.avatar" />
       </view>
     </view>
-    <view class="footer">
-      <view class="item location">
-        <view
-          v-if="item.meta.location"
-          class="iconfont ic-weizhi"
-        />
+    <view
+      v-if="item.meta"
+      class="footer"
+    >
+      <view
+        v-if="item.meta.location"
+        class="item location"
+      >
+        <view class="iconfont ic-weizhi" />
         <view class="name">
           {{ item.meta.location }}
         </view>
@@ -130,7 +133,7 @@ export default {
     }
 
     .ic-shiming {
-      color: goldenrod;
+      color: gold;
     }
   }
 

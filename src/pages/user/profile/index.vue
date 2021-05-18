@@ -34,7 +34,7 @@
         >
           <radio
             color="#fb7299"
-            :checked="state.meta.sex === item.value"
+            :checked="state.meta.sex == item.value"
             class="checkbox-list__checkbox"
             :value="item.value"
           >{{ item.text }}</radio>
@@ -149,6 +149,11 @@
     >
       点击保存
     </button>
+    <view class="tips">
+      <view>
+        PS：小程序不提供聊天功能，所以需要用户主动填写微信号，方便其他人直接联系你与你沟通
+      </view>
+    </view>
   </view>
 </template>
 
@@ -230,6 +235,11 @@ export default {
     const handleSubmit = () => {
       state.nickname = state.nickname.trim()
       state.meta.wechat = state.meta.wechat.trim()
+      if (!/^[a-zA-Z][a-zA-Z\d_-]{5,19}$/.test(state.meta.wechat)) {
+        toast.info('请填写合法的微信号')
+        return
+      }
+
       http.post('user/profile', state)
       .then(() => {
         toast.info('保存成功')
@@ -296,6 +306,16 @@ export default {
     .slide-wrap {
       width: 60%;
       min-width: 200px;
+    }
+  }
+
+  .tips {
+    padding: $container-padding;
+
+    view {
+      margin: $container-padding / 2 0;
+      font-size: 28px;
+      color: $color-text-gray;
     }
   }
 

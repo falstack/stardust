@@ -41,7 +41,8 @@
     "@tarojs/runtime": "3.2.7",
     "@tarojs/taro": "3.2.7",
     "vue": "^3.0.11",
-    "vuex": "^4.0.0"
+    "vuex": "^4.0.0",
+    "weapp-qrcode": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.14.0",

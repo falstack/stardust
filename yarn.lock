@@ -5145,7 +5145,7 @@ extend-shallow@^3.0.0, extend-shallow@^3.0.2:
     assign-symbols "^1.0.0"
     is-extendable "^1.0.1"
 
-extend@~3.0.2:
+extend@^3.0.2, extend@~3.0.2:
   version "3.0.2"
   resolved "https://registry.npm.taobao.org/extend/download/extend-3.0.2.tgz#f8b1136b4071fbd8eb140aff858b1019ec2915fa"
   integrity sha1-+LETa0Bx+9jrFAr/hYsQGewpFfo=
@@ -10817,6 +10817,13 @@ wcwidth@^1.0.1:
   integrity sha1-8LDc+RW8X/FSivrbLA4XtTLaL+g=
   dependencies:
     defaults "^1.0.3"
+
+weapp-qrcode@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npm.taobao.org/weapp-qrcode/download/weapp-qrcode-1.0.0.tgz#4f3b4b4e7d37710c513439166734587859aebbfc"
+  integrity sha1-TztLTn03cQxRNDkWZzRYeFmuu/w=
+  dependencies:
+    extend "^3.0.2"
 
 webidl-conversions@^4.0.2:
   version "4.0.2"

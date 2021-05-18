@@ -174,6 +174,7 @@ export default {
         birthday: null,
         bodyHeight: 0,
         bodyWeight: 0,
+        link: '',
         work: '',
         wechat: '',
         location: '',

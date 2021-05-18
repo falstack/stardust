@@ -11,8 +11,8 @@ export default {
     }
   },
   actions: {
-    getModelData({ state, commit }, { type, slug }) {
-      if (state.user && state.user.slug === slug) {
+    getModelData({ state, commit }, { type, slug, refresh }) {
+      if (!refresh && state.user && state.user.slug === slug) {
         return
       }
 

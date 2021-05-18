@@ -1,5 +1,9 @@
 <template>
-  <view class="user-card">
+  <navigator
+    class="user-card"
+    :url="`/pages/user/public/index?slug=${item.slug}`"
+    hover-class="none"
+  >
     <view class="header">
       <view class="nickname">
         {{ item.nickname }}
@@ -68,7 +72,7 @@
         </view>
       </view>
     </view>
-  </view>
+  </navigator>
 </template>
 
 <script>
@@ -95,6 +99,7 @@ export default {
 
 <style lang="scss">
 .user-card {
+  display: block;
   background-color: #fff;
   padding: 15px;
   margin-bottom: 20px;
